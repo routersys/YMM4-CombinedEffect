@@ -6,6 +6,8 @@
 
 YMM4（YukkuriMovieMaker v4）で複数の映像エフェクトを一つにまとめ、プリセットとして管理・適用できるプラグインです。
 
+![image](https://github.com/routersys/YMM4-CombinedEffect/blob/main/CombinedEffect.png)
+
 ---
 
 ### 概要
