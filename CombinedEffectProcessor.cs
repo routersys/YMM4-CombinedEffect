@@ -48,8 +48,11 @@ namespace CombinedEffect
 
         public DrawDescription Update(EffectDescription effectDescription)
         {
-            if (isDisposed)
+            if (isDisposed || !item.IsEnabled)
+            {
+                Output = inputImage;
                 return effectDescription.DrawDescription;
+            }
 
             UpdateProcessors();
 
@@ -62,13 +65,18 @@ namespace CombinedEffect
             ID2D1Image? currentImage = inputImage;
             var currentEffectDescription = effectDescription;
 
-            foreach (var processor in processors)
+            for (int i = 0; i < processors.Count; i++)
             {
-                processor.SetInput(currentImage);
-                var newDrawDescription = processor.Update(currentEffectDescription);
-                currentImage = processor.Output;
+                var effect = item.Effects[i];
+                var processor = processors[i];
 
-                currentEffectDescription = currentEffectDescription with { DrawDescription = newDrawDescription };
+                if (effect.IsEnabled)
+                {
+                    processor.SetInput(currentImage);
+                    var newDrawDescription = processor.Update(currentEffectDescription);
+                    currentImage = processor.Output;
+                    currentEffectDescription = currentEffectDescription with { DrawDescription = newDrawDescription };
+                }
             }
 
             Output = currentImage;
