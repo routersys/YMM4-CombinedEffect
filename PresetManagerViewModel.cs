@@ -277,17 +277,17 @@ namespace CombinedEffect.ViewModels
             if (obj == null) return null;
             if (visited.Contains(obj)) return null;
 
-            visited.Add(obj);
-
             var type = obj.GetType();
 
-            if (type.IsPrimitive || obj is string || obj is decimal || type.IsEnum)
+            if (type.FullName == "System.Windows.Media.Color")
             {
-                visited.Remove(obj);
-                return obj;
+                var converter = TypeDescriptor.GetConverter(type);
+                return converter.ConvertToString(obj);
             }
 
-            if (obj is JsonElement)
+            visited.Add(obj);
+
+            if (type.IsPrimitive || obj is string || obj is decimal || type.IsEnum)
             {
                 visited.Remove(obj);
                 return obj;
@@ -346,7 +346,7 @@ namespace CombinedEffect.ViewModels
             return JsonSerializer.Serialize(serializableList, _jsonOptions);
         }
 
-        private static void PopulateObjectFromJson(object obj, JsonElement element, JsonSerializerOptions options)
+        private static void PopulateParameters(object obj, JsonElement element, JsonSerializerOptions options)
         {
             if (element.ValueKind != JsonValueKind.Object) return;
 
@@ -358,23 +358,88 @@ namespace CombinedEffect.ViewModels
             {
                 if (objProperties.TryGetValue(jsonProp.Name, out var targetProp))
                 {
+                    if (targetProp.PropertyType.FullName == "System.Windows.Media.Color")
+                    {
+                        continue;
+                    }
+
                     try
                     {
                         if (targetProp.CanWrite)
                         {
                             var deserializedValue = jsonProp.Value.Deserialize(targetProp.PropertyType, options);
                             targetProp.SetValue(obj, deserializedValue);
+                            var newlySetObject = targetProp.GetValue(obj);
+                            if (newlySetObject != null)
+                            {
+                                PopulateColors(newlySetObject, jsonProp.Value);
+                            }
                         }
                         else
                         {
                             var existingInnerObject = targetProp.GetValue(obj);
                             if (existingInnerObject != null)
                             {
-                                PopulateObjectFromJson(existingInnerObject, jsonProp.Value, options);
+                                PopulateParameters(existingInnerObject, jsonProp.Value, options);
+                                PopulateColors(existingInnerObject, jsonProp.Value);
                             }
                         }
                     }
                     catch (Exception) { }
+                }
+            }
+        }
+
+        private static void PopulateColors(object obj, JsonElement element)
+        {
+            if (obj is IList list && element.ValueKind == JsonValueKind.Array)
+            {
+                var jsonItems = element.EnumerateArray().ToList();
+                if (list.Count == jsonItems.Count)
+                {
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        var listItem = list[i];
+                        if (listItem != null)
+                        {
+                            PopulateColors(listItem, jsonItems[i]);
+                        }
+                    }
+                }
+                return;
+            }
+
+            if (element.ValueKind != JsonValueKind.Object) return;
+
+            var objProperties = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.CanRead)
+                .ToDictionary(p => p.Name);
+
+            foreach (var jsonProp in element.EnumerateObject())
+            {
+                if (objProperties.TryGetValue(jsonProp.Name, out var targetProp))
+                {
+                    if (targetProp.CanWrite && targetProp.PropertyType.FullName == "System.Windows.Media.Color")
+                    {
+                        if (jsonProp.Value.ValueKind == JsonValueKind.String)
+                        {
+                            try
+                            {
+                                var converter = TypeDescriptor.GetConverter(targetProp.PropertyType);
+                                var deserializedValue = converter.ConvertFromString(jsonProp.Value.GetString());
+                                targetProp.SetValue(obj, deserializedValue);
+                            }
+                            catch (Exception) { }
+                        }
+                    }
+                    else
+                    {
+                        var existingInnerObject = targetProp.GetValue(obj);
+                        if (existingInnerObject != null)
+                        {
+                            PopulateColors(existingInnerObject, jsonProp.Value);
+                        }
+                    }
                 }
             }
         }
@@ -400,7 +465,10 @@ namespace CombinedEffect.ViewModels
                 {
                     var propertiesJson = JsonSerializer.Serialize(item.Properties, options);
                     var propertiesElement = JsonSerializer.Deserialize<JsonElement>(propertiesJson);
-                    PopulateObjectFromJson(effectInstance, propertiesElement, options);
+
+                    PopulateColors(effectInstance, propertiesElement);
+
+                    PopulateParameters(effectInstance, propertiesElement, options);
                 }
                 builder.Add(effectInstance);
             }
