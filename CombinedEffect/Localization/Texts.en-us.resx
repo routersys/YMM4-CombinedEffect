@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+<data name="CurrentCulture" xml:space="preserve"><value>en-us</value></data>
+<data name="PresetManager_GroupHeader" xml:space="preserve"><value>Group</value></data>
+<data name="PresetManager_PresetHeader" xml:space="preserve"><value>Preset</value></data>
+<data name="PresetManager_SearchPlaceholder" xml:space="preserve"><value>Search presets...</value></data>
+<data name="PresetManager_AddGroup" xml:space="preserve"><value>Add Group</value></data>
+<data name="PresetManager_RemoveGroup" xml:space="preserve"><value>Remove Group</value></data>
+<data name="PresetManager_AddPreset" xml:space="preserve"><value>Add</value></data>
+<data name="PresetManager_RemovePreset" xml:space="preserve"><value>Remove</value></data>
+<data name="PresetManager_UpdatePreset" xml:space="preserve"><value>Update</value></data>
+<data name="PresetManager_ApplyPreset" xml:space="preserve"><value>Apply</value></data>
+<data name="PresetManager_GroupAll" xml:space="preserve"><value>All</value></data>
+<data name="PresetManager_GroupFavorites" xml:space="preserve"><value>Favorites</value></data>
+<data name="PresetManager_DefaultGroup" xml:space="preserve"><value>Default</value></data>
+<data name="PresetManager_NewGroup" xml:space="preserve"><value>New Group</value></data>
+<data name="PresetManager_NewPreset" xml:space="preserve"><value>New Preset</value></data>
+<data name="PresetManager_SaveError" xml:space="preserve"><value>Failed to save preset</value></data>
+<data name="PresetManager_ApplyError" xml:space="preserve"><value>Failed to apply preset</value></data>
+<data name="CombinedEffect_DisplayName" xml:space="preserve"><value>Combined Effect</value></data>
+<data name="CombinedEffect_DisplayNameWithPreset" xml:space="preserve"><value>Combined Effect [{0}]</value></data>
+<data name="CombinedEffect_PresetGroup" xml:space="preserve"><value>Preset Management</value></data>
+<data name="CombinedEffect_EffectGroup" xml:space="preserve"><value>Active Effects</value></data>
+<data name="VideoEffect_Name" xml:space="preserve"><value>Combined Effect</value></data>
+<data name="VideoEffect_Category_Tool" xml:space="preserve"><value>Tool</value></data>
+<data name="VideoEffect_Tag_Combined" xml:space="preserve"><value>Combined</value></data>
+<data name="VideoEffect_Tag_Preset" xml:space="preserve"><value>Preset</value></data>
+<data name="VideoEffect_Tag_Group" xml:space="preserve"><value>Group</value></data>
+<data name="PresetManager_GroupRecent" xml:space="preserve"><value>Recent</value></data>
+<data name="Dialog_Cancel" xml:space="preserve"><value>Cancel</value></data>
+<data name="Confirm_Delete" xml:space="preserve"><value>Confirm Deletion</value></data>
+<data name="Confirm_DeleteGroup" xml:space="preserve"><value>Are you sure you want to delete this group?</value></data>
+<data name="Confirm_DeletePreset" xml:space="preserve"><value>Are you sure you want to delete this preset?</value></data>
+<data name="Dialog_Title" xml:space="preserve"><value>Input</value></data>
+<data name="Dialog_InputName" xml:space="preserve"><value>Enter a name</value></data>
+</root>

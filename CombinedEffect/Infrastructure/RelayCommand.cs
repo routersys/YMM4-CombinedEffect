@@ -1,0 +1,27 @@
+using System.Windows.Input;
+
+namespace CombinedEffect.Infrastructure;
+
+internal sealed class RelayCommand<T> : ICommand
+{
+    private readonly Action<T?> _execute;
+    private readonly Predicate<T?>? _canExecute;
+
+    public event EventHandler? CanExecuteChanged
+    {
+        add => CommandManager.RequerySuggested += value;
+        remove => CommandManager.RequerySuggested -= value;
+    }
+
+    public RelayCommand(Action<T?> execute, Predicate<T?>? canExecute = null)
+    {
+        _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+        _canExecute = canExecute;
+    }
+
+    public bool CanExecute(object? parameter) =>
+        _canExecute is null || _canExecute(parameter is T t ? t : default);
+
+    public void Execute(object? parameter) =>
+        _execute(parameter is T t ? t : default);
+}
