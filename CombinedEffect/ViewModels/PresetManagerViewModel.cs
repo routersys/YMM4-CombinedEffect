@@ -539,14 +539,14 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
     {
         var target = presetVm ?? SelectedPreset;
         if (target is null) return;
-        
+
         var confirmWindow = new ConfirmationDialogWindow(Texts.Confirm_ClearPreset, Texts.Confirm_ClearPresetTitle);
         if (confirmWindow.ShowDialog() != true) return;
 
         target.Model.SerializedEffects = _serialization.Serialize(ImmutableList<IVideoEffect>.Empty);
         target.RefreshEffectInfo(_serialization);
         _persistence.SavePreset(target.Model);
-        
+
         TriggerUpdateCheck();
     }
 

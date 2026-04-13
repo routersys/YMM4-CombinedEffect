@@ -8,9 +8,12 @@ using YukkuriMovieMaker.Commons;
 using YukkuriMovieMaker.Controls;
 using YukkuriMovieMaker.Exo;
 using YukkuriMovieMaker.Player.Video;
+using YukkuriMovieMaker.Plugin;
 using YukkuriMovieMaker.Plugin.Effects;
 
 namespace CombinedEffect.Effect;
+
+[PluginDetails(AuthorName = "routersys")]
 
 [VideoEffect(nameof(Texts.VideoEffect_Name), [nameof(Texts.VideoEffect_Category_Tool)], [nameof(Texts.VideoEffect_Tag_Combined), nameof(Texts.VideoEffect_Tag_Preset), nameof(Texts.VideoEffect_Tag_Group)], IsAviUtlSupported = false, ResourceType = typeof(Texts))]
 public sealed class CombinedEffect : VideoEffectBase
