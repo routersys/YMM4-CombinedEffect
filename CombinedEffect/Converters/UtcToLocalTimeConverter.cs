@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace CombinedEffect.Infrastructure;
+namespace CombinedEffect.Converters;
 
 public sealed class UtcToLocalTimeConverter : IValueConverter
 {
