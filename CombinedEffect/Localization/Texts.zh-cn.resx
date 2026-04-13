@@ -91,4 +91,51 @@
 <data name="Confirm_DeletePreset" xml:space="preserve"><value>确定要删除此预设吗？</value></data>
 <data name="Dialog_Title" xml:space="preserve"><value>输入</value></data>
 <data name="Dialog_InputName" xml:space="preserve"><value>请输入名称</value></data>
+<data name="History_Manage" xml:space="preserve"><value>历史管理</value></data>
+<data name="History_Title" xml:space="preserve"><value>历史与分支</value></data>
+<data name="History_Snapshot" xml:space="preserve"><value>快照</value></data>
+<data name="History_Branch" xml:space="preserve"><value>分支</value></data>
+<data name="History_Current" xml:space="preserve"><value>当前</value></data>
+<data name="History_NewSnapshot" xml:space="preserve"><value>保存新快照</value></data>
+<data name="History_NewBranch" xml:space="preserve"><value>创建新分支</value></data>
+<data name="History_Revert" xml:space="preserve"><value>恢复到此状态</value></data>
+<data name="History_MessagePlaceholder" xml:space="preserve"><value>输入更改内容...</value></data>
+<data name="History_BranchNamePlaceholder" xml:space="preserve"><value>输入分支名称...</value></data>
+<data name="History_Create" xml:space="preserve"><value>创建</value></data>
+<data name="PresetManager_Clear" xml:space="preserve"><value>清除</value></data>
+<data name="PresetManager_ClearUnselected" xml:space="preserve"><value>删除未选中的效果</value></data>
+<data name="Confirm_ClearUnselectedTitle" xml:space="preserve"><value>删除未选中</value></data>
+<data name="Confirm_ClearUnselected" xml:space="preserve"><value>要删除所有禁用的效果吗？</value></data>
+<data name="Confirm_SamePresetApplyTitle" xml:space="preserve"><value>确认重复应用</value></data>
+<data name="Confirm_SamePresetApply" xml:space="preserve"><value>要再次应用相同的预设吗？</value></data>
+<data name="History_ColumnMessage" xml:space="preserve"><value>信息</value></data>
+<data name="History_ColumnTime" xml:space="preserve"><value>时间</value></data>
+<data name="History_ColumnID" xml:space="preserve"><value>ID</value></data>
+<data name="History_Changes" xml:space="preserve"><value>更改</value></data>
+<data name="History_Added" xml:space="preserve"><value>已添加</value></data>
+<data name="History_Removed" xml:space="preserve"><value>已删除</value></data>
+<data name="History_Unchanged" xml:space="preserve"><value>无更改</value></data>
+<data name="History_Modified" xml:space="preserve"><value>已修改</value></data>
+<data name="History_RawData" xml:space="preserve"><value>原始数据</value></data>
+<data name="History_Merge" xml:space="preserve"><value>合并到当前</value></data>
+<data name="History_Reset" xml:space="preserve"><value>重置</value></data>
+<data name="History_ResetSoft" xml:space="preserve"><value>保留更改 (Soft)</value></data>
+<data name="History_ResetHard" xml:space="preserve"><value>放弃更改 (Hard)</value></data>
+<data name="History_ManageTags" xml:space="preserve"><value>管理标签</value></data>
+<data name="History_TagsTitle" xml:space="preserve"><value>标签管理</value></data>
+<data name="History_TagInputPlaceholder" xml:space="preserve"><value>输入新标签...</value></data>
+<data name="History_AddTag" xml:space="preserve"><value>添加</value></data>
+<data name="History_RemoveTag" xml:space="preserve"><value>删除</value></data>
+<data name="CombinedEffect_ActiveEffectsCount" xml:space="preserve"><value>{0} 应用中: {1}个</value></data>
+<data name="CombinedEffect_ActiveEffectsCountWithPreset" xml:space="preserve"><value>{0} 应用中: {1}个 [{2}]</value></data>
+<data name="History_DefaultBranchName" xml:space="preserve"><value>main</value></data>
+<data name="History_DiffExtractionFailed" xml:space="preserve"><value>差异提取失败</value></data>
+<data name="History_EffectsCountDiff" xml:space="preserve"><value>效果数量: {0}</value></data>
+<data name="History_DiffEffectHeader" xml:space="preserve"><value>[{0}]</value></data>
+<data name="History_DiffPropertyChange" xml:space="preserve"><value>{0}: {1} -&gt; {2}</value></data>
+<data name="Error_DiskIO" xml:space="preserve"><value>文件写入失败。请检查磁盘空间和权限。</value></data>
+<data name="PresetManager_RenamePreset" xml:space="preserve"><value>重命名</value></data>
+<data name="PresetManager_ClearPreset" xml:space="preserve"><value>清空预设</value></data>
+<data name="Confirm_ClearPresetTitle" xml:space="preserve"><value>清空预设</value></data>
+<data name="Confirm_ClearPreset" xml:space="preserve"><value>要删除此预设中的所有效果并将其清空吗？</value></data>
 </root>

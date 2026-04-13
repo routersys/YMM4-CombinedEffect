@@ -210,11 +210,47 @@
                     <ListBox x:Name="PresetListBox" Grid.Row="2" Margin="0"
                              ItemsSource="{Binding DisplayedPresets}"
                              SelectedItem="{Binding SelectedPreset}"
+                             SelectionMode="Extended"
                              AllowDrop="True"
                              PreviewMouseWheel="ListBox_PreviewMouseWheel">
+                        <ListBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="{x:Static loc:Texts.PresetManager_Clear}">
+                                    <MenuItem Header="{x:Static loc:Texts.PresetManager_ClearUnselected}" 
+                                              Command="{Binding PlacementTarget.DataContext.ClearUnselectedCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                </MenuItem>
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                                 <Setter Property="AllowDrop" Value="True"/>
+                                <Setter Property="Tag" Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=ListBox}}"/>
+                                <Setter Property="ContextMenu">
+                                    <Setter.Value>
+                                        <ContextMenu>
+                                            <MenuItem Header="{x:Static loc:Texts.PresetManager_ApplyPreset}" 
+                                                      Command="{Binding PlacementTarget.Tag.ApplySinglePresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                            <MenuItem Header="{x:Static loc:Texts.PresetManager_UpdatePreset}" 
+                                                      Command="{Binding PlacementTarget.Tag.UpdatePresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                            <MenuItem Header="{x:Static loc:Texts.PresetManager_RenamePreset}" 
+                                                      Command="{Binding PlacementTarget.Tag.RenamePresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                            <MenuItem Header="{x:Static loc:Texts.PresetManager_RemovePreset}" 
+                                                      Command="{Binding PlacementTarget.Tag.RemovePresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                            <Separator/>
+                                            <MenuItem Header="{x:Static loc:Texts.PresetManager_ClearPreset}" 
+                                                      Command="{Binding PlacementTarget.Tag.ClearPresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                            <Separator/>
+                                            <MenuItem Header="{x:Static loc:Texts.History_Manage}" 
+                                                      Command="{Binding PlacementTarget.Tag.ManageHistoryCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                        </ContextMenu>
+                                    </Setter.Value>
+                                </Setter>
                                 <EventSetter Event="PreviewMouseLeftButtonDown" Handler="PresetItem_PreviewMouseLeftButtonDown"/>
                                 <EventSetter Event="MouseMove" Handler="PresetItem_MouseMove"/>
                                 <EventSetter Event="DragEnter" Handler="PresetItem_DragEnter"/>
@@ -310,7 +346,7 @@
                                     <TextBlock Grid.Column="1" Text="{x:Static loc:Texts.PresetManager_UpdatePreset}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" VerticalAlignment="Center" Margin="5,0,5,0" Visibility="Collapsed" Opacity="0" />
                                 </Grid>
                             </Button>
-                            <Button Command="{Binding ApplyPresetCommand}" Padding="0" Height="28" FontWeight="Bold" ToolTip="{x:Static loc:Texts.PresetManager_ApplyPreset}" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" HorizontalContentAlignment="Left" VerticalContentAlignment="Stretch" MouseEnter="PresetButton_MouseEnter" MouseLeave="PresetButton_MouseLeave">
+                            <Button Command="{Binding ApplyPresetCommand}" CommandParameter="{Binding SelectedItems, ElementName=PresetListBox}" Padding="0" Height="28" FontWeight="Bold" ToolTip="{x:Static loc:Texts.PresetManager_ApplyPreset}" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" HorizontalContentAlignment="Left" VerticalContentAlignment="Stretch" MouseEnter="PresetButton_MouseEnter" MouseLeave="PresetButton_MouseLeave">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>

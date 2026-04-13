@@ -5,68 +5,128 @@ using CombinedEffect.Services.Interfaces;
 using Newtonsoft.Json;
 using System.IO;
 using System.Reflection;
-using System.Text;
+using System.Windows;
 
 namespace CombinedEffect.Services;
 
-internal sealed class PresetPersistenceService : IPresetPersistenceService
+internal sealed class PresetPersistenceService : IPresetPersistenceService, IDisposable
 {
-    private const string CrcSeparator = "\n<|CRC32|>";
     private static readonly JsonSerializerSettings Settings = new() { Formatting = Formatting.Indented };
 
     private readonly string _presetsDirectory;
+    private readonly SemaphoreSlim _ioLock = new(1, 1);
+    private readonly AsyncDebouncer _debouncer = new();
+    private bool _disposed;
 
     public PresetPersistenceService()
     {
         var assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
             ?? AppDomain.CurrentDomain.BaseDirectory;
-        _presetsDirectory = Path.Combine(assemblyDir, "presets");
+        _presetsDirectory = Path.Combine(assemblyDir, Constants.DirectoryPresets);
         Directory.CreateDirectory(_presetsDirectory);
     }
 
-    private string GroupRegistryPath => Path.Combine(_presetsDirectory, "groups.json");
+    private string GroupRegistryPath => Path.Combine(_presetsDirectory, Constants.FileRegistry);
 
-    public GroupRegistry LoadGroupRegistry()
+    public async Task<GroupRegistry> LoadGroupRegistryAsync()
     {
-        var content = ReadWithFallback(GroupRegistryPath);
-        if (content is null) return CreateDefaultRegistry();
-        try
+        return await Task.Run(async () =>
         {
-            return JsonConvert.DeserializeObject<GroupRegistry>(content, Settings)
-                ?? CreateDefaultRegistry();
-        }
-        catch { return CreateDefaultRegistry(); }
+            await _ioLock.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                var content = AtomicFileWriter.ReadVerified(GroupRegistryPath);
+                if (content is null) return CreateDefaultRegistry();
+                return JsonConvert.DeserializeObject<GroupRegistry>(content, Settings)
+                    ?? CreateDefaultRegistry();
+            }
+            catch { return CreateDefaultRegistry(); }
+            finally { _ioLock.Release(); }
+        }).ConfigureAwait(false);
     }
 
     public void SaveGroupRegistry(GroupRegistry registry)
     {
         var json = JsonConvert.SerializeObject(registry, Settings);
-        WriteWithBackup(GroupRegistryPath, json);
+        _debouncer.DebounceAsync("registry", TimeSpan.FromMilliseconds(300), async () =>
+        {
+            await _ioLock.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                await AtomicFileWriter.WriteAtomicAsync(GroupRegistryPath, json).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _ = Application.Current.Dispatcher.InvokeAsync(() =>
+                    MessageBox.Show($"{Texts.Error_DiskIO}\n{ex.Message}", Texts.Dialog_Title, MessageBoxButton.OK, MessageBoxImage.Error));
+            }
+            finally
+            {
+                _ioLock.Release();
+            }
+        });
     }
 
-    public EffectPreset? LoadPreset(Guid id)
+    public async Task<EffectPreset?> LoadPresetAsync(Guid id)
     {
-        var content = ReadWithFallback(GetPresetPath(id));
-        if (content is null) return null;
-        try
+        return await Task.Run(async () =>
         {
-            return JsonConvert.DeserializeObject<EffectPreset>(content, Settings);
-        }
-        catch { return null; }
+            await _ioLock.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                var content = AtomicFileWriter.ReadVerified(GetPresetPath(id));
+                if (content is null) return null;
+                return JsonConvert.DeserializeObject<EffectPreset>(content, Settings);
+            }
+            catch { return null; }
+            finally { _ioLock.Release(); }
+        }).ConfigureAwait(false);
     }
 
     public void SavePreset(EffectPreset preset)
     {
         var json = JsonConvert.SerializeObject(preset, Settings);
-        WriteWithBackup(GetPresetPath(preset.Id), json);
+        _debouncer.DebounceAsync($"preset_{preset.Id:N}", TimeSpan.FromMilliseconds(300), async () =>
+        {
+            await _ioLock.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                await AtomicFileWriter.WriteAtomicAsync(GetPresetPath(preset.Id), json).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _ = Application.Current.Dispatcher.InvokeAsync(() =>
+                    MessageBox.Show($"{Texts.Error_DiskIO}\n{ex.Message}", Texts.Dialog_Title, MessageBoxButton.OK, MessageBoxImage.Error));
+            }
+            finally
+            {
+                _ioLock.Release();
+            }
+        });
     }
 
     public void DeletePreset(Guid id)
     {
-        var path = GetPresetPath(id);
-        var bakPath = path + ".bak";
-        if (File.Exists(path)) File.Delete(path);
-        if (File.Exists(bakPath)) File.Delete(bakPath);
+        _debouncer.DebounceAsync($"delete_{id:N}", TimeSpan.FromMilliseconds(100), async () =>
+        {
+            await _ioLock.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                var path = GetPresetPath(id);
+                var bakPath = path + ".bak";
+                if (File.Exists(path)) File.Delete(path);
+                if (File.Exists(bakPath)) File.Delete(bakPath);
+            }
+            catch (Exception ex)
+            {
+                _ = Application.Current.Dispatcher.InvokeAsync(() =>
+                    MessageBox.Show($"{Texts.Error_DiskIO}\n{ex.Message}", Texts.Dialog_Title, MessageBoxButton.OK, MessageBoxImage.Error));
+            }
+            finally
+            {
+                _ioLock.Release();
+            }
+        });
     }
 
     private string GetPresetPath(Guid id) =>
@@ -75,48 +135,11 @@ internal sealed class PresetPersistenceService : IPresetPersistenceService
     private static GroupRegistry CreateDefaultRegistry() =>
         new() { Groups = [new PresetGroup { Name = Texts.PresetManager_DefaultGroup }] };
 
-    private static string? ReadWithFallback(string path) =>
-        TryReadVerified(path) ?? TryReadVerified(path + ".bak");
-
-    private static string? TryReadVerified(string path)
+    public void Dispose()
     {
-        if (!File.Exists(path)) return null;
-        try
-        {
-            var raw = File.ReadAllText(path, Encoding.UTF8);
-            var separatorIndex = raw.LastIndexOf(CrcSeparator, StringComparison.Ordinal);
-            if (separatorIndex < 0) return raw;
-
-            var content = raw[..separatorIndex];
-            var storedHex = raw[(separatorIndex + CrcSeparator.Length)..].Trim();
-            if (!uint.TryParse(storedHex, System.Globalization.NumberStyles.HexNumber, null, out var storedCrc))
-                return null;
-
-            var contentBytes = Encoding.UTF8.GetBytes(content);
-            return Crc32.Compute(contentBytes) == storedCrc ? content : null;
-        }
-        catch { return null; }
-    }
-
-    private static void WriteWithBackup(string path, string content)
-    {
-        var contentBytes = Encoding.UTF8.GetBytes(content);
-        var crc = Crc32.Compute(contentBytes);
-        var fullContent = $"{content}{CrcSeparator}{crc:X8}";
-        var tempPath = path + ".tmp";
-        try
-        {
-            File.WriteAllText(tempPath, fullContent, Encoding.UTF8);
-            if (File.Exists(path))
-                File.Replace(tempPath, path, path + ".bak");
-            else
-                File.Move(tempPath, path);
-        }
-        catch
-        {
-            if (File.Exists(tempPath))
-                try { File.Delete(tempPath); } catch { }
-            throw;
-        }
+        if (_disposed) return;
+        _disposed = true;
+        _debouncer.Dispose();
+        _ioLock.Dispose();
     }
 }

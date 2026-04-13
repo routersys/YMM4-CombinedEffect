@@ -91,4 +91,51 @@
 <data name="Confirm_DeletePreset" xml:space="preserve"><value>¿Está seguro de que desea eliminar este ajuste?</value></data>
 <data name="Dialog_Title" xml:space="preserve"><value>Entrada</value></data>
 <data name="Dialog_InputName" xml:space="preserve"><value>Introduzca un nombre</value></data>
+<data name="History_Manage" xml:space="preserve"><value>Gestión de historial</value></data>
+<data name="History_Title" xml:space="preserve"><value>Historial y Ramas</value></data>
+<data name="History_Snapshot" xml:space="preserve"><value>Instantánea</value></data>
+<data name="History_Branch" xml:space="preserve"><value>Rama</value></data>
+<data name="History_Current" xml:space="preserve"><value>Actual</value></data>
+<data name="History_NewSnapshot" xml:space="preserve"><value>Guardar Nueva Instantánea</value></data>
+<data name="History_NewBranch" xml:space="preserve"><value>Crear Nueva Rama</value></data>
+<data name="History_Revert" xml:space="preserve"><value>Revertir a Esto</value></data>
+<data name="History_MessagePlaceholder" xml:space="preserve"><value>Introduzca cambios...</value></data>
+<data name="History_BranchNamePlaceholder" xml:space="preserve"><value>Introduzca nombre de rama...</value></data>
+<data name="History_Create" xml:space="preserve"><value>Crear</value></data>
+<data name="PresetManager_Clear" xml:space="preserve"><value>Limpiar</value></data>
+<data name="PresetManager_ClearUnselected" xml:space="preserve"><value>Eliminar efectos no seleccionados</value></data>
+<data name="Confirm_ClearUnselectedTitle" xml:space="preserve"><value>Eliminar No Seleccionados</value></data>
+<data name="Confirm_ClearUnselected" xml:space="preserve"><value>¿Desea eliminar todos los efectos deshabilitados?</value></data>
+<data name="Confirm_SamePresetApplyTitle" xml:space="preserve"><value>Confirmar aplicación duplicada</value></data>
+<data name="Confirm_SamePresetApply" xml:space="preserve"><value>¿Desea aplicar el mismo ajuste preestablecido nuevamente?</value></data>
+<data name="History_ColumnMessage" xml:space="preserve"><value>Mensaje</value></data>
+<data name="History_ColumnTime" xml:space="preserve"><value>Hora</value></data>
+<data name="History_ColumnID" xml:space="preserve"><value>ID</value></data>
+<data name="History_Changes" xml:space="preserve"><value>Cambios</value></data>
+<data name="History_Added" xml:space="preserve"><value>Agregado</value></data>
+<data name="History_Removed" xml:space="preserve"><value>Eliminado</value></data>
+<data name="History_Unchanged" xml:space="preserve"><value>Sin cambios</value></data>
+<data name="History_Modified" xml:space="preserve"><value>Modificado</value></data>
+<data name="History_RawData" xml:space="preserve"><value>Datos Crudos</value></data>
+<data name="History_Merge" xml:space="preserve"><value>Fusionar en Actual</value></data>
+<data name="History_Reset" xml:space="preserve"><value>Restablecer</value></data>
+<data name="History_ResetSoft" xml:space="preserve"><value>Mantener Cambios (Soft)</value></data>
+<data name="History_ResetHard" xml:space="preserve"><value>Descartar Cambios (Hard)</value></data>
+<data name="History_ManageTags" xml:space="preserve"><value>Administrar Etiquetas</value></data>
+<data name="History_TagsTitle" xml:space="preserve"><value>Gestión de Etiquetas</value></data>
+<data name="History_TagInputPlaceholder" xml:space="preserve"><value>Introduzca nueva etiqueta...</value></data>
+<data name="History_AddTag" xml:space="preserve"><value>Añadir</value></data>
+<data name="History_RemoveTag" xml:space="preserve"><value>Eliminar</value></data>
+<data name="CombinedEffect_ActiveEffectsCount" xml:space="preserve"><value>{0} Activo: {1}</value></data>
+<data name="CombinedEffect_ActiveEffectsCountWithPreset" xml:space="preserve"><value>{0} Activo: {1} [{2}]</value></data>
+<data name="History_DefaultBranchName" xml:space="preserve"><value>main</value></data>
+<data name="History_DiffExtractionFailed" xml:space="preserve"><value>Error al extraer diferencias</value></data>
+<data name="History_EffectsCountDiff" xml:space="preserve"><value>Efectos: {0}</value></data>
+<data name="History_DiffEffectHeader" xml:space="preserve"><value>[{0}]</value></data>
+<data name="History_DiffPropertyChange" xml:space="preserve"><value>{0}: {1} -&gt; {2}</value></data>
+<data name="Error_DiskIO" xml:space="preserve"><value>Error al escribir el archivo. Verifique el espacio en disco y los permisos.</value></data>
+<data name="PresetManager_RenamePreset" xml:space="preserve"><value>Renombrar</value></data>
+<data name="PresetManager_ClearPreset" xml:space="preserve"><value>Vaciar Ajuste</value></data>
+<data name="Confirm_ClearPresetTitle" xml:space="preserve"><value>Vaciar Ajuste</value></data>
+<data name="Confirm_ClearPreset" xml:space="preserve"><value>¿Desea eliminar todos los efectos de este ajuste y vaciarlo?</value></data>
 </root>

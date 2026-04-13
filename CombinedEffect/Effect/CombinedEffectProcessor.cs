@@ -43,9 +43,10 @@ internal sealed class CombinedEffectProcessor : IVideoEffectProcessor
 
         ID2D1Image? current = _inputImage;
         var description = effectDescription;
+        var activeEffects = _currentEffects;
         for (int i = 0; i < _processors.Count; i++)
         {
-            if (!_effect.Effects[i].IsEnabled) continue;
+            if (i >= activeEffects.Count || !activeEffects[i].IsEnabled) continue;
             _processors[i].SetInput(current);
             var updated = _processors[i].Update(description);
             current = _processors[i].Output;

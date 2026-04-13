@@ -1,19 +1,31 @@
 using CombinedEffect.Models;
-using CombinedEffect.ViewModels;
 using CombinedEffect.Services;
+using CombinedEffect.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Documents;
-using System.Windows.Controls.Primitives;
 using YukkuriMovieMaker.Commons;
 
 namespace CombinedEffect.Views;
 
 public partial class PresetManagerControl : UserControl, IPropertyEditorControl
 {
+    private const double MobileBreakpointWidth = 400.0;
+    private const double MinControlHeight = 200.0;
+    private const double MinGroupColumnWidthMobile = 0.0;
+    private const double MinGroupColumnWidthDesktop = 120.0;
+    private const double MaxGroupColumnWidthDesktop = 400.0;
+    private const double MinGroupColumnWidthFallback = 50.0;
+    private const double ButtonAnimationDurationMs = 150.0;
+    private const double ButtonAnimationDeceleration = 0.9;
+    private const double ButtonTextPadding = 10.0;
+    private const string GroupDragFormat = "CombinedEffect.GroupFormat";
+    private const string PresetDragFormat = "CombinedEffect.PresetFormat";
+
     public event EventHandler? BeginEdit;
     public event EventHandler? EndEdit;
 
@@ -30,8 +42,8 @@ public partial class PresetManagerControl : UserControl, IPropertyEditorControl
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
         var settings = ServiceRegistry.Instance.UISettings.Settings;
-        Height = Math.Max(200, settings.ControlHeight);
-        GroupColumn.Width = new GridLength(Math.Max(50, settings.GroupColumnWidth));
+        Height = Math.Max(MinControlHeight, settings.ControlHeight);
+        GroupColumn.Width = new GridLength(Math.Max(MinGroupColumnWidthFallback, settings.GroupColumnWidth));
     }
 
     private void PresetManagerControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -72,21 +84,21 @@ public partial class PresetManagerControl : UserControl, IPropertyEditorControl
 
     private void RootControl_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        if (e.NewSize.Width < 400)
+        if (e.NewSize.Width < MobileBreakpointWidth)
         {
             MobileMenuButton.Visibility = Visibility.Visible;
             GroupPanel.Visibility = Visibility.Collapsed;
             GroupSplitter.Visibility = Visibility.Collapsed;
-            GroupColumn.MinWidth = 0;
-            GroupColumn.MaxWidth = 0;
-            GroupColumn.Width = new GridLength(0);
+            GroupColumn.MinWidth = MinGroupColumnWidthMobile;
+            GroupColumn.MaxWidth = MinGroupColumnWidthMobile;
+            GroupColumn.Width = new GridLength(MinGroupColumnWidthMobile);
         }
         else
         {
             var settings = ServiceRegistry.Instance.UISettings.Settings;
-            GroupColumn.MinWidth = 120;
-            GroupColumn.MaxWidth = 400;
-            GroupColumn.Width = new GridLength(Math.Max(120, settings.GroupColumnWidth));
+            GroupColumn.MinWidth = MinGroupColumnWidthDesktop;
+            GroupColumn.MaxWidth = MaxGroupColumnWidthDesktop;
+            GroupColumn.Width = new GridLength(Math.Max(MinGroupColumnWidthDesktop, settings.GroupColumnWidth));
             GroupSplitter.Visibility = Visibility.Visible;
             GroupPanel.Visibility = Visibility.Visible;
             MobileMenuButton.Visibility = Visibility.Collapsed;
@@ -119,13 +131,13 @@ public partial class PresetManagerControl : UserControl, IPropertyEditorControl
         if (sender is not ListBoxItem item || item.DataContext is not PresetGroup group) return;
         if (PresetManagerViewModel.IsVirtualGroup(group)) return;
 
-        DragDrop.DoDragDrop(item, new DataObject("GroupFormat", group), DragDropEffects.Move);
+        DragDrop.DoDragDrop(item, new DataObject(GroupDragFormat, group), DragDropEffects.Move);
         RemoveAdorner();
     }
 
     private void GroupItem_DragEnter(object sender, DragEventArgs e)
     {
-        if (!e.Data.GetDataPresent("GroupFormat")) return;
+        if (!e.Data.GetDataPresent(GroupDragFormat)) return;
         if (sender is not ListBoxItem item || item.DataContext is not PresetGroup group) return;
         if (PresetManagerViewModel.IsVirtualGroup(group)) return;
         CreateAdorner(item);
@@ -136,9 +148,9 @@ public partial class PresetManagerControl : UserControl, IPropertyEditorControl
     private void GroupItem_Drop(object sender, DragEventArgs e)
     {
         RemoveAdorner();
-        if (!e.Data.GetDataPresent("GroupFormat")) return;
+        if (!e.Data.GetDataPresent(GroupDragFormat)) return;
         if (sender is not ListBoxItem item || item.DataContext is not PresetGroup target) return;
-        if (e.Data.GetData("GroupFormat") is PresetGroup source && DataContext is PresetManagerViewModel vm)
+        if (e.Data.GetData(GroupDragFormat) is PresetGroup source && DataContext is PresetManagerViewModel vm)
             vm.MoveGroup(source, target);
     }
 
@@ -165,13 +177,13 @@ public partial class PresetManagerControl : UserControl, IPropertyEditorControl
         if (sender is not ListBoxItem item || item.DataContext is not PresetItemViewModel preset) return;
         if (DataContext is PresetManagerViewModel vm && vm.IsCurrentGroupVirtual) return;
 
-        DragDrop.DoDragDrop(item, new DataObject("PresetFormat", preset), DragDropEffects.Move);
+        DragDrop.DoDragDrop(item, new DataObject(PresetDragFormat, preset), DragDropEffects.Move);
         RemoveAdorner();
     }
 
     private void PresetItem_DragEnter(object sender, DragEventArgs e)
     {
-        if (!e.Data.GetDataPresent("PresetFormat")) return;
+        if (!e.Data.GetDataPresent(PresetDragFormat)) return;
         if (DataContext is PresetManagerViewModel vm && vm.IsCurrentGroupVirtual) return;
         if (sender is ListBoxItem item)
             CreateAdorner(item);
@@ -182,9 +194,9 @@ public partial class PresetManagerControl : UserControl, IPropertyEditorControl
     private void PresetItem_Drop(object sender, DragEventArgs e)
     {
         RemoveAdorner();
-        if (!e.Data.GetDataPresent("PresetFormat")) return;
+        if (!e.Data.GetDataPresent(PresetDragFormat)) return;
         if (sender is not ListBoxItem item || item.DataContext is not PresetItemViewModel target) return;
-        if (e.Data.GetData("PresetFormat") is PresetItemViewModel source && DataContext is PresetManagerViewModel vm)
+        if (e.Data.GetData(PresetDragFormat) is PresetItemViewModel source && DataContext is PresetManagerViewModel vm)
             vm.MovePreset(source, target);
     }
 
@@ -221,12 +233,13 @@ public partial class PresetManagerControl : UserControl, IPropertyEditorControl
 
         textBlock.Visibility = Visibility.Visible;
         textBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-        var targetWidth = button.ActualHeight + textBlock.DesiredSize.Width + 10;
+        var targetWidth = button.ActualHeight + textBlock.DesiredSize.Width + ButtonTextPadding;
+        var duration = TimeSpan.FromMilliseconds(ButtonAnimationDurationMs);
 
         button.BeginAnimation(WidthProperty,
-            new DoubleAnimation(button.ActualWidth, targetWidth, TimeSpan.FromMilliseconds(150)) { DecelerationRatio = 0.9 });
+            new DoubleAnimation(button.ActualWidth, targetWidth, duration) { DecelerationRatio = ButtonAnimationDeceleration });
         textBlock.BeginAnimation(OpacityProperty,
-            new DoubleAnimation(textBlock.Opacity, 1.0, TimeSpan.FromMilliseconds(150)));
+            new DoubleAnimation(textBlock.Opacity, 1.0, duration));
     }
 
     private void PresetButton_MouseLeave(object sender, MouseEventArgs e)
@@ -234,7 +247,8 @@ public partial class PresetManagerControl : UserControl, IPropertyEditorControl
         if (sender is not Button button || button.Content is not Grid mainGrid) return;
         if (mainGrid.Children[1] is not TextBlock textBlock) return;
 
-        var widthAnim = new DoubleAnimation(button.ActualWidth, button.ActualHeight, TimeSpan.FromMilliseconds(150)) { DecelerationRatio = 0.9 };
+        var duration = TimeSpan.FromMilliseconds(ButtonAnimationDurationMs);
+        var widthAnim = new DoubleAnimation(button.ActualWidth, button.ActualHeight, duration) { DecelerationRatio = ButtonAnimationDeceleration };
         widthAnim.Completed += (_, _) =>
         {
             if (!button.IsMouseOver) textBlock.Visibility = Visibility.Collapsed;
@@ -242,6 +256,6 @@ public partial class PresetManagerControl : UserControl, IPropertyEditorControl
 
         button.BeginAnimation(WidthProperty, widthAnim);
         textBlock.BeginAnimation(OpacityProperty,
-            new DoubleAnimation(textBlock.Opacity, 0.0, TimeSpan.FromMilliseconds(150)));
+            new DoubleAnimation(textBlock.Opacity, 0.0, duration));
     }
 }

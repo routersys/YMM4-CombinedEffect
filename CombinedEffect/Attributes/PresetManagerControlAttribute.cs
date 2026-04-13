@@ -18,7 +18,9 @@ internal sealed class PresetManagerControlAttribute : PropertyEditorAttribute2
     public override void SetBindings(FrameworkElement control, ItemProperty[] itemProperties)
     {
         if (control is not PresetManagerControl editor) return;
-        editor.DataContext = new PresetManagerViewModel(itemProperties);
+        var vm = new PresetManagerViewModel(itemProperties);
+        vm.Initialize();
+        editor.DataContext = vm;
     }
 
     public override void ClearBindings(FrameworkElement control)

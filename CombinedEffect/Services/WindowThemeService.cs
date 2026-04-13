@@ -1,5 +1,4 @@
 using CombinedEffect.Services.Interfaces;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -35,11 +34,10 @@ internal sealed class WindowThemeService : IWindowThemeService
         SetDwmColor((HWND)hwnd, DWMWINDOWATTRIBUTE.DWMWA_TEXT_COLOR, textBrush.Color);
     }
 
-    private static void SetDwmColor(HWND hwnd, DWMWINDOWATTRIBUTE attribute, Color color)
+    private static unsafe void SetDwmColor(HWND hwnd, DWMWINDOWATTRIBUTE attribute, Color color)
     {
         uint colorRef = (uint)(color.R | (color.G << 8) | (color.B << 16));
-        byte[] bytes = BitConverter.GetBytes(colorRef);
-        ReadOnlySpan<byte> span = MemoryMarshal.CreateReadOnlySpan(in bytes[0], bytes.Length);
-        PInvoke.DwmSetWindowAttribute(hwnd, attribute, span);
+        PInvoke.DwmSetWindowAttribute(hwnd, attribute,
+            new ReadOnlySpan<byte>(&colorRef, sizeof(uint)));
     }
 }

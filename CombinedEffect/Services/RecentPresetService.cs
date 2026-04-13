@@ -1,74 +1,115 @@
+using CombinedEffect.Infrastructure;
+using CombinedEffect.Localization;
 using CombinedEffect.Services.Interfaces;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
-using System.Linq;
 using System.Reflection;
+using System.Windows;
 
 namespace CombinedEffect.Services;
 
-internal sealed class RecentPresetService : IRecentPresetService
+internal sealed class RecentPresetService : IRecentPresetService, IDisposable
 {
     private readonly string _filePath;
-    private readonly List<Guid> _recentIds = [];
+    private ImmutableList<Guid> _recentIds = ImmutableList<Guid>.Empty;
+    private readonly object _lock = new();
+    private readonly SemaphoreSlim _ioLock = new(1, 1);
+    private readonly AsyncDebouncer _debouncer = new();
+    private bool _disposed;
 
     public RecentPresetService()
     {
         var assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? AppDomain.CurrentDomain.BaseDirectory;
-        _filePath = Path.Combine(assemblyDir, "presets", "RecentPresets.json");
-        Load();
+        _filePath = Path.Combine(assemblyDir, Constants.DirectoryPresets, Constants.FileRecentIds);
+        _ = Task.Run(LoadAsync);
     }
 
-    public IEnumerable<Guid> GetRecentIds() => _recentIds.ToList();
+    public Task<IReadOnlyList<Guid>> GetRecentIdsAsync()
+    {
+        IReadOnlyList<Guid> result;
+        lock (_lock) result = _recentIds;
+        return Task.FromResult(result);
+    }
 
     public void Add(Guid id)
     {
-        _recentIds.Remove(id);
-        _recentIds.Insert(0, id);
-        if (_recentIds.Count > 10)
+        lock (_lock)
         {
-            _recentIds.RemoveRange(10, _recentIds.Count - 10);
+            var newIds = _recentIds.Remove(id).Insert(0, id);
+            if (newIds.Count > 10)
+                newIds = newIds.RemoveRange(10, newIds.Count - 10);
+            _recentIds = newIds;
         }
-        Save();
+        SaveAsync();
     }
 
     public void Remove(Guid id)
     {
-        if (_recentIds.Remove(id))
+        bool changed = false;
+        lock (_lock)
         {
-            Save();
+            if (_recentIds.Contains(id))
+            {
+                _recentIds = _recentIds.Remove(id);
+                changed = true;
+            }
         }
+        if (changed) SaveAsync();
     }
 
-    private void Load()
+    private async Task LoadAsync()
     {
-        if (!File.Exists(_filePath)) return;
+        await _ioLock.WaitAsync().ConfigureAwait(false);
         try
         {
-            var content = File.ReadAllText(_filePath);
+            var content = AtomicFileWriter.ReadVerified(_filePath);
+            if (content is null) return;
             var ids = JsonConvert.DeserializeObject<List<Guid>>(content);
             if (ids is not null)
             {
-                _recentIds.Clear();
-                _recentIds.AddRange(ids);
+                lock (_lock)
+                {
+                    _recentIds = [.. ids];
+                }
             }
         }
         catch { }
+        finally { _ioLock.Release(); }
     }
 
-    private void Save()
+    private void SaveAsync()
     {
-        try
+        ImmutableList<Guid> currentIds;
+        lock (_lock) currentIds = _recentIds;
+
+        _debouncer.DebounceAsync("recent", TimeSpan.FromMilliseconds(500), async () =>
         {
-            var directory = Path.GetDirectoryName(_filePath);
-            if (directory is not null && !Directory.Exists(directory))
+            await _ioLock.WaitAsync().ConfigureAwait(false);
+            try
             {
-                Directory.CreateDirectory(directory);
+                var directory = Path.GetDirectoryName(_filePath);
+                if (directory is not null && !Directory.Exists(directory))
+                    Directory.CreateDirectory(directory);
+                await File.WriteAllTextAsync(_filePath, JsonConvert.SerializeObject(currentIds)).ConfigureAwait(false);
             }
-            var json = JsonConvert.SerializeObject(_recentIds);
-            File.WriteAllText(_filePath, json);
-        }
-        catch { }
+            catch (Exception ex)
+            {
+                _ = Application.Current.Dispatcher.InvokeAsync(() =>
+                    MessageBox.Show($"{Texts.Error_DiskIO}\n{ex.Message}", Texts.Dialog_Title, MessageBoxButton.OK, MessageBoxImage.Error));
+            }
+            finally
+            {
+                _ioLock.Release();
+            }
+        });
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+        _disposed = true;
+        _debouncer.Dispose();
+        _ioLock.Dispose();
     }
 }

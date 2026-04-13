@@ -7,10 +7,16 @@ namespace CombinedEffect.Converters;
 
 internal sealed class FavoriteStarBrushConverter : IValueConverter
 {
+    private static readonly SolidColorBrush FavoriteBrush;
+
+    static FavoriteStarBrushConverter()
+    {
+        FavoriteBrush = new SolidColorBrush(Color.FromRgb(0xFF, 0xD7, 0x00));
+        FavoriteBrush.Freeze();
+    }
+
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
-        value is true
-            ? new SolidColorBrush(Color.FromRgb(0xFF, 0xD7, 0x00))
-            : SystemColors.GrayTextBrush;
+        value is true ? FavoriteBrush : SystemColors.GrayTextBrush;
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
         throw new NotSupportedException();

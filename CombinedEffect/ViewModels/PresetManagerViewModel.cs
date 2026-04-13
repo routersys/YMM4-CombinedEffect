@@ -4,101 +4,116 @@ using CombinedEffect.Models;
 using CombinedEffect.Services;
 using CombinedEffect.Services.Interfaces;
 using CombinedEffect.Views;
-using CombinedEffect.Effect;
 using Newtonsoft.Json;
+using System.Collections;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using YukkuriMovieMaker.Commons;
+using YukkuriMovieMaker.Plugin.Effects;
 
 namespace CombinedEffect.ViewModels;
 
-internal sealed class PresetManagerViewModel : ObservableBase, IDisposable
+internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : ObservableBase, IDisposable
 {
-    private readonly ItemProperty[] _itemProperties;
-    private readonly Effect.CombinedEffect _effect;
-    private readonly IEffectSerializationService _serialization;
-    private readonly IPresetPersistenceService _persistence;
-    private readonly IRecentPresetService _recentService;
-    private readonly Dictionary<Guid, PresetItemViewModel> _presetCache = [];
+    private readonly ItemProperty[] _itemProperties = itemProperties;
+    private readonly Effect.CombinedEffect _effect = (Effect.CombinedEffect)itemProperties[0].PropertyOwner;
+    private readonly Dictionary<Guid, Window> _historyWindows = new();
+    private readonly IEffectSerializationService _serialization = ServiceRegistry.Instance.EffectSerialization;
+    private readonly IPresetPersistenceService _persistence = ServiceRegistry.Instance.PresetPersistence;
+    private readonly IRecentPresetService _recentService = ServiceRegistry.Instance.RecentPreset;
+    private readonly Dictionary<Guid, PresetItemViewModel> _presetCache = new();
 
-    private PresetGroup? _selectedGroup;
-    private PresetItemViewModel? _selectedPreset;
-    private string _searchText = string.Empty;
+    private readonly AsyncDebouncer _updateDebouncer = new();
+    private ImmutableList<IVideoEffect> _trackedEffects = [];
+    private bool _canUpdatePresetCache;
+
     private bool _disposed;
+    private Guid? _appliedPresetId;
 
     public ObservableCollection<PresetGroup> Groups { get; } = [];
     public ObservableCollection<PresetItemViewModel> DisplayedPresets { get; } = [];
 
     public PresetGroup? SelectedGroup
     {
-        get => _selectedGroup;
+        get;
         set
         {
-            if (!SetProperty(ref _selectedGroup, value)) return;
+            if (!SetProperty(ref field, value)) return;
             RefreshDisplayedPresets();
         }
     }
 
     public PresetItemViewModel? SelectedPreset
     {
-        get => _selectedPreset;
+        get;
         set
         {
-            if (!SetProperty(ref _selectedPreset, value)) return;
+            if (!SetProperty(ref field, value)) return;
+            TriggerUpdateCheck();
             CommandManager.InvalidateRequerySuggested();
         }
     }
 
     public string SearchText
     {
-        get => _searchText;
+        get;
         set
         {
-            if (!SetProperty(ref _searchText, value)) return;
+            if (!SetProperty(ref field, value)) return;
             OnPropertyChanged(nameof(IsSearchTextEmpty));
             RefreshDisplayedPresets();
         }
-    }
+    } = string.Empty;
 
-    public bool IsSearchTextEmpty => string.IsNullOrEmpty(_searchText);
-    public bool IsCurrentGroupVirtual => IsVirtualGroup(_selectedGroup);
+    public bool IsSearchTextEmpty => string.IsNullOrEmpty(SearchText);
+    public bool IsCurrentGroupVirtual => IsVirtualGroup(SelectedGroup);
 
-    public ICommand AddGroupCommand { get; }
-    public ICommand RemoveGroupCommand { get; }
-    public ICommand RenameGroupCommand { get; }
-    public ICommand AddPresetCommand { get; }
-    public ICommand RemovePresetCommand { get; }
-    public ICommand RenamePresetCommand { get; }
-    public ICommand ApplyPresetCommand { get; }
-    public ICommand UpdatePresetCommand { get; }
-    public ICommand ToggleFavoriteCommand { get; }
+    public ICommand AddGroupCommand { get; private set; } = null!;
+    public ICommand RemoveGroupCommand { get; private set; } = null!;
+    public ICommand RenameGroupCommand { get; private set; } = null!;
+    public ICommand AddPresetCommand { get; private set; } = null!;
+    public ICommand RemovePresetCommand { get; private set; } = null!;
+    public ICommand RenamePresetCommand { get; private set; } = null!;
+    public ICommand ApplyPresetCommand { get; private set; } = null!;
+    public ICommand UpdatePresetCommand { get; private set; } = null!;
+    public ICommand ToggleFavoriteCommand { get; private set; } = null!;
+    public ICommand ManageHistoryCommand { get; private set; } = null!;
+    public ICommand ClearUnselectedCommand { get; private set; } = null!;
+    public ICommand ApplySinglePresetCommand { get; private set; } = null!;
+    public ICommand ClearPresetCommand { get; private set; } = null!;
 
     public event EventHandler? BeginEdit;
     public event EventHandler? EndEdit;
 
-    public PresetManagerViewModel(ItemProperty[] itemProperties)
-    {
-        _itemProperties = itemProperties;
-        _effect = (Effect.CombinedEffect)itemProperties[0].PropertyOwner;
-        _serialization = ServiceRegistry.Instance.EffectSerialization;
-        _persistence = ServiceRegistry.Instance.PresetPersistence;
-        _recentService = ServiceRegistry.Instance.RecentPreset;
+    public PresetManagerViewModel() : this([]) { }
 
+    public void Initialize()
+    {
         ServiceRegistry.Instance.PresetMigration.MigrateIfRequired();
 
         AddGroupCommand = new RelayCommand<object>(_ => ExecuteAddGroup());
         RemoveGroupCommand = new RelayCommand<object>(_ => ExecuteRemoveGroup(), _ => CanRemoveGroup());
         RenameGroupCommand = new RelayCommand<PresetGroup>(ExecuteRenameGroup, CanRenameGroup);
         AddPresetCommand = new RelayCommand<object>(_ => ExecuteAddPreset());
-        RemovePresetCommand = new RelayCommand<object>(_ => ExecuteRemovePreset(), _ => _selectedPreset is not null);
-        RenamePresetCommand = new RelayCommand<PresetItemViewModel>(ExecuteRenamePreset);
-        ApplyPresetCommand = new RelayCommand<object>(_ => ExecuteApplyPreset(), _ => _selectedPreset is not null);
-        UpdatePresetCommand = new RelayCommand<object>(_ => ExecuteUpdatePreset(), _ => CanUpdatePreset());
+        RemovePresetCommand = new RelayCommand<PresetItemViewModel>(ExecuteRemovePreset, CanRemovePreset);
+        RenamePresetCommand = new RelayCommand<PresetItemViewModel>(ExecuteRenamePreset, CanRenamePreset);
+        ApplyPresetCommand = new RelayCommand<IList>(ExecuteApplyPreset, list => list is not null && list.Count > 0);
+        UpdatePresetCommand = new RelayCommand<PresetItemViewModel>(ExecuteUpdatePreset, CanUpdatePreset);
         ToggleFavoriteCommand = new RelayCommand<PresetItemViewModel>(ExecuteToggleFavorite);
+        ManageHistoryCommand = new RelayCommand<PresetItemViewModel>(ExecuteManageHistory);
+        ClearUnselectedCommand = new RelayCommand<object>(_ => ExecuteClearUnselected());
+        ApplySinglePresetCommand = new RelayCommand<PresetItemViewModel>(ExecuteApplySinglePreset);
+        ClearPresetCommand = new RelayCommand<PresetItemViewModel>(ExecuteClearPreset, CanClearPreset);
 
-        LoadData();
-        SelectedGroup = Groups.FirstOrDefault(g => g.Name == Texts.PresetManager_GroupAll);
+        _effect.PropertyChanged += OnEffectPropertyChanged;
+        AttachEffectHandlers(_effect.Effects);
+
+        _ = LoadDataAsync();
+        UpdateAppliedPresetId();
+        TriggerUpdateCheck();
         ResourceRegistry.Instance.Register(this);
     }
 
@@ -106,65 +121,164 @@ internal sealed class PresetManagerViewModel : ObservableBase, IDisposable
         group?.Name is { } name &&
         (name == Texts.PresetManager_GroupAll || name == Texts.PresetManager_GroupFavorites || name == Texts.PresetManager_GroupRecent);
 
+    private void AttachEffectHandlers(ImmutableList<IVideoEffect> effects)
+    {
+        foreach (var effect in _trackedEffects)
+        {
+            if (effect is INotifyPropertyChanged inpc)
+                inpc.PropertyChanged -= OnVideoEffectPropertyChanged;
+        }
+
+        _trackedEffects = effects;
+
+        foreach (var effect in _trackedEffects)
+        {
+            if (effect is INotifyPropertyChanged inpc)
+                inpc.PropertyChanged += OnVideoEffectPropertyChanged;
+        }
+    }
+
+    private void OnVideoEffectPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        TriggerUpdateCheck();
+    }
+
+    private void TriggerUpdateCheck()
+    {
+        var preset = SelectedPreset;
+        var appliedId = _appliedPresetId;
+        var effectsSnapshot = _effect.Effects;
+
+        _updateDebouncer.DebounceAsync("update_check", TimeSpan.FromMilliseconds(50), async () =>
+        {
+            if (preset is null || appliedId != preset.Model.Id)
+            {
+                SetUpdateCache(false);
+                return;
+            }
+
+            var currentJson = await Task.Run(() => _serialization.Serialize(effectsSnapshot)).ConfigureAwait(false);
+            var isDirty = currentJson != preset.Model.SerializedEffects;
+            SetUpdateCache(isDirty);
+        });
+    }
+
+    private void SetUpdateCache(bool value)
+    {
+        if (_canUpdatePresetCache == value) return;
+        _canUpdatePresetCache = value;
+        Application.Current.Dispatcher.InvokeAsync(CommandManager.InvalidateRequerySuggested);
+    }
+
+    private void OnEffectPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            if (e.PropertyName == nameof(Effect.CombinedEffect.SelectedPresetJson))
+            {
+                UpdateAppliedPresetId();
+                TriggerUpdateCheck();
+            }
+            else if (e.PropertyName == nameof(Effect.CombinedEffect.Effects))
+            {
+                AttachEffectHandlers(_effect.Effects);
+                TriggerUpdateCheck();
+            }
+        });
+    }
+
+    private void UpdateAppliedPresetId()
+    {
+        if (string.IsNullOrEmpty(_effect.SelectedPresetJson))
+        {
+            _appliedPresetId = null;
+            return;
+        }
+        try
+        {
+            var preset = JsonConvert.DeserializeObject<EffectPreset>(_effect.SelectedPresetJson);
+            _appliedPresetId = preset?.Id;
+        }
+        catch
+        {
+            _appliedPresetId = null;
+        }
+    }
+
     private bool CanRemoveGroup() =>
-        _selectedGroup is not null &&
-        !IsVirtualGroup(_selectedGroup) &&
-        _selectedGroup.Name != Texts.PresetManager_DefaultGroup;
+        SelectedGroup is not null &&
+        !IsVirtualGroup(SelectedGroup) &&
+        SelectedGroup.Name != Texts.PresetManager_DefaultGroup;
 
     private static bool CanRenameGroup(PresetGroup? group) =>
         group is not null && !IsVirtualGroup(group);
 
-    private bool CanUpdatePreset()
+    private bool CanRemovePreset(PresetItemViewModel? presetVm) => (presetVm ?? SelectedPreset) is not null;
+
+    private bool CanRenamePreset(PresetItemViewModel? presetVm) => (presetVm ?? SelectedPreset) is not null;
+
+    private bool CanUpdatePreset(PresetItemViewModel? presetVm)
     {
-        if (_selectedPreset is null) return false;
-        try
-        {
-            if (string.IsNullOrEmpty(_effect.SelectedPresetJson)) return false;
-            var appliedPreset = JsonConvert.DeserializeObject<EffectPreset>(_effect.SelectedPresetJson);
-            if (appliedPreset is null || appliedPreset.Id != _selectedPreset.Model.Id) return false;
-        }
-        catch
-        {
-            return false;
-        }
-        var currentSerialized = _serialization.Serialize(_effect.Effects);
-        return currentSerialized != _selectedPreset.Model.SerializedEffects;
+        var target = presetVm ?? SelectedPreset;
+        return _canUpdatePresetCache && target == SelectedPreset;
     }
 
-    private void LoadData()
+    private bool CanClearPreset(PresetItemViewModel? presetVm)
     {
-        Groups.Add(new PresetGroup { Name = Texts.PresetManager_GroupAll });
-        Groups.Add(new PresetGroup { Name = Texts.PresetManager_GroupRecent });
-        Groups.Add(new PresetGroup { Name = Texts.PresetManager_GroupFavorites });
+        var target = presetVm ?? SelectedPreset;
+        return target is not null && target.EffectCount > 0;
+    }
 
-        var registry = _persistence.LoadGroupRegistry();
+    private async Task LoadDataAsync()
+    {
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            Groups.Add(new PresetGroup { Name = Texts.PresetManager_GroupAll });
+            Groups.Add(new PresetGroup { Name = Texts.PresetManager_GroupRecent });
+            Groups.Add(new PresetGroup { Name = Texts.PresetManager_GroupFavorites });
+        });
+
+        var registry = await _persistence.LoadGroupRegistryAsync().ConfigureAwait(false);
         if (registry.Groups.Count == 0)
             registry.Groups.Add(new PresetGroup { Name = Texts.PresetManager_DefaultGroup });
 
+        var loadedVms = new List<(PresetGroup group, List<PresetItemViewModel> vms)>();
         foreach (var group in registry.Groups)
         {
+            var vms = new List<PresetItemViewModel>();
             foreach (var id in group.PresetIds)
             {
-                var preset = _persistence.LoadPreset(id);
+                var preset = await _persistence.LoadPresetAsync(id).ConfigureAwait(false);
                 if (preset is not null)
-                    _presetCache[id] = new PresetItemViewModel(preset, _serialization);
+                    vms.Add(new PresetItemViewModel(preset, _serialization));
             }
-            Groups.Add(group);
+            loadedVms.Add((group, vms));
         }
+
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            foreach (var (group, vms) in loadedVms)
+            {
+                foreach (var vm in vms)
+                    _presetCache[vm.Model.Id] = vm;
+                Groups.Add(group);
+            }
+            SelectedGroup = Groups.FirstOrDefault(g => g.Name == Texts.PresetManager_GroupAll);
+        });
     }
 
     private void RefreshDisplayedPresets()
     {
         DisplayedPresets.Clear();
-        if (_selectedGroup is null) return;
+        if (SelectedGroup is null) return;
 
         OnPropertyChanged(nameof(IsCurrentGroupVirtual));
 
-        IEnumerable<PresetItemViewModel> source = ResolvePresetsForGroup(_selectedGroup);
+        IEnumerable<PresetItemViewModel> source = ResolvePresetsForGroup(SelectedGroup);
         if (!IsSearchTextEmpty)
-            source = source.Where(p => p.Model.Name.Contains(_searchText, StringComparison.OrdinalIgnoreCase));
+            source = source.Where(p => p.Model.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
 
-        if (IsVirtualGroup(_selectedGroup) && _selectedGroup.Name != Texts.PresetManager_GroupRecent)
+        if (IsVirtualGroup(SelectedGroup) && SelectedGroup.Name != Texts.PresetManager_GroupRecent)
         {
             foreach (var preset in source.OrderBy(p => p.Model.Name))
                 DisplayedPresets.Add(preset);
@@ -185,13 +299,23 @@ internal sealed class PresetManagerViewModel : ObservableBase, IDisposable
                          .SelectMany(g => ResolvePresetsById(g.PresetIds))
                          .Where(p => p.Model.IsFavorite);
         if (group.Name == Texts.PresetManager_GroupRecent)
-            return ResolvePresetsById(_recentService.GetRecentIds().ToList());
+        {
+            var recentIds = _recentService.GetRecentIdsAsync().GetAwaiter().GetResult();
+            return ResolvePresetsById(recentIds);
+        }
         return ResolvePresetsById(group.PresetIds);
     }
 
-    private IEnumerable<PresetItemViewModel> ResolvePresetsById(List<Guid> ids) =>
-        ids.Select(id => _presetCache.TryGetValue(id, out var p) ? p : null)
-           .OfType<PresetItemViewModel>();
+    private List<PresetItemViewModel> ResolvePresetsById(IReadOnlyList<Guid> ids)
+    {
+        var result = new List<PresetItemViewModel>(ids.Count);
+        foreach (var id in ids)
+        {
+            if (_presetCache.TryGetValue(id, out var p))
+                result.Add(p);
+        }
+        return result;
+    }
 
     private void ExecuteAddGroup()
     {
@@ -206,7 +330,7 @@ internal sealed class PresetManagerViewModel : ObservableBase, IDisposable
 
     private void ExecuteRenameGroup(PresetGroup? group)
     {
-        var target = group ?? _selectedGroup;
+        var target = group ?? SelectedGroup;
         if (target is null || IsVirtualGroup(target)) return;
 
         var inputWindow = new InputDialogWindow(Texts.Dialog_InputName, Texts.Dialog_Title, target.Name);
@@ -218,20 +342,20 @@ internal sealed class PresetManagerViewModel : ObservableBase, IDisposable
 
     private void ExecuteRemoveGroup()
     {
-        if (_selectedGroup is null || !CanRemoveGroup()) return;
+        if (SelectedGroup is null || !CanRemoveGroup()) return;
         var confirmWindow = new ConfirmationDialogWindow(Texts.Confirm_DeleteGroup, Texts.Confirm_Delete);
         if (confirmWindow.ShowDialog() != true) return;
 
-        foreach (var id in _selectedGroup.PresetIds.ToList())
+        foreach (var id in SelectedGroup.PresetIds.ToList())
             PurgePreset(id);
-        Groups.Remove(_selectedGroup);
+        Groups.Remove(SelectedGroup);
         SelectedGroup = Groups.FirstOrDefault(g => g.Name == Texts.PresetManager_GroupAll);
         PersistRegistry();
     }
 
     private void ExecuteAddPreset()
     {
-        PresetGroup? targetGroup = _selectedGroup;
+        PresetGroup? targetGroup = SelectedGroup;
         if (targetGroup is null || IsVirtualGroup(targetGroup))
         {
             targetGroup = Groups.FirstOrDefault(g => !IsVirtualGroup(g));
@@ -258,7 +382,7 @@ internal sealed class PresetManagerViewModel : ObservableBase, IDisposable
 
     private void ExecuteRenamePreset(PresetItemViewModel? presetVm)
     {
-        var target = presetVm ?? _selectedPreset;
+        var target = presetVm ?? SelectedPreset;
         if (target is null) return;
 
         var inputWindow = new InputDialogWindow(Texts.Dialog_InputName, Texts.Dialog_Title, target.Model.Name);
@@ -269,39 +393,81 @@ internal sealed class PresetManagerViewModel : ObservableBase, IDisposable
         _persistence.SavePreset(target.Model);
     }
 
-    private void ExecuteRemovePreset()
+    private void ExecuteRemovePreset(PresetItemViewModel? presetVm)
     {
-        if (_selectedPreset is null) return;
+        var target = presetVm ?? SelectedPreset;
+        if (target is null) return;
         var confirmWindow = new ConfirmationDialogWindow(Texts.Confirm_DeletePreset, Texts.Confirm_Delete);
         if (confirmWindow.ShowDialog() != true) return;
 
-        var id = _selectedPreset.Model.Id;
+        var id = target.Model.Id;
+        if (_historyWindows.TryGetValue(id, out var window))
+            window.Close();
         foreach (var group in Groups.Where(g => !IsVirtualGroup(g)))
             group.PresetIds.Remove(id);
+        if (SelectedPreset == target)
+            SelectedPreset = null;
         PurgePreset(id);
         RefreshDisplayedPresets();
         PersistRegistry();
     }
 
-    private void ExecuteApplyPreset()
+    private void ExecuteApplyPreset(IList? selectedItems)
     {
-        if (_selectedPreset is null) return;
+        if (selectedItems is null || selectedItems.Count == 0) return;
+        var presets = selectedItems.OfType<PresetItemViewModel>().ToList();
+        if (presets.Count == 0) return;
+
         try
         {
-            var effects = _serialization.Deserialize(_selectedPreset.Model.SerializedEffects);
-            if (effects is null) return;
+            var newEffects = new List<IVideoEffect>();
+            foreach (var preset in presets)
+            {
+                var effects = _serialization.Deserialize(preset.Model.SerializedEffects);
+                if (effects is not null) newEffects.AddRange(effects);
+            }
+            if (newEffects.Count == 0) return;
+
+            var isAppending = false;
+            if (presets.Count == 1 && _effect.Effects.Count > 0)
+            {
+                var currentSerialized = _serialization.Serialize(_effect.Effects);
+                if (currentSerialized == presets[0].Model.SerializedEffects)
+                {
+                    var confirmWindow = new ConfirmationDialogWindow(Texts.Confirm_SamePresetApply, Texts.Confirm_SamePresetApplyTitle);
+                    if (confirmWindow.ShowDialog() != true) return;
+                    isAppending = true;
+                }
+            }
+
             BeginEdit?.Invoke(this, EventArgs.Empty);
-            var presetJson = JsonConvert.SerializeObject(_selectedPreset.Model);
+
+            var combinedEffects = new List<IVideoEffect>();
+            if (isAppending)
+            {
+                combinedEffects.AddRange(_effect.Effects);
+            }
+            combinedEffects.AddRange(newEffects);
+
+            var presetJson = presets.Count == 1 ? JsonConvert.SerializeObject(presets[0].Model) : string.Empty;
+            var immutableEffects = ImmutableList.CreateRange(combinedEffects);
             foreach (var prop in _itemProperties)
             {
                 var target = (Effect.CombinedEffect)prop.PropertyOwner;
-                target.Effects = effects;
+                target.Effects = immutableEffects;
                 target.SelectedPresetJson = presetJson;
             }
             EndEdit?.Invoke(this, EventArgs.Empty);
 
-            _recentService.Add(_selectedPreset.Model.Id);
-            if (_selectedGroup?.Name == Texts.PresetManager_GroupRecent)
+            if (presets.Count == 1)
+            {
+                _appliedPresetId = presets[0].Model.Id;
+            }
+
+            foreach (var preset in presets)
+                _recentService.Add(preset.Model.Id);
+
+            if (SelectedGroup?.Name == Texts.PresetManager_GroupRecent)
                 RefreshDisplayedPresets();
         }
         catch
@@ -310,13 +476,88 @@ internal sealed class PresetManagerViewModel : ObservableBase, IDisposable
         }
     }
 
-    private void ExecuteUpdatePreset()
+    private void ExecuteApplySinglePreset(PresetItemViewModel? presetVm)
     {
-        if (_selectedPreset is null) return;
-        _selectedPreset.Model.SerializedEffects = _serialization.Serialize(_effect.Effects);
-        _selectedPreset.RefreshEffectInfo(_serialization);
-        _persistence.SavePreset(_selectedPreset.Model);
+        var target = presetVm ?? SelectedPreset;
+        if (target is not null)
+            ExecuteApplyPreset(new[] { target });
+    }
+
+    private void ExecuteManageHistory(PresetItemViewModel? presetVm)
+    {
+        var target = presetVm ?? SelectedPreset;
+        if (target is null) return;
+
+        var id = target.Model.Id;
+        if (_historyWindows.TryGetValue(id, out var existingWindow))
+        {
+            if (existingWindow.IsVisible)
+            {
+                existingWindow.Focus();
+                return;
+            }
+            _historyWindows.Remove(id);
+        }
+
+        var vm = new HistoryManagerViewModel(target, _itemProperties);
+        vm.BeginEdit += (_, _) => BeginEdit?.Invoke(this, EventArgs.Empty);
+        vm.EndEdit += (_, _) => EndEdit?.Invoke(this, EventArgs.Empty);
+        var window = new HistoryManagerWindow(vm)
+        {
+            Owner = Application.Current.MainWindow
+        };
+        window.Closed += (s, e) =>
+        {
+            _historyWindows.Remove(id);
+            vm.Dispose();
+        };
+        _historyWindows[id] = window;
+        window.Show();
         CommandManager.InvalidateRequerySuggested();
+    }
+
+    private void ExecuteClearUnselected()
+    {
+        var confirmWindow = new ConfirmationDialogWindow(Texts.Confirm_ClearUnselected, Texts.Confirm_ClearUnselectedTitle);
+        if (confirmWindow.ShowDialog() != true) return;
+
+        var currentEffects = _effect.Effects;
+        var newEffects = currentEffects.Where(e => e.IsEnabled).ToList();
+        if (currentEffects.Count == newEffects.Count) return;
+
+        BeginEdit?.Invoke(this, EventArgs.Empty);
+        var immutableEffects = ImmutableList.CreateRange(newEffects);
+        foreach (var prop in _itemProperties)
+        {
+            var target = (Effect.CombinedEffect)prop.PropertyOwner;
+            target.Effects = immutableEffects;
+        }
+        EndEdit?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void ExecuteClearPreset(PresetItemViewModel? presetVm)
+    {
+        var target = presetVm ?? SelectedPreset;
+        if (target is null) return;
+        
+        var confirmWindow = new ConfirmationDialogWindow(Texts.Confirm_ClearPreset, Texts.Confirm_ClearPresetTitle);
+        if (confirmWindow.ShowDialog() != true) return;
+
+        target.Model.SerializedEffects = _serialization.Serialize(ImmutableList<IVideoEffect>.Empty);
+        target.RefreshEffectInfo(_serialization);
+        _persistence.SavePreset(target.Model);
+        
+        TriggerUpdateCheck();
+    }
+
+    private void ExecuteUpdatePreset(PresetItemViewModel? presetVm)
+    {
+        var target = presetVm ?? SelectedPreset;
+        if (target is null) return;
+        target.Model.SerializedEffects = _serialization.Serialize(_effect.Effects);
+        target.RefreshEffectInfo(_serialization);
+        _persistence.SavePreset(target.Model);
+        TriggerUpdateCheck();
     }
 
     private void ExecuteToggleFavorite(PresetItemViewModel? presetVm)
@@ -325,7 +566,7 @@ internal sealed class PresetManagerViewModel : ObservableBase, IDisposable
         presetVm.Model.IsFavorite = !presetVm.Model.IsFavorite;
         presetVm.RefreshFavorite();
         _persistence.SavePreset(presetVm.Model);
-        if (_selectedGroup?.Name == Texts.PresetManager_GroupFavorites)
+        if (SelectedGroup?.Name == Texts.PresetManager_GroupFavorites)
             RefreshDisplayedPresets();
     }
 
@@ -375,6 +616,13 @@ internal sealed class PresetManagerViewModel : ObservableBase, IDisposable
     {
         if (_disposed) return;
         _disposed = true;
+        _updateDebouncer.Dispose();
+        foreach (var effect in _trackedEffects)
+        {
+            if (effect is INotifyPropertyChanged inpc)
+                inpc.PropertyChanged -= OnVideoEffectPropertyChanged;
+        }
+        _effect.PropertyChanged -= OnEffectPropertyChanged;
         ResourceRegistry.Instance.Unregister(this);
     }
 }

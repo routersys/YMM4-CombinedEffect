@@ -91,4 +91,51 @@
 <data name="Confirm_DeletePreset" xml:space="preserve"><value>Are you sure you want to delete this preset?</value></data>
 <data name="Dialog_Title" xml:space="preserve"><value>Input</value></data>
 <data name="Dialog_InputName" xml:space="preserve"><value>Enter a name</value></data>
+<data name="History_Manage" xml:space="preserve"><value>History Management</value></data>
+<data name="History_Title" xml:space="preserve"><value>History &amp; Branches</value></data>
+<data name="History_Snapshot" xml:space="preserve"><value>Snapshot</value></data>
+<data name="History_Branch" xml:space="preserve"><value>Branch</value></data>
+<data name="History_Current" xml:space="preserve"><value>Current</value></data>
+<data name="History_NewSnapshot" xml:space="preserve"><value>Save New Snapshot</value></data>
+<data name="History_NewBranch" xml:space="preserve"><value>Create New Branch</value></data>
+<data name="History_Revert" xml:space="preserve"><value>Revert to This</value></data>
+<data name="History_MessagePlaceholder" xml:space="preserve"><value>Enter changes...</value></data>
+<data name="History_BranchNamePlaceholder" xml:space="preserve"><value>Enter branch name...</value></data>
+<data name="History_Create" xml:space="preserve"><value>Create</value></data>
+<data name="PresetManager_Clear" xml:space="preserve"><value>Clear</value></data>
+<data name="PresetManager_ClearUnselected" xml:space="preserve"><value>Remove Unselected Effects</value></data>
+<data name="Confirm_ClearUnselectedTitle" xml:space="preserve"><value>Remove Unselected</value></data>
+<data name="Confirm_ClearUnselected" xml:space="preserve"><value>Do you want to remove all disabled effects?</value></data>
+<data name="Confirm_SamePresetApplyTitle" xml:space="preserve"><value>Confirm Duplicate Apply</value></data>
+<data name="Confirm_SamePresetApply" xml:space="preserve"><value>Do you want to apply the same preset again?</value></data>
+<data name="History_ColumnMessage" xml:space="preserve"><value>Message</value></data>
+<data name="History_ColumnTime" xml:space="preserve"><value>Time</value></data>
+<data name="History_ColumnID" xml:space="preserve"><value>ID</value></data>
+<data name="History_Changes" xml:space="preserve"><value>Changes</value></data>
+<data name="History_Added" xml:space="preserve"><value>Added</value></data>
+<data name="History_Removed" xml:space="preserve"><value>Removed</value></data>
+<data name="History_Unchanged" xml:space="preserve"><value>Unchanged</value></data>
+<data name="History_Modified" xml:space="preserve"><value>Modified</value></data>
+<data name="History_RawData" xml:space="preserve"><value>Raw Data</value></data>
+<data name="History_Merge" xml:space="preserve"><value>Merge to Current</value></data>
+<data name="History_Reset" xml:space="preserve"><value>Reset</value></data>
+<data name="History_ResetSoft" xml:space="preserve"><value>Keep Changes (Soft)</value></data>
+<data name="History_ResetHard" xml:space="preserve"><value>Discard Changes (Hard)</value></data>
+<data name="History_ManageTags" xml:space="preserve"><value>Manage Tags</value></data>
+<data name="History_TagsTitle" xml:space="preserve"><value>Tag Management</value></data>
+<data name="History_TagInputPlaceholder" xml:space="preserve"><value>Enter new tag...</value></data>
+<data name="History_AddTag" xml:space="preserve"><value>Add</value></data>
+<data name="History_RemoveTag" xml:space="preserve"><value>Remove</value></data>
+<data name="CombinedEffect_ActiveEffectsCount" xml:space="preserve"><value>{0} Active: {1}</value></data>
+<data name="CombinedEffect_ActiveEffectsCountWithPreset" xml:space="preserve"><value>{0} Active: {1} [{2}]</value></data>
+<data name="History_DefaultBranchName" xml:space="preserve"><value>main</value></data>
+<data name="History_DiffExtractionFailed" xml:space="preserve"><value>Diff extraction failed</value></data>
+<data name="History_EffectsCountDiff" xml:space="preserve"><value>Effects Count: {0}</value></data>
+<data name="History_DiffEffectHeader" xml:space="preserve"><value>[{0}]</value></data>
+<data name="History_DiffPropertyChange" xml:space="preserve"><value>{0}: {1} -&gt; {2}</value></data>
+<data name="Error_DiskIO" xml:space="preserve"><value>Failed to write file. Please check disk space and permissions.</value></data>
+<data name="PresetManager_RenamePreset" xml:space="preserve"><value>Rename</value></data>
+<data name="PresetManager_ClearPreset" xml:space="preserve"><value>Empty Preset</value></data>
+<data name="Confirm_ClearPresetTitle" xml:space="preserve"><value>Clear Preset</value></data>
+<data name="Confirm_ClearPreset" xml:space="preserve"><value>Do you want to remove all effects from this preset and make it empty?</value></data>
 </root>

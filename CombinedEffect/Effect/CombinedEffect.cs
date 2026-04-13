@@ -1,7 +1,6 @@
 using CombinedEffect.Attributes;
 using CombinedEffect.Localization;
 using CombinedEffect.Models;
-using CombinedEffect.Services;
 using Newtonsoft.Json;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
@@ -16,18 +15,20 @@ namespace CombinedEffect.Effect;
 [VideoEffect(nameof(Texts.VideoEffect_Name), [nameof(Texts.VideoEffect_Category_Tool)], [nameof(Texts.VideoEffect_Tag_Combined), nameof(Texts.VideoEffect_Tag_Preset), nameof(Texts.VideoEffect_Tag_Group)], IsAviUtlSupported = false, ResourceType = typeof(Texts))]
 public sealed class CombinedEffect : VideoEffectBase
 {
-    private string _presetName = string.Empty;
-    private string? _selectedPresetJson;
-    private ImmutableList<IVideoEffect> _effects = ImmutableList<IVideoEffect>.Empty;
+    private string PresetName
+    {
+        get;
+        set;
+    } = string.Empty;
 
     public override string Label
     {
         get
         {
             var count = Effects.Count;
-            return string.IsNullOrEmpty(_presetName)
-                ? $"{Texts.CombinedEffect_DisplayName} 適用中: {count}個"
-                : $"{Texts.CombinedEffect_DisplayName} 適用中: {count}個 [{_presetName}]";
+            return string.IsNullOrEmpty(PresetName)
+                ? string.Format(Texts.CombinedEffect_ActiveEffectsCount, Texts.CombinedEffect_DisplayName, count)
+                : string.Format(Texts.CombinedEffect_ActiveEffectsCountWithPreset, Texts.CombinedEffect_DisplayName, count, PresetName);
         }
     }
 
@@ -40,43 +41,34 @@ public sealed class CombinedEffect : VideoEffectBase
     [VideoEffectSelector(PropertyEditorSize = PropertyEditorSize.FullWidth)]
     public ImmutableList<IVideoEffect> Effects
     {
-        get => _effects;
+        get;
         set
         {
-            if (!Set(ref _effects, value)) return;
+            if (!Set(ref field, value)) return;
             OnPropertyChanged(nameof(Label));
         }
-    }
+    } = ImmutableList<IVideoEffect>.Empty;
 
     public string? SelectedPresetJson
     {
-        get => _selectedPresetJson;
+        get;
         set
         {
-            if (!Set(ref _selectedPresetJson, value)) return;
+            if (!Set(ref field, value)) return;
             if (string.IsNullOrEmpty(value))
             {
-                _presetName = string.Empty;
+                PresetName = string.Empty;
                 OnPropertyChanged(nameof(Label));
                 return;
             }
             try
             {
                 var preset = JsonConvert.DeserializeObject<EffectPreset>(value);
-                if (preset is null)
-                {
-                    _presetName = string.Empty;
-                }
-                else
-                {
-                    _presetName = preset.Name;
-                    var deserialized = ServiceRegistry.Instance.EffectSerialization.Deserialize(preset.SerializedEffects);
-                    if (deserialized is not null) Effects = deserialized;
-                }
+                PresetName = preset?.Name ?? string.Empty;
             }
             catch
             {
-                _presetName = string.Empty;
+                PresetName = string.Empty;
             }
             OnPropertyChanged(nameof(Label));
         }
@@ -88,5 +80,5 @@ public sealed class CombinedEffect : VideoEffectBase
     public override IEnumerable<string> CreateExoVideoFilters(int keyFrameIndex, ExoOutputDescription exoOutputDescription) =>
         [];
 
-    protected override IEnumerable<IAnimatable> GetAnimatables() => _effects;
+    protected override IEnumerable<IAnimatable> GetAnimatables() => Effects;
 }

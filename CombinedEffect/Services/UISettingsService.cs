@@ -1,7 +1,6 @@
 using CombinedEffect.Models;
 using CombinedEffect.Services.Interfaces;
 using Newtonsoft.Json;
-using System;
 using System.IO;
 using System.Reflection;
 

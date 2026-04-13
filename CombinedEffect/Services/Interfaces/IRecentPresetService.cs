@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-
 namespace CombinedEffect.Services.Interfaces;
 
 internal interface IRecentPresetService
 {
-    IEnumerable<Guid> GetRecentIds();
+    Task<IReadOnlyList<Guid>> GetRecentIdsAsync();
     void Add(Guid id);
     void Remove(Guid id);
 }

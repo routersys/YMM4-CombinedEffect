@@ -91,4 +91,51 @@
 <data name="Confirm_DeletePreset" xml:space="preserve"><value>이 프리셋을 삭제하시겠습니까?</value></data>
 <data name="Dialog_Title" xml:space="preserve"><value>입력</value></data>
 <data name="Dialog_InputName" xml:space="preserve"><value>이름을 입력하세요</value></data>
+<data name="History_Manage" xml:space="preserve"><value>기록 관리</value></data>
+<data name="History_Title" xml:space="preserve"><value>기록 및 분기</value></data>
+<data name="History_Snapshot" xml:space="preserve"><value>스냅샷</value></data>
+<data name="History_Branch" xml:space="preserve"><value>분기</value></data>
+<data name="History_Current" xml:space="preserve"><value>현재</value></data>
+<data name="History_NewSnapshot" xml:space="preserve"><value>새 스냅샷 저장</value></data>
+<data name="History_NewBranch" xml:space="preserve"><value>새 분기 생성</value></data>
+<data name="History_Revert" xml:space="preserve"><value>이 상태로 되돌리기</value></data>
+<data name="History_MessagePlaceholder" xml:space="preserve"><value>변경 내용 입력...</value></data>
+<data name="History_BranchNamePlaceholder" xml:space="preserve"><value>분기 이름 입력...</value></data>
+<data name="History_Create" xml:space="preserve"><value>생성</value></data>
+<data name="PresetManager_Clear" xml:space="preserve"><value>지우기</value></data>
+<data name="PresetManager_ClearUnselected" xml:space="preserve"><value>선택되지 않은 효과 제거</value></data>
+<data name="Confirm_ClearUnselectedTitle" xml:space="preserve"><value>미선택 제거</value></data>
+<data name="Confirm_ClearUnselected" xml:space="preserve"><value>비활성화된 모든 효과를 제거하시겠습니까?</value></data>
+<data name="Confirm_SamePresetApplyTitle" xml:space="preserve"><value>중복 적용 확인</value></data>
+<data name="Confirm_SamePresetApply" xml:space="preserve"><value>동일한 프리셋을 다시 적용하시겠습니까?</value></data>
+<data name="History_ColumnMessage" xml:space="preserve"><value>메시지</value></data>
+<data name="History_ColumnTime" xml:space="preserve"><value>시간</value></data>
+<data name="History_ColumnID" xml:space="preserve"><value>ID</value></data>
+<data name="History_Changes" xml:space="preserve"><value>변경 내용</value></data>
+<data name="History_Added" xml:space="preserve"><value>추가됨</value></data>
+<data name="History_Removed" xml:space="preserve"><value>삭제됨</value></data>
+<data name="History_Unchanged" xml:space="preserve"><value>변경 없음</value></data>
+<data name="History_Modified" xml:space="preserve"><value>수정됨</value></data>
+<data name="History_RawData" xml:space="preserve"><value>원시 데이터</value></data>
+<data name="History_Merge" xml:space="preserve"><value>현재 기록에 병합</value></data>
+<data name="History_Reset" xml:space="preserve"><value>초기화</value></data>
+<data name="History_ResetSoft" xml:space="preserve"><value>변경 유지 (Soft)</value></data>
+<data name="History_ResetHard" xml:space="preserve"><value>변경 버림 (Hard)</value></data>
+<data name="History_ManageTags" xml:space="preserve"><value>태그 관리</value></data>
+<data name="History_TagsTitle" xml:space="preserve"><value>태그 관리</value></data>
+<data name="History_TagInputPlaceholder" xml:space="preserve"><value>새 태그 입력...</value></data>
+<data name="History_AddTag" xml:space="preserve"><value>추가</value></data>
+<data name="History_RemoveTag" xml:space="preserve"><value>제거</value></data>
+<data name="CombinedEffect_ActiveEffectsCount" xml:space="preserve"><value>{0} 적용 중: {1}개</value></data>
+<data name="CombinedEffect_ActiveEffectsCountWithPreset" xml:space="preserve"><value>{0} 적용 중: {1}개 [{2}]</value></data>
+<data name="History_DefaultBranchName" xml:space="preserve"><value>main</value></data>
+<data name="History_DiffExtractionFailed" xml:space="preserve"><value>차이 추출 실패</value></data>
+<data name="History_EffectsCountDiff" xml:space="preserve"><value>효과 수: {0}</value></data>
+<data name="History_DiffEffectHeader" xml:space="preserve"><value>[{0}]</value></data>
+<data name="History_DiffPropertyChange" xml:space="preserve"><value>{0}: {1} -&gt; {2}</value></data>
+<data name="Error_DiskIO" xml:space="preserve"><value>파일 쓰기에 실패했습니다. 디스크 공간 및 권한을 확인하세요.</value></data>
+<data name="PresetManager_RenamePreset" xml:space="preserve"><value>이름 바꾸기</value></data>
+<data name="PresetManager_ClearPreset" xml:space="preserve"><value>프리셋 비우기</value></data>
+<data name="Confirm_ClearPresetTitle" xml:space="preserve"><value>프리셋 비우기</value></data>
+<data name="Confirm_ClearPreset" xml:space="preserve"><value>이 프리셋의 모든 효과를 제거하고 비우시겠습니까?</value></data>
 </root>

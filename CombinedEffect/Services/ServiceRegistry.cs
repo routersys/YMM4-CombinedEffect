@@ -30,10 +30,14 @@ internal sealed class ServiceRegistry
             () => new PresetMigrationService(_presetPersistence.Value));
     }
 
+    private readonly Lazy<IHistoryRepository> _historyRepository =
+        new(() => new HistoryRepository());
+
     public IEffectSerializationService EffectSerialization => _effectSerialization.Value;
     public IPresetPersistenceService PresetPersistence => _presetPersistence.Value;
     public IPresetMigrationService PresetMigration => _presetMigration.Value;
     public IWindowThemeService WindowTheme => _windowTheme.Value;
     public IRecentPresetService RecentPreset => _recentPreset.Value;
     public IUISettingsService UISettings => _uiSettings.Value;
+    public IHistoryRepository HistoryRepository => _historyRepository.Value;
 }

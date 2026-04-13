@@ -1,7 +1,6 @@
 using CombinedEffect.Infrastructure;
 using CombinedEffect.Models;
 using CombinedEffect.Services.Interfaces;
-using YukkuriMovieMaker.Plugin.Effects;
 
 namespace CombinedEffect.ViewModels;
 

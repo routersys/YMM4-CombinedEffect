@@ -4,9 +4,9 @@ namespace CombinedEffect.Services.Interfaces;
 
 internal interface IPresetPersistenceService
 {
-    GroupRegistry LoadGroupRegistry();
+    Task<GroupRegistry> LoadGroupRegistryAsync();
     void SaveGroupRegistry(GroupRegistry registry);
-    EffectPreset? LoadPreset(Guid id);
+    Task<EffectPreset?> LoadPresetAsync(Guid id);
     void SavePreset(EffectPreset preset);
     void DeletePreset(Guid id);
 }

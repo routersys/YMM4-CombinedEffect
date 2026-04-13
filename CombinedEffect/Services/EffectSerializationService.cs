@@ -16,7 +16,7 @@ internal sealed class EffectSerializationService : IEffectSerializationService
     };
 
     public string Serialize(ImmutableList<IVideoEffect> effects) =>
-        JsonConvert.SerializeObject(new List<IVideoEffect>(effects), Settings);
+        JsonConvert.SerializeObject(effects, Settings);
 
     public ImmutableList<IVideoEffect>? Deserialize(string? json)
     {

@@ -91,4 +91,51 @@
 <data name="Confirm_DeletePreset" xml:space="preserve"><value>Apakah Anda yakin ingin menghapus prasetel ini?</value></data>
 <data name="Dialog_Title" xml:space="preserve"><value>Masukan</value></data>
 <data name="Dialog_InputName" xml:space="preserve"><value>Masukkan nama</value></data>
+<data name="History_Manage" xml:space="preserve"><value>Manajemen Riwayat</value></data>
+<data name="History_Title" xml:space="preserve"><value>Riwayat &amp; Cabang</value></data>
+<data name="History_Snapshot" xml:space="preserve"><value>Cuplikan</value></data>
+<data name="History_Branch" xml:space="preserve"><value>Cabang</value></data>
+<data name="History_Current" xml:space="preserve"><value>Saat Ini</value></data>
+<data name="History_NewSnapshot" xml:space="preserve"><value>Simpan Cuplikan Baru</value></data>
+<data name="History_NewBranch" xml:space="preserve"><value>Buat Cabang Baru</value></data>
+<data name="History_Revert" xml:space="preserve"><value>Kembali ke Ini</value></data>
+<data name="History_MessagePlaceholder" xml:space="preserve"><value>Masukkan perubahan...</value></data>
+<data name="History_BranchNamePlaceholder" xml:space="preserve"><value>Masukkan nama cabang...</value></data>
+<data name="History_Create" xml:space="preserve"><value>Buat</value></data>
+<data name="PresetManager_Clear" xml:space="preserve"><value>Bersihkan</value></data>
+<data name="PresetManager_ClearUnselected" xml:space="preserve"><value>Hapus Efek yang Tidak Dipilih</value></data>
+<data name="Confirm_ClearUnselectedTitle" xml:space="preserve"><value>Hapus Tidak Dipilih</value></data>
+<data name="Confirm_ClearUnselected" xml:space="preserve"><value>Apakah Anda ingin menghapus semua efek yang dinonaktifkan?</value></data>
+<data name="Confirm_SamePresetApplyTitle" xml:space="preserve"><value>Konfirmasi Penerapan Ganda</value></data>
+<data name="Confirm_SamePresetApply" xml:space="preserve"><value>Apakah Anda ingin menerapkan prasetel yang sama lagi?</value></data>
+<data name="History_ColumnMessage" xml:space="preserve"><value>Pesan</value></data>
+<data name="History_ColumnTime" xml:space="preserve"><value>Waktu</value></data>
+<data name="History_ColumnID" xml:space="preserve"><value>ID</value></data>
+<data name="History_Changes" xml:space="preserve"><value>Perubahan</value></data>
+<data name="History_Added" xml:space="preserve"><value>Ditambahkan</value></data>
+<data name="History_Removed" xml:space="preserve"><value>Dihapus</value></data>
+<data name="History_Unchanged" xml:space="preserve"><value>Tidak Berubah</value></data>
+<data name="History_Modified" xml:space="preserve"><value>Diubah</value></data>
+<data name="History_RawData" xml:space="preserve"><value>Data Mentah</value></data>
+<data name="History_Merge" xml:space="preserve"><value>Gabungkan ke Saat Ini</value></data>
+<data name="History_Reset" xml:space="preserve"><value>Reset</value></data>
+<data name="History_ResetSoft" xml:space="preserve"><value>Pertahankan Perubahan (Soft)</value></data>
+<data name="History_ResetHard" xml:space="preserve"><value>Buang Perubahan (Hard)</value></data>
+<data name="History_ManageTags" xml:space="preserve"><value>Manajemen Tag</value></data>
+<data name="History_TagsTitle" xml:space="preserve"><value>Manajemen Tag</value></data>
+<data name="History_TagInputPlaceholder" xml:space="preserve"><value>Masukkan tag baru...</value></data>
+<data name="History_AddTag" xml:space="preserve"><value>Tambah</value></data>
+<data name="History_RemoveTag" xml:space="preserve"><value>Hapus</value></data>
+<data name="CombinedEffect_ActiveEffectsCount" xml:space="preserve"><value>{0} Aktif: {1}</value></data>
+<data name="CombinedEffect_ActiveEffectsCountWithPreset" xml:space="preserve"><value>{0} Aktif: {1} [{2}]</value></data>
+<data name="History_DefaultBranchName" xml:space="preserve"><value>main</value></data>
+<data name="History_DiffExtractionFailed" xml:space="preserve"><value>Gagal mengekstrak diff</value></data>
+<data name="History_EffectsCountDiff" xml:space="preserve"><value>Jumlah Efek: {0}</value></data>
+<data name="History_DiffEffectHeader" xml:space="preserve"><value>[{0}]</value></data>
+<data name="History_DiffPropertyChange" xml:space="preserve"><value>{0}: {1} -&gt; {2}</value></data>
+<data name="Error_DiskIO" xml:space="preserve"><value>Gagal menulis file. Silakan periksa ruang disk dan izin.</value></data>
+<data name="PresetManager_RenamePreset" xml:space="preserve"><value>Ganti Nama</value></data>
+<data name="PresetManager_ClearPreset" xml:space="preserve"><value>Kosongkan Prasetel</value></data>
+<data name="Confirm_ClearPresetTitle" xml:space="preserve"><value>Kosongkan Prasetel</value></data>
+<data name="Confirm_ClearPreset" xml:space="preserve"><value>Apakah Anda ingin menghapus semua efek dari prasetel ini dan mengosongkannya?</value></data>
 </root>
