@@ -42,7 +42,7 @@
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Setter Property="Padding" Value="2"/>
         </Style>
-        
+
         <Style x:Key="VerticalGridSplitterStyle" TargetType="GridSplitter">
             <Setter Property="Width" Value="3"/>
             <Setter Property="Background" Value="Transparent"/>
@@ -134,7 +134,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        
+
                         <ToggleButton x:Name="MobileMenuButton" Grid.Column="0" VerticalAlignment="Center" Width="28" Height="28" Padding="0" Background="Transparent" BorderThickness="0" Visibility="Collapsed">
                             <Path Data="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" Fill="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" Stretch="Uniform" Width="16" Height="16"/>
                         </ToggleButton>
@@ -193,15 +193,25 @@
                                   Margin="6,0,4,0"
                                   VerticalAlignment="Center"
                                   Fill="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
-                            <TextBox Grid.Column="1"
+                            <TextBox x:Name="SearchTextBox" Grid.Column="1"
                                      Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                                      Background="Transparent" BorderThickness="0"
                                      Padding="0,6" VerticalContentAlignment="Center"/>
                             <TextBlock Grid.Column="1"
                                        Text="{x:Static loc:Texts.PresetManager_SearchPlaceholder}"
                                        Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
-                                       IsHitTestVisible="False" VerticalAlignment="Center" Margin="2,0,0,0"
-                                       Visibility="{Binding IsSearchTextEmpty, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                       IsHitTestVisible="False" VerticalAlignment="Center" Margin="2,0,0,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, ElementName=SearchTextBox}" Value="">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </Grid>
                     </Grid>
 
