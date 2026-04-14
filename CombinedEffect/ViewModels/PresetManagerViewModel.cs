@@ -63,12 +63,10 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
         set
         {
             if (!SetProperty(ref field, value)) return;
-            OnPropertyChanged(nameof(IsSearchTextEmpty));
             RefreshDisplayedPresets();
         }
     } = string.Empty;
 
-    public bool IsSearchTextEmpty => string.IsNullOrEmpty(SearchText);
     public bool IsCurrentGroupVirtual => IsVirtualGroup(SelectedGroup);
 
     public ICommand AddGroupCommand { get; private set; } = null!;
@@ -275,7 +273,7 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
         OnPropertyChanged(nameof(IsCurrentGroupVirtual));
 
         IEnumerable<PresetItemViewModel> source = ResolvePresetsForGroup(SelectedGroup);
-        if (!IsSearchTextEmpty)
+        if (!string.IsNullOrEmpty(SearchText))
             source = source.Where(p => p.Model.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
 
         if (IsVirtualGroup(SelectedGroup) && SelectedGroup.Name != Texts.PresetManager_GroupRecent)
