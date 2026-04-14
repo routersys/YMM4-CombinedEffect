@@ -151,4 +151,7 @@
 <data name="PresetManager_ExchangeExportError" xml:space="preserve"><value>プリセットの書き出しに失敗しました</value></data>
 <data name="PresetManager_ExchangeImportError" xml:space="preserve"><value>プリセットの読み込みに失敗しました</value></data>
 <data name="PresetManager_ExchangeBundleDefaultName" xml:space="preserve"><value>まとめてエフェクト_プリセット</value></data>
+<data name="PresetExchangeMigrator_UnsupportedVersion" xml:space="preserve"><value>プリセット交換フォーマットのバージョン {0} はサポートされていません。サポートされている最大バージョンは {1} です。</value></data>
+<data name="Error_InvalidPresetPackage" xml:space="preserve"><value>ファイル '{0}' には有効なプリセット交換パッケージが含まれていません。</value></data>
+<data name="Error_UnrecognizedFormatId" xml:space="preserve"><value>ファイル '{0}' のフォーマットID '{1}' が認識できませんでした。'{2}' が想定されています。</value></data>
 </root>

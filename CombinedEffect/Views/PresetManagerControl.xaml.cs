@@ -200,6 +200,19 @@ public partial class PresetManagerControl : UserControl, IPropertyEditorControl
             vm.MovePreset(source, target);
     }
 
+    private void PresetItem_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Shift) && !Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            return;
+
+        if (sender is not ListBoxItem item) return;
+        if (ItemsControl.ItemsControlFromItemContainer(item) is not ListBox listBox) return;
+        if (listBox.ContextMenu is null) return;
+
+        listBox.ContextMenu.IsOpen = true;
+        e.Handled = true;
+    }
+
     private void PresetItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (sender is not ListBoxItem item || item.DataContext is not PresetItemViewModel preset) return;

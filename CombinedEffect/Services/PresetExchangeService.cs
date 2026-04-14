@@ -1,3 +1,4 @@
+using CombinedEffect.Localization;
 using CombinedEffect.Models;
 using CombinedEffect.Services.Interfaces;
 using Newtonsoft.Json;
@@ -8,7 +9,7 @@ namespace CombinedEffect.Services;
 
 internal sealed class PresetExchangeService : IPresetExchangeService
 {
-    private static readonly JsonSerializerSettings Settings = new()
+    private static readonly JsonSerializerSettings SerializerSettings = new()
     {
         Formatting = Formatting.Indented,
         NullValueHandling = NullValueHandling.Ignore,
@@ -27,12 +28,12 @@ internal sealed class PresetExchangeService : IPresetExchangeService
             Presets = [.. presets.Select(CloneForExport)]
         };
 
-        var json = JsonConvert.SerializeObject(package, Settings);
+        var json = JsonConvert.SerializeObject(package, SerializerSettings);
         var directoryPath = Path.GetDirectoryName(filePath);
         if (!string.IsNullOrWhiteSpace(directoryPath))
             Directory.CreateDirectory(directoryPath);
 
-        File.WriteAllText(filePath, json, new UTF8Encoding(false));
+        File.WriteAllText(filePath, json, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
     }
 
     public IReadOnlyList<EffectPreset> Import(IReadOnlyList<string> filePaths)
@@ -43,11 +44,15 @@ internal sealed class PresetExchangeService : IPresetExchangeService
         foreach (var filePath in filePaths.Where(static p => !string.IsNullOrWhiteSpace(p)))
         {
             var json = File.ReadAllText(filePath, Encoding.UTF8);
-            var package = JsonConvert.DeserializeObject<PresetExchangePackage>(json, Settings)
-                ?? throw new InvalidDataException(filePath);
+            var package = JsonConvert.DeserializeObject<PresetExchangePackage>(json, SerializerSettings)
+                ?? throw new InvalidDataException(
+                    string.Format(Texts.Error_InvalidPresetPackage, filePath));
 
-            if (package.FormatId != PresetExchangeFormat.FormatId || package.Version != PresetExchangeFormat.Version)
-                throw new InvalidDataException(filePath);
+            if (package.FormatId != PresetExchangeFormat.FormatId)
+                throw new InvalidDataException(
+                    string.Format(Texts.Error_UnrecognizedFormatId, filePath, package.FormatId, PresetExchangeFormat.FormatId));
+
+            package = PresetExchangeMigrator.Migrate(package);
 
             if (package.Presets.Count == 0)
                 continue;

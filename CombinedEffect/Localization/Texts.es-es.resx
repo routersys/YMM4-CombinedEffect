@@ -151,4 +151,7 @@
 <data name="PresetManager_ExchangeExportError" xml:space="preserve"><value>Error al exportar preajustes</value></data>
 <data name="PresetManager_ExchangeImportError" xml:space="preserve"><value>Error al importar preajustes</value></data>
 <data name="PresetManager_ExchangeBundleDefaultName" xml:space="preserve"><value>CombinedEffect_Preajustes</value></data>
+<data name="PresetExchangeMigrator_UnsupportedVersion" xml:space="preserve"><value>La versión {0} del formato de intercambio de presets no es compatible. La versión máxima admitida es {1}.</value></data>
+<data name="Error_InvalidPresetPackage" xml:space="preserve"><value>El archivo '{0}' no contiene un paquete de intercambio de ajustes preestablecidos válido.</value></data>
+<data name="Error_UnrecognizedFormatId" xml:space="preserve"><value>El archivo '{0}' tiene un ID de formato no reconocido '{1}'. Se esperaba '{2}'.</value></data>
 </root>

@@ -151,4 +151,7 @@
 <data name="PresetManager_ExchangeExportError" xml:space="preserve"><value>Gagal mengekspor prasetel</value></data>
 <data name="PresetManager_ExchangeImportError" xml:space="preserve"><value>Gagal mengimpor prasetel</value></data>
 <data name="PresetManager_ExchangeBundleDefaultName" xml:space="preserve"><value>CombinedEffect_Prasetel</value></data>
+<data name="PresetExchangeMigrator_UnsupportedVersion" xml:space="preserve"><value>Versi format pertukaran prasetel {0} tidak didukung. Versi maksimum yang didukung adalah {1}.</value></data>
+<data name="Error_InvalidPresetPackage" xml:space="preserve"><value>File '{0}' tidak berisi paket pertukaran prasetel yang valid.</value></data>
+<data name="Error_UnrecognizedFormatId" xml:space="preserve"><value>File '{0}' memiliki ID format yang tidak dikenal '{1}'. Diharapkan '{2}'.</value></data>
 </root>

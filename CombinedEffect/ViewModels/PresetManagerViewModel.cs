@@ -18,15 +18,6 @@ using YukkuriMovieMaker.Plugin.Effects;
 
 namespace CombinedEffect.ViewModels;
 
-public enum PresetSearchMode
-{
-    Name,
-    EffectName,
-    EffectCount,
-    RawJson,
-    Any
-}
-
 internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : ObservableBase, IDisposable
 {
     private readonly ItemProperty[] _itemProperties = itemProperties;
@@ -82,8 +73,8 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
     public bool IsSearchModeEffectCount => SearchMode == PresetSearchMode.EffectCount;
     public bool IsSearchModeRawJson => SearchMode == PresetSearchMode.RawJson;
     public bool IsSearchModeAny => SearchMode == PresetSearchMode.Any;
-    public string ExchangeExportText => Texts.GetString("PresetManager_ExchangeExport");
-    public string ExchangeImportText => Texts.GetString("PresetManager_ExchangeImport");
+    public string ExchangeExportText => Texts.PresetManager_ExchangeExport;
+    public string ExchangeImportText => Texts.PresetManager_ExchangeImport;
 
     public PresetItemViewModel? SelectedPreset
     {
@@ -418,7 +409,7 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
 
         var defaultFileName = targets.Count == 1
             ? CreateSafeFileName(targets[0].Model.Name)
-            : Texts.GetString("PresetManager_ExchangeBundleDefaultName");
+            : Texts.PresetManager_ExchangeBundleDefaultName;
 
         var filePath = _presetExchangeDialog.ShowExportDialog(defaultFileName);
         if (string.IsNullOrWhiteSpace(filePath)) return;
@@ -429,7 +420,7 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
         }
         catch
         {
-            MessageBox.Show(Texts.GetString("PresetManager_ExchangeExportError"));
+            MessageBox.Show(Texts.PresetManager_ExchangeExportError);
         }
     }
 
@@ -469,7 +460,7 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
         }
         catch
         {
-            MessageBox.Show(Texts.GetString("PresetManager_ExchangeImportError"));
+            MessageBox.Show(Texts.PresetManager_ExchangeImportError);
         }
     }
 

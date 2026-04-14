@@ -217,7 +217,7 @@
                                 <MenuItem Width="28" Height="28" Padding="0" BorderThickness="0" Background="Transparent" ToolTip="{x:Static loc:Texts.SearchMode_Tooltip}">
                                     <MenuItem.Header>
                                         <Grid Width="28" Height="28" Background="Transparent">
-                                            <Path Data="M3 5v2h2V5H3zm4 0v2h14V5H7zM11 11v2h2v-2h-2zm-8 0v2h6v-2H3zm12 0v2h6v-2h-6zM7 17v2h2v-2H7zm-4 0v2h2v-2H3zm8 0v2h10v-2H11z" 
+                                            <Path Data="M3 5v2h2V5H3zm4 0v2h14V5H7zM11 11v2h2v-2h-2zm-8 0v2h6v-2H3zm12 0v2h6v-2h-6zM7 17v2h2v-2H7zm-4 0v2h2v-2H3zm8 0v2h10v-2H11z"
                                                   Fill="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
                                                   Stretch="Uniform" Width="14" Height="14"
                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -243,14 +243,11 @@
                              PreviewMouseWheel="ListBox_PreviewMouseWheel">
                         <ListBox.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="{x:Static loc:Texts.PresetManager_ExchangeExport}"
-                                          Command="{Binding PlacementTarget.DataContext.ExportPresetsCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                          CommandParameter="{Binding PlacementTarget.SelectedItems, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                                 <MenuItem Header="{x:Static loc:Texts.PresetManager_ExchangeImport}"
                                           Command="{Binding PlacementTarget.DataContext.ImportPresetsCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                                 <Separator/>
                                 <MenuItem Header="{x:Static loc:Texts.PresetManager_Clear}">
-                                    <MenuItem Header="{x:Static loc:Texts.PresetManager_ClearUnselected}" 
+                                    <MenuItem Header="{x:Static loc:Texts.PresetManager_ClearUnselected}"
                                               Command="{Binding PlacementTarget.DataContext.ClearUnselectedCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                                 </MenuItem>
                             </ContextMenu>
@@ -262,30 +259,28 @@
                                 <Setter Property="ContextMenu">
                                     <Setter.Value>
                                         <ContextMenu>
-                                            <MenuItem Header="{x:Static loc:Texts.PresetManager_ApplyPreset}" 
+                                            <MenuItem Header="{x:Static loc:Texts.PresetManager_ApplyPreset}"
                                                       Command="{Binding PlacementTarget.Tag.DataContext.ApplySinglePresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                                       CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
-                                            <MenuItem Header="{x:Static loc:Texts.PresetManager_UpdatePreset}" 
+                                            <MenuItem Header="{x:Static loc:Texts.PresetManager_UpdatePreset}"
                                                       Command="{Binding PlacementTarget.Tag.DataContext.UpdatePresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                                       CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
-                                            <MenuItem Header="{x:Static loc:Texts.PresetManager_RenamePreset}" 
+                                            <MenuItem Header="{x:Static loc:Texts.PresetManager_RenamePreset}"
                                                       Command="{Binding PlacementTarget.Tag.DataContext.RenamePresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                                       CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
-                                            <MenuItem Header="{x:Static loc:Texts.PresetManager_RemovePreset}" 
+                                            <MenuItem Header="{x:Static loc:Texts.PresetManager_RemovePreset}"
                                                       Command="{Binding PlacementTarget.Tag.DataContext.RemovePresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                                       CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                                             <Separator/>
-                                            <MenuItem Header="{x:Static loc:Texts.PresetManager_ClearPreset}" 
+                                            <MenuItem Header="{x:Static loc:Texts.PresetManager_ClearPreset}"
                                                       Command="{Binding PlacementTarget.Tag.DataContext.ClearPresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                                       CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                                             <Separator/>
                                             <MenuItem Header="{x:Static loc:Texts.PresetManager_ExchangeExport}"
                                                       Command="{Binding PlacementTarget.Tag.DataContext.ExportPresetsCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                                       CommandParameter="{Binding PlacementTarget.Tag.SelectedItems, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
-                                            <MenuItem Header="{x:Static loc:Texts.PresetManager_ExchangeImport}"
-                                                      Command="{Binding PlacementTarget.Tag.DataContext.ImportPresetsCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                                             <Separator/>
-                                            <MenuItem Header="{x:Static loc:Texts.History_Manage}" 
+                                            <MenuItem Header="{x:Static loc:Texts.History_Manage}"
                                                       Command="{Binding PlacementTarget.Tag.DataContext.ManageHistoryCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                                       CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                                         </ContextMenu>
@@ -297,6 +292,7 @@
                                 <EventSetter Event="DragLeave" Handler="PresetItem_DragLeave"/>
                                 <EventSetter Event="Drop" Handler="PresetItem_Drop"/>
                                 <EventSetter Event="MouseDoubleClick" Handler="PresetItem_MouseDoubleClick"/>
+                                <EventSetter Event="PreviewMouseRightButtonDown" Handler="PresetItem_PreviewMouseRightButtonDown"/>
                             </Style>
                         </ListBox.ItemContainerStyle>
                         <ListBox.ItemTemplate>
@@ -314,20 +310,20 @@
                                             CommandParameter="{Binding}"
                                             Style="{StaticResource StarButtonStyle}"
                                             Width="24" Height="24" Padding="0" Margin="0,0,4,0">
-                                        <Path Data="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" 
+                                        <Path Data="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
                                               Stretch="Uniform" Width="14" Height="14" VerticalAlignment="Center" HorizontalAlignment="Center"
                                               Fill="{Binding IsFavorite, Converter={StaticResource FavoriteStarBrushConverter}}"/>
                                     </Button>
 
                                     <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Name}"/>
 
-                                    <TextBlock Grid.Column="2" 
+                                    <TextBlock Grid.Column="2"
                                                Text="{Binding EffectCount}"
                                                Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
                                                VerticalAlignment="Center"
                                                Margin="0,0,6,0"/>
 
-                                    <Border Grid.Column="3" Width="16" Height="16" Background="Transparent" 
+                                    <Border Grid.Column="3" Width="16" Height="16" Background="Transparent"
                                             VerticalAlignment="Center" Margin="0,0,4,0" Cursor="Help">
                                         <Border.ToolTip>
                                             <ToolTip Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
@@ -339,8 +335,8 @@
                                                 <TextBlock Text="{Binding EffectInfo}" LineHeight="16" />
                                             </ToolTip>
                                         </Border.ToolTip>
-                                        <Path Data="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" 
-                                              Fill="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" 
+                                        <Path Data="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
+                                              Fill="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
                                               Stretch="Uniform" />
                                     </Border>
                                 </Grid>

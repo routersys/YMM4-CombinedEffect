@@ -151,4 +151,7 @@
 <data name="PresetManager_ExchangeExportError" xml:space="preserve"><value>导出预设失败</value></data>
 <data name="PresetManager_ExchangeImportError" xml:space="preserve"><value>导入预设失败</value></data>
 <data name="PresetManager_ExchangeBundleDefaultName" xml:space="preserve"><value>组合效果_预设</value></data>
+<data name="PresetExchangeMigrator_UnsupportedVersion" xml:space="preserve"><value>不支持预设交换格式版本 {0}。支持的最大版本为 {1}。</value></data>
+<data name="Error_InvalidPresetPackage" xml:space="preserve"><value>文件 '{0}' 不包含有效的预设交换包。</value></data>
+<data name="Error_UnrecognizedFormatId" xml:space="preserve"><value>文件 '{0}' 的格式 ID '{1}' 无法识别。预期为 '{2}'。</value></data>
 </root>

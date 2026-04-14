@@ -37,5 +37,5 @@ internal sealed class PresetExchangeDialogService : IPresetExchangeDialogService
     }
 
     private static string BuildFilter() =>
-        $"{Texts.GetString("PresetManager_ExchangeFileType")} (*{PresetExchangeFormat.Extension})|*{PresetExchangeFormat.Extension}|{Texts.GetString("PresetManager_AllFiles")} (*.*)|*.*";
+        $"{Texts.PresetManager_ExchangeFileType} (*{PresetExchangeFormat.Extension})|*{PresetExchangeFormat.Extension}|{Texts.PresetManager_AllFiles} (*.*)|*.*";
 }

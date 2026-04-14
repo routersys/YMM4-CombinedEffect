@@ -151,4 +151,7 @@
 <data name="PresetManager_ExchangeExportError" xml:space="preserve"><value>Failed to export presets</value></data>
 <data name="PresetManager_ExchangeImportError" xml:space="preserve"><value>Failed to import presets</value></data>
 <data name="PresetManager_ExchangeBundleDefaultName" xml:space="preserve"><value>CombinedEffect_Presets</value></data>
+<data name="PresetExchangeMigrator_UnsupportedVersion" xml:space="preserve"><value>Preset exchange format version {0} is not supported. Maximum supported version is {1}.</value></data>
+<data name="Error_InvalidPresetPackage" xml:space="preserve"><value>File '{0}' does not contain a valid preset exchange package.</value></data>
+<data name="Error_UnrecognizedFormatId" xml:space="preserve"><value>File '{0}' has an unrecognized format ID '{1}'. Expected '{2}'.</value></data>
 </root>
