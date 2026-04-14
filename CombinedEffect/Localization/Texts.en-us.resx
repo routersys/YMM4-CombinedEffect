@@ -138,4 +138,10 @@
 <data name="PresetManager_ClearPreset" xml:space="preserve"><value>Empty Preset</value></data>
 <data name="Confirm_ClearPresetTitle" xml:space="preserve"><value>Clear Preset</value></data>
 <data name="Confirm_ClearPreset" xml:space="preserve"><value>Do you want to remove all effects from this preset and make it empty?</value></data>
+<data name="SearchMode_Tooltip" xml:space="preserve"><value>Change search target</value></data>
+<data name="SearchMode_Name" xml:space="preserve"><value>Preset Name</value></data>
+<data name="SearchMode_EffectName" xml:space="preserve"><value>Effect Name</value></data>
+<data name="SearchMode_EffectCount" xml:space="preserve"><value>Effect Count</value></data>
+<data name="SearchMode_RawJson" xml:space="preserve"><value>Raw Data (JSON)</value></data>
+<data name="SearchMode_Any" xml:space="preserve"><value>All</value></data>
 </root>

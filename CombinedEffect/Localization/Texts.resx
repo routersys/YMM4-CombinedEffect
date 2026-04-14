@@ -138,4 +138,10 @@
 <data name="PresetManager_ClearPreset" xml:space="preserve"><value>プリセットを空にする</value></data>
 <data name="Confirm_ClearPresetTitle" xml:space="preserve"><value>プリセットのクリア</value></data>
 <data name="Confirm_ClearPreset" xml:space="preserve"><value>このプリセットのすべてのエフェクトを削除して空にしますか？</value></data>
+<data name="SearchMode_Tooltip" xml:space="preserve"><value>検索対象を変更</value></data>
+<data name="SearchMode_Name" xml:space="preserve"><value>プリセット名</value></data>
+<data name="SearchMode_EffectName" xml:space="preserve"><value>エフェクト名</value></data>
+<data name="SearchMode_EffectCount" xml:space="preserve"><value>エフェクト数</value></data>
+<data name="SearchMode_RawJson" xml:space="preserve"><value>内部データ(JSON)</value></data>
+<data name="SearchMode_Any" xml:space="preserve"><value>すべて</value></data>
 </root>

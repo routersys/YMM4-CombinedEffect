@@ -138,4 +138,10 @@
 <data name="PresetManager_ClearPreset" xml:space="preserve"><value>Kosongkan Prasetel</value></data>
 <data name="Confirm_ClearPresetTitle" xml:space="preserve"><value>Kosongkan Prasetel</value></data>
 <data name="Confirm_ClearPreset" xml:space="preserve"><value>Apakah Anda ingin menghapus semua efek dari prasetel ini dan mengosongkannya?</value></data>
+<data name="SearchMode_Tooltip" xml:space="preserve"><value>Ubah Target Pencarian</value></data>
+<data name="SearchMode_Name" xml:space="preserve"><value>Nama Prasetel</value></data>
+<data name="SearchMode_EffectName" xml:space="preserve"><value>Nama Efek</value></data>
+<data name="SearchMode_EffectCount" xml:space="preserve"><value>Jumlah Efek</value></data>
+<data name="SearchMode_RawJson" xml:space="preserve"><value>Data Mentah (JSON)</value></data>
+<data name="SearchMode_Any" xml:space="preserve"><value>Semua</value></data>
 </root>

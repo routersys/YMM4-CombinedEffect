@@ -138,4 +138,10 @@
 <data name="PresetManager_ClearPreset" xml:space="preserve"><value>Vaciar Ajuste</value></data>
 <data name="Confirm_ClearPresetTitle" xml:space="preserve"><value>Vaciar Ajuste</value></data>
 <data name="Confirm_ClearPreset" xml:space="preserve"><value>¿Desea eliminar todos los efectos de este ajuste y vaciarlo?</value></data>
+<data name="SearchMode_Tooltip" xml:space="preserve"><value>Cambiar objetivo de búsqueda</value></data>
+<data name="SearchMode_Name" xml:space="preserve"><value>Nombre del preajuste</value></data>
+<data name="SearchMode_EffectName" xml:space="preserve"><value>Nombre del efecto</value></data>
+<data name="SearchMode_EffectCount" xml:space="preserve"><value>Recuento de efectos</value></data>
+<data name="SearchMode_RawJson" xml:space="preserve"><value>Datos en bruto (JSON)</value></data>
+<data name="SearchMode_Any" xml:space="preserve"><value>Todo</value></data>
 </root>

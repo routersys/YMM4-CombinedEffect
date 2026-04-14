@@ -13,8 +13,18 @@ using System.Windows;
 using System.Windows.Input;
 using YukkuriMovieMaker.Commons;
 using YukkuriMovieMaker.Plugin.Effects;
+using System.Text.RegularExpressions;
 
 namespace CombinedEffect.ViewModels;
+
+public enum PresetSearchMode
+{
+    Name,
+    EffectName,
+    EffectCount,
+    RawJson,
+    Any
+}
 
 internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : ObservableBase, IDisposable
 {
@@ -45,6 +55,30 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
             RefreshDisplayedPresets();
         }
     }
+
+    private PresetSearchMode _searchMode = PresetSearchMode.Name;
+    public PresetSearchMode SearchMode
+    {
+        get => _searchMode;
+        set
+        {
+            if (_searchMode == value) return;
+            _searchMode = value;
+            OnPropertyChanged(nameof(SearchMode));
+            OnPropertyChanged(nameof(IsSearchModeName));
+            OnPropertyChanged(nameof(IsSearchModeEffectName));
+            OnPropertyChanged(nameof(IsSearchModeEffectCount));
+            OnPropertyChanged(nameof(IsSearchModeRawJson));
+            OnPropertyChanged(nameof(IsSearchModeAny));
+            RefreshDisplayedPresets();
+        }
+    }
+
+    public bool IsSearchModeName => SearchMode == PresetSearchMode.Name;
+    public bool IsSearchModeEffectName => SearchMode == PresetSearchMode.EffectName;
+    public bool IsSearchModeEffectCount => SearchMode == PresetSearchMode.EffectCount;
+    public bool IsSearchModeRawJson => SearchMode == PresetSearchMode.RawJson;
+    public bool IsSearchModeAny => SearchMode == PresetSearchMode.Any;
 
     public PresetItemViewModel? SelectedPreset
     {
@@ -82,6 +116,7 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
     public ICommand ClearUnselectedCommand { get; private set; } = null!;
     public ICommand ApplySinglePresetCommand { get; private set; } = null!;
     public ICommand ClearPresetCommand { get; private set; } = null!;
+    public ICommand SetSearchModeCommand { get; private set; } = null!;
 
     public event EventHandler? BeginEdit;
     public event EventHandler? EndEdit;
@@ -105,6 +140,7 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
         ClearUnselectedCommand = new RelayCommand<object>(_ => ExecuteClearUnselected());
         ApplySinglePresetCommand = new RelayCommand<PresetItemViewModel>(ExecuteApplySinglePreset);
         ClearPresetCommand = new RelayCommand<PresetItemViewModel>(ExecuteClearPreset, CanClearPreset);
+        SetSearchModeCommand = new RelayCommand<object>(ExecuteSetSearchMode);
 
         _effect.PropertyChanged += OnEffectPropertyChanged;
         AttachEffectHandlers(_effect.Effects);
@@ -273,8 +309,17 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
         OnPropertyChanged(nameof(IsCurrentGroupVirtual));
 
         IEnumerable<PresetItemViewModel> source = ResolvePresetsForGroup(SelectedGroup);
-        if (!string.IsNullOrEmpty(SearchText))
-            source = source.Where(p => p.Model.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
+        if (!string.IsNullOrWhiteSpace(SearchText))
+        {
+            Regex? regex = null;
+            try
+            {
+                regex = new Regex(SearchText, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+            }
+            catch { }
+
+            source = source.Where(p => MatchesSearch(p, SearchText, SearchMode, regex));
+        }
 
         if (IsVirtualGroup(SelectedGroup) && SelectedGroup.Name != Texts.PresetManager_GroupRecent)
         {
@@ -286,6 +331,26 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
             foreach (var preset in source)
                 DisplayedPresets.Add(preset);
         }
+    }
+
+    private static bool MatchesSearch(PresetItemViewModel p, string text, PresetSearchMode mode, Regex? regex)
+    {
+        bool IsMatchText(string? input)
+        {
+            if (string.IsNullOrEmpty(input)) return false;
+            if (regex is not null && regex.IsMatch(input)) return true;
+            return input.Contains(text, StringComparison.OrdinalIgnoreCase);
+        }
+
+        return mode switch
+        {
+            PresetSearchMode.Name => IsMatchText(p.Model.Name),
+            PresetSearchMode.EffectName => IsMatchText(p.EffectInfo),
+            PresetSearchMode.EffectCount => int.TryParse(text, out var c) ? p.EffectCount == c : IsMatchText(p.EffectCount.ToString()),
+            PresetSearchMode.RawJson => IsMatchText(p.Model.SerializedEffects),
+            PresetSearchMode.Any => IsMatchText(p.Model.Name) || IsMatchText(p.EffectInfo) || IsMatchText(p.Model.SerializedEffects),
+            _ => false
+        };
     }
 
     private IEnumerable<PresetItemViewModel> ResolvePresetsForGroup(PresetGroup group)
@@ -313,6 +378,12 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
                 result.Add(p);
         }
         return result;
+    }
+
+    private void ExecuteSetSearchMode(object? modeText)
+    {
+        if (modeText is string str && Enum.TryParse<PresetSearchMode>(str, out var mode))
+            SearchMode = mode;
     }
 
     private void ExecuteAddGroup()

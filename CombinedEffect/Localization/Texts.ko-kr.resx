@@ -138,4 +138,10 @@
 <data name="PresetManager_ClearPreset" xml:space="preserve"><value>프리셋 비우기</value></data>
 <data name="Confirm_ClearPresetTitle" xml:space="preserve"><value>프리셋 비우기</value></data>
 <data name="Confirm_ClearPreset" xml:space="preserve"><value>이 프리셋의 모든 효과를 제거하고 비우시겠습니까?</value></data>
+<data name="SearchMode_Tooltip" xml:space="preserve"><value>검색 대상 변경</value></data>
+<data name="SearchMode_Name" xml:space="preserve"><value>프리셋 이름</value></data>
+<data name="SearchMode_EffectName" xml:space="preserve"><value>효과 이름</value></data>
+<data name="SearchMode_EffectCount" xml:space="preserve"><value>효과 수</value></data>
+<data name="SearchMode_RawJson" xml:space="preserve"><value>내부 데이터 (JSON)</value></data>
+<data name="SearchMode_Any" xml:space="preserve"><value>모두</value></data>
 </root>

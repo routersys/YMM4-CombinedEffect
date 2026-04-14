@@ -138,4 +138,10 @@
 <data name="PresetManager_ClearPreset" xml:space="preserve"><value>清空预设</value></data>
 <data name="Confirm_ClearPresetTitle" xml:space="preserve"><value>清空预设</value></data>
 <data name="Confirm_ClearPreset" xml:space="preserve"><value>要删除此预设中的所有效果并将其清空吗？</value></data>
+<data name="SearchMode_Tooltip" xml:space="preserve"><value>更改搜索目标</value></data>
+<data name="SearchMode_Name" xml:space="preserve"><value>预设名称</value></data>
+<data name="SearchMode_EffectName" xml:space="preserve"><value>效果名称</value></data>
+<data name="SearchMode_EffectCount" xml:space="preserve"><value>效果数量</value></data>
+<data name="SearchMode_RawJson" xml:space="preserve"><value>内部数据 (JSON)</value></data>
+<data name="SearchMode_Any" xml:space="preserve"><value>所有</value></data>
 </root>

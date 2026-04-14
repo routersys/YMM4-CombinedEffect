@@ -138,4 +138,10 @@
 <data name="PresetManager_ClearPreset" xml:space="preserve"><value>إفراغ الإعداد</value></data>
 <data name="Confirm_ClearPresetTitle" xml:space="preserve"><value>إفراغ الإعداد</value></data>
 <data name="Confirm_ClearPreset" xml:space="preserve"><value>هل تريد إزالة جميع التأثيرات من هذا الإعداد وجعله فارغاً؟</value></data>
+<data name="SearchMode_Tooltip" xml:space="preserve"><value>تغيير هدف البحث</value></data>
+<data name="SearchMode_Name" xml:space="preserve"><value>اسم الإعداد المسبق</value></data>
+<data name="SearchMode_EffectName" xml:space="preserve"><value>اسم التأثير</value></data>
+<data name="SearchMode_EffectCount" xml:space="preserve"><value>عدد التأثيرات</value></data>
+<data name="SearchMode_RawJson" xml:space="preserve"><value>البيانات الخام (JSON)</value></data>
+<data name="SearchMode_Any" xml:space="preserve"><value>الكل</value></data>
 </root>
