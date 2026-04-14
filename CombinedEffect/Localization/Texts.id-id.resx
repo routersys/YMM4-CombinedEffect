@@ -144,4 +144,11 @@
 <data name="SearchMode_EffectCount" xml:space="preserve"><value>Jumlah Efek</value></data>
 <data name="SearchMode_RawJson" xml:space="preserve"><value>Data Mentah (JSON)</value></data>
 <data name="SearchMode_Any" xml:space="preserve"><value>Semua</value></data>
+<data name="PresetManager_ExchangeExport" xml:space="preserve"><value>Ekspor</value></data>
+<data name="PresetManager_ExchangeImport" xml:space="preserve"><value>Impor</value></data>
+<data name="PresetManager_ExchangeFileType" xml:space="preserve"><value>Paket Prasetel Efek Gabungan</value></data>
+<data name="PresetManager_AllFiles" xml:space="preserve"><value>Semua Berkas</value></data>
+<data name="PresetManager_ExchangeExportError" xml:space="preserve"><value>Gagal mengekspor prasetel</value></data>
+<data name="PresetManager_ExchangeImportError" xml:space="preserve"><value>Gagal mengimpor prasetel</value></data>
+<data name="PresetManager_ExchangeBundleDefaultName" xml:space="preserve"><value>CombinedEffect_Prasetel</value></data>
 </root>

@@ -144,4 +144,11 @@
 <data name="SearchMode_EffectCount" xml:space="preserve"><value>Effect Count</value></data>
 <data name="SearchMode_RawJson" xml:space="preserve"><value>Raw Data (JSON)</value></data>
 <data name="SearchMode_Any" xml:space="preserve"><value>All</value></data>
+<data name="PresetManager_ExchangeExport" xml:space="preserve"><value>Export</value></data>
+<data name="PresetManager_ExchangeImport" xml:space="preserve"><value>Import</value></data>
+<data name="PresetManager_ExchangeFileType" xml:space="preserve"><value>Combined Effect Preset Package</value></data>
+<data name="PresetManager_AllFiles" xml:space="preserve"><value>All Files</value></data>
+<data name="PresetManager_ExchangeExportError" xml:space="preserve"><value>Failed to export presets</value></data>
+<data name="PresetManager_ExchangeImportError" xml:space="preserve"><value>Failed to import presets</value></data>
+<data name="PresetManager_ExchangeBundleDefaultName" xml:space="preserve"><value>CombinedEffect_Presets</value></data>
 </root>

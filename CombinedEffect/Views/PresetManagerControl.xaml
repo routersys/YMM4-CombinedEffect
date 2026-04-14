@@ -243,6 +243,12 @@
                              PreviewMouseWheel="ListBox_PreviewMouseWheel">
                         <ListBox.ContextMenu>
                             <ContextMenu>
+                                <MenuItem Header="{x:Static loc:Texts.PresetManager_ExchangeExport}"
+                                          Command="{Binding PlacementTarget.DataContext.ExportPresetsCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                          CommandParameter="{Binding PlacementTarget.SelectedItems, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                <MenuItem Header="{x:Static loc:Texts.PresetManager_ExchangeImport}"
+                                          Command="{Binding PlacementTarget.DataContext.ImportPresetsCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                <Separator/>
                                 <MenuItem Header="{x:Static loc:Texts.PresetManager_Clear}">
                                     <MenuItem Header="{x:Static loc:Texts.PresetManager_ClearUnselected}" 
                                               Command="{Binding PlacementTarget.DataContext.ClearUnselectedCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
@@ -252,29 +258,35 @@
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                                 <Setter Property="AllowDrop" Value="True"/>
-                                <Setter Property="Tag" Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=ListBox}}"/>
+                                <Setter Property="Tag" Value="{Binding RelativeSource={RelativeSource AncestorType=ListBox}}"/>
                                 <Setter Property="ContextMenu">
                                     <Setter.Value>
                                         <ContextMenu>
                                             <MenuItem Header="{x:Static loc:Texts.PresetManager_ApplyPreset}" 
-                                                      Command="{Binding PlacementTarget.Tag.ApplySinglePresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      Command="{Binding PlacementTarget.Tag.DataContext.ApplySinglePresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                                       CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                                             <MenuItem Header="{x:Static loc:Texts.PresetManager_UpdatePreset}" 
-                                                      Command="{Binding PlacementTarget.Tag.UpdatePresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      Command="{Binding PlacementTarget.Tag.DataContext.UpdatePresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                                       CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                                             <MenuItem Header="{x:Static loc:Texts.PresetManager_RenamePreset}" 
-                                                      Command="{Binding PlacementTarget.Tag.RenamePresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      Command="{Binding PlacementTarget.Tag.DataContext.RenamePresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                                       CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                                             <MenuItem Header="{x:Static loc:Texts.PresetManager_RemovePreset}" 
-                                                      Command="{Binding PlacementTarget.Tag.RemovePresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      Command="{Binding PlacementTarget.Tag.DataContext.RemovePresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                                       CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                                             <Separator/>
                                             <MenuItem Header="{x:Static loc:Texts.PresetManager_ClearPreset}" 
-                                                      Command="{Binding PlacementTarget.Tag.ClearPresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      Command="{Binding PlacementTarget.Tag.DataContext.ClearPresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                                       CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                                             <Separator/>
+                                            <MenuItem Header="{x:Static loc:Texts.PresetManager_ExchangeExport}"
+                                                      Command="{Binding PlacementTarget.Tag.DataContext.ExportPresetsCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      CommandParameter="{Binding PlacementTarget.Tag.SelectedItems, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                            <MenuItem Header="{x:Static loc:Texts.PresetManager_ExchangeImport}"
+                                                      Command="{Binding PlacementTarget.Tag.DataContext.ImportPresetsCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                            <Separator/>
                                             <MenuItem Header="{x:Static loc:Texts.History_Manage}" 
-                                                      Command="{Binding PlacementTarget.Tag.ManageHistoryCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      Command="{Binding PlacementTarget.Tag.DataContext.ManageHistoryCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                                       CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                                         </ContextMenu>
                                     </Setter.Value>

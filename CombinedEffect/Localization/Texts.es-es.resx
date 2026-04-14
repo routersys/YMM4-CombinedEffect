@@ -144,4 +144,11 @@
 <data name="SearchMode_EffectCount" xml:space="preserve"><value>Recuento de efectos</value></data>
 <data name="SearchMode_RawJson" xml:space="preserve"><value>Datos en bruto (JSON)</value></data>
 <data name="SearchMode_Any" xml:space="preserve"><value>Todo</value></data>
+<data name="PresetManager_ExchangeExport" xml:space="preserve"><value>Exportar</value></data>
+<data name="PresetManager_ExchangeImport" xml:space="preserve"><value>Importar</value></data>
+<data name="PresetManager_ExchangeFileType" xml:space="preserve"><value>Paquete de preajustes de efecto combinado</value></data>
+<data name="PresetManager_AllFiles" xml:space="preserve"><value>Todos los archivos</value></data>
+<data name="PresetManager_ExchangeExportError" xml:space="preserve"><value>Error al exportar preajustes</value></data>
+<data name="PresetManager_ExchangeImportError" xml:space="preserve"><value>Error al importar preajustes</value></data>
+<data name="PresetManager_ExchangeBundleDefaultName" xml:space="preserve"><value>CombinedEffect_Preajustes</value></data>
 </root>

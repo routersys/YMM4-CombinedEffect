@@ -34,6 +34,12 @@ internal sealed class ServiceRegistry
     private readonly Lazy<IUISettingsService> _uiSettings =
         new(() => new UISettingsService());
 
+    private readonly Lazy<IPresetExchangeService> _presetExchange =
+        new(() => new PresetExchangeService());
+
+    private readonly Lazy<IPresetExchangeDialogService> _presetExchangeDialog =
+        new(() => new PresetExchangeDialogService());
+
     private ServiceRegistry()
     {
         _loggerService = new Lazy<ILoggerService>(
@@ -56,4 +62,6 @@ internal sealed class ServiceRegistry
     public IRecentPresetService RecentPreset => _recentPreset.Value;
     public IUISettingsService UISettings => _uiSettings.Value;
     public IHistoryRepository HistoryRepository => _historyRepository.Value;
+    public IPresetExchangeService PresetExchange => _presetExchange.Value;
+    public IPresetExchangeDialogService PresetExchangeDialog => _presetExchangeDialog.Value;
 }

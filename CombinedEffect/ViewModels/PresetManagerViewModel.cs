@@ -9,11 +9,12 @@ using System.Collections;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using YukkuriMovieMaker.Commons;
 using YukkuriMovieMaker.Plugin.Effects;
-using System.Text.RegularExpressions;
 
 namespace CombinedEffect.ViewModels;
 
@@ -34,6 +35,8 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
     private readonly IEffectSerializationService _serialization = ServiceRegistry.Instance.EffectSerialization;
     private readonly IPresetPersistenceService _persistence = ServiceRegistry.Instance.PresetPersistence;
     private readonly IRecentPresetService _recentService = ServiceRegistry.Instance.RecentPreset;
+    private readonly IPresetExchangeService _presetExchange = ServiceRegistry.Instance.PresetExchange;
+    private readonly IPresetExchangeDialogService _presetExchangeDialog = ServiceRegistry.Instance.PresetExchangeDialog;
     private readonly Dictionary<Guid, PresetItemViewModel> _presetCache = new();
 
     private readonly AsyncDebouncer _updateDebouncer = new();
@@ -79,6 +82,8 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
     public bool IsSearchModeEffectCount => SearchMode == PresetSearchMode.EffectCount;
     public bool IsSearchModeRawJson => SearchMode == PresetSearchMode.RawJson;
     public bool IsSearchModeAny => SearchMode == PresetSearchMode.Any;
+    public string ExchangeExportText => Texts.GetString("PresetManager_ExchangeExport");
+    public string ExchangeImportText => Texts.GetString("PresetManager_ExchangeImport");
 
     public PresetItemViewModel? SelectedPreset
     {
@@ -117,6 +122,8 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
     public ICommand ApplySinglePresetCommand { get; private set; } = null!;
     public ICommand ClearPresetCommand { get; private set; } = null!;
     public ICommand SetSearchModeCommand { get; private set; } = null!;
+    public ICommand ExportPresetsCommand { get; private set; } = null!;
+    public ICommand ImportPresetsCommand { get; private set; } = null!;
 
     public event EventHandler? BeginEdit;
     public event EventHandler? EndEdit;
@@ -141,6 +148,8 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
         ApplySinglePresetCommand = new RelayCommand<PresetItemViewModel>(ExecuteApplySinglePreset);
         ClearPresetCommand = new RelayCommand<PresetItemViewModel>(ExecuteClearPreset, CanClearPreset);
         SetSearchModeCommand = new RelayCommand<object>(ExecuteSetSearchMode);
+        ExportPresetsCommand = new RelayCommand<IList>(ExecuteExportPresets, CanExportPresets);
+        ImportPresetsCommand = new RelayCommand<object>(_ => ExecuteImportPresets());
 
         _effect.PropertyChanged += OnEffectPropertyChanged;
         AttachEffectHandlers(_effect.Effects);
@@ -384,6 +393,91 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
     {
         if (modeText is string str && Enum.TryParse<PresetSearchMode>(str, out var mode))
             SearchMode = mode;
+    }
+
+    private bool CanExportPresets(IList? selectedItems) => ResolveExportTargets(selectedItems).Count > 0;
+
+    private List<PresetItemViewModel> ResolveExportTargets(IList? selectedItems)
+    {
+        var targets = selectedItems?
+            .OfType<PresetItemViewModel>()
+            .GroupBy(p => p.Model.Id)
+            .Select(g => g.First())
+            .ToList() ?? [];
+
+        if (targets.Count == 0 && SelectedPreset is not null)
+            targets.Add(SelectedPreset);
+
+        return targets;
+    }
+
+    private void ExecuteExportPresets(IList? selectedItems)
+    {
+        var targets = ResolveExportTargets(selectedItems);
+        if (targets.Count == 0) return;
+
+        var defaultFileName = targets.Count == 1
+            ? CreateSafeFileName(targets[0].Model.Name)
+            : Texts.GetString("PresetManager_ExchangeBundleDefaultName");
+
+        var filePath = _presetExchangeDialog.ShowExportDialog(defaultFileName);
+        if (string.IsNullOrWhiteSpace(filePath)) return;
+
+        try
+        {
+            _presetExchange.Export(filePath, [.. targets.Select(p => p.Model)]);
+        }
+        catch
+        {
+            MessageBox.Show(Texts.GetString("PresetManager_ExchangeExportError"));
+        }
+    }
+
+    private void ExecuteImportPresets()
+    {
+        var filePaths = _presetExchangeDialog.ShowImportDialog();
+        if (filePaths.Count == 0) return;
+
+        try
+        {
+            var importedPresets = _presetExchange.Import(filePaths);
+            if (importedPresets.Count == 0) return;
+
+            var targetGroup = SelectedGroup;
+            if (targetGroup is null || IsVirtualGroup(targetGroup))
+                targetGroup = Groups.FirstOrDefault(g => !IsVirtualGroup(g));
+            if (targetGroup is null) return;
+
+            PresetItemViewModel? firstImported = null;
+            foreach (var preset in importedPresets)
+            {
+                if (string.IsNullOrWhiteSpace(preset.Name))
+                    preset.Name = Texts.PresetManager_NewPreset;
+
+                var vm = new PresetItemViewModel(preset, _serialization);
+                _presetCache[preset.Id] = vm;
+                targetGroup.PresetIds.Add(preset.Id);
+                _persistence.SavePreset(preset);
+                firstImported ??= vm;
+            }
+
+            PersistRegistry();
+            SelectedGroup = targetGroup;
+            RefreshDisplayedPresets();
+            if (firstImported is not null)
+                SelectedPreset = firstImported;
+        }
+        catch
+        {
+            MessageBox.Show(Texts.GetString("PresetManager_ExchangeImportError"));
+        }
+    }
+
+    private static string CreateSafeFileName(string source)
+    {
+        var invalidChars = Path.GetInvalidFileNameChars();
+        var safeName = string.Concat(source.Select(ch => invalidChars.Contains(ch) ? '_' : ch)).Trim();
+        return string.IsNullOrWhiteSpace(safeName) ? Texts.PresetManager_NewPreset : safeName;
     }
 
     private void ExecuteAddGroup()

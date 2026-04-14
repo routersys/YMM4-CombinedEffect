@@ -144,4 +144,11 @@
 <data name="SearchMode_EffectCount" xml:space="preserve"><value>효과 수</value></data>
 <data name="SearchMode_RawJson" xml:space="preserve"><value>내부 데이터 (JSON)</value></data>
 <data name="SearchMode_Any" xml:space="preserve"><value>모두</value></data>
+<data name="PresetManager_ExchangeExport" xml:space="preserve"><value>내보내기</value></data>
+<data name="PresetManager_ExchangeImport" xml:space="preserve"><value>가져오기</value></data>
+<data name="PresetManager_ExchangeFileType" xml:space="preserve"><value>조합 효과 프리셋 패키지</value></data>
+<data name="PresetManager_AllFiles" xml:space="preserve"><value>모든 파일</value></data>
+<data name="PresetManager_ExchangeExportError" xml:space="preserve"><value>프리셋 내보내기에 실패했습니다</value></data>
+<data name="PresetManager_ExchangeImportError" xml:space="preserve"><value>프리셋 가져오기에 실패했습니다</value></data>
+<data name="PresetManager_ExchangeBundleDefaultName" xml:space="preserve"><value>조합효과_프리셋</value></data>
 </root>

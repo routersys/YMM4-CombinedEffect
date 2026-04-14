@@ -144,4 +144,11 @@
 <data name="SearchMode_EffectCount" xml:space="preserve"><value>エフェクト数</value></data>
 <data name="SearchMode_RawJson" xml:space="preserve"><value>内部データ(JSON)</value></data>
 <data name="SearchMode_Any" xml:space="preserve"><value>すべて</value></data>
+<data name="PresetManager_ExchangeExport" xml:space="preserve"><value>書き出し</value></data>
+<data name="PresetManager_ExchangeImport" xml:space="preserve"><value>読み込み</value></data>
+<data name="PresetManager_ExchangeFileType" xml:space="preserve"><value>まとめてエフェクト プリセットパッケージ</value></data>
+<data name="PresetManager_AllFiles" xml:space="preserve"><value>すべてのファイル</value></data>
+<data name="PresetManager_ExchangeExportError" xml:space="preserve"><value>プリセットの書き出しに失敗しました</value></data>
+<data name="PresetManager_ExchangeImportError" xml:space="preserve"><value>プリセットの読み込みに失敗しました</value></data>
+<data name="PresetManager_ExchangeBundleDefaultName" xml:space="preserve"><value>まとめてエフェクト_プリセット</value></data>
 </root>

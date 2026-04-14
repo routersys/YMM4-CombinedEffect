@@ -144,4 +144,11 @@
 <data name="SearchMode_EffectCount" xml:space="preserve"><value>效果數量</value></data>
 <data name="SearchMode_RawJson" xml:space="preserve"><value>內部數據 (JSON)</value></data>
 <data name="SearchMode_Any" xml:space="preserve"><value>所有</value></data>
+<data name="PresetManager_ExchangeExport" xml:space="preserve"><value>匯出</value></data>
+<data name="PresetManager_ExchangeImport" xml:space="preserve"><value>匯入</value></data>
+<data name="PresetManager_ExchangeFileType" xml:space="preserve"><value>組合效果預設封裝</value></data>
+<data name="PresetManager_AllFiles" xml:space="preserve"><value>所有檔案</value></data>
+<data name="PresetManager_ExchangeExportError" xml:space="preserve"><value>匯出預設失敗</value></data>
+<data name="PresetManager_ExchangeImportError" xml:space="preserve"><value>匯入預設失敗</value></data>
+<data name="PresetManager_ExchangeBundleDefaultName" xml:space="preserve"><value>組合效果_預設</value></data>
 </root>
