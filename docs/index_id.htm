@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Efek Gabungan — Panduan Pengguna</title>
+</head>
+<body>
+
+<p>
+[<a href="index.htm">日本語</a>]
+[<a href="index_en.htm">English</a>]
+[<a href="index_zh-cn.htm">中文（简体）</a>]
+[<a href="index_zh-tw.htm">中文（繁體）</a>]
+[<a href="index_ko.htm">한국어</a>]
+[<a href="index_es.htm">Español</a>]
+[<a href="index_ar.htm">العربية</a>]
+[<strong>Indonesia</strong>]
+</p>
+
+<h1>Efek Gabungan for YMM4 — Panduan Pengguna</h1>
+<p>Versi: 2.1.0 &nbsp;/&nbsp; OS yang Didukung: Windows 10 / 11 (64bit) &nbsp;/&nbsp; Runtime: .NET 10.0</p>
+<hr>
+
+<h2>Daftar Isi</h2>
+<ol>
+  <li><a href="#overview">Ikhtisar</a></li>
+  <li><a href="#requirements">Persyaratan Sistem</a></li>
+  <li><a href="#install">Instalasi</a></li>
+  <li><a href="#quickstart">Memulai</a></li>
+  <li><a href="#ui">Tata Letak Antarmuka</a></li>
+  <li><a href="#groups">Manajemen Grup</a></li>
+  <li><a href="#presets">Manajemen Prasetel</a></li>
+  <li><a href="#virtual-groups">Grup Virtual</a></li>
+  <li><a href="#apply">Menerapkan Prasetel</a></li>
+  <li><a href="#update">Memperbarui Prasetel</a></li>
+  <li><a href="#search">Pencarian Prasetel</a></li>
+  <li><a href="#favorite">Favorit</a></li>
+  <li><a href="#clipboard">Salin, Potong &amp; Tempel</a></li>
+  <li><a href="#exchange">Ekspor &amp; Impor Prasetel</a></li>
+  <li><a href="#history">Riwayat Cuplikan &amp; Manajemen Cabang</a></li>
+  <li><a href="#tags">Manajemen Tag</a></li>
+  <li><a href="#clear">Hapus Efek Sekaligus</a></li>
+  <li><a href="#responsive">Antarmuka Responsif &amp; Tata Letak</a></li>
+  <li><a href="#persistence">Penyimpanan Data &amp; Persistensi Aman</a></li>
+  <li><a href="#migration">Migrasi dari Versi Lama</a></li>
+  <li><a href="#files">Struktur File &amp; Folder</a></li>
+  <li><a href="#multilang">Dukungan Multibahasa</a></li>
+  <li><a href="#params">Referensi Parameter</a></li>
+  <li><a href="#operations">Referensi Cepat</a></li>
+  <li><a href="#caution">Catatan &amp; Peringatan</a></li>
+  <li><a href="#license">Penafian &amp; Lisensi</a></li>
+</ol>
+<hr>
+
+<h2 id="overview">1. Ikhtisar</h2>
+<p>
+«Efek Gabungan» adalah plugin efek video untuk YukkuriMovieMaker4 (YMM4).
+Plugin ini memungkinkan Anda menyimpan beberapa efek video dalam satu item «Efek Gabungan» dan mengelolanya melalui pengelompokan, penyimpanan prasetel, dan pemanggilan kembali.
+</p>
+<p>Fitur utama:</p>
+<ul>
+  <li>Menerapkan beberapa efek secara berurutan dalam satu item</li>
+  <li>Menyimpan, memanggil, dan berbagi prasetel dengan nama</li>
+  <li>Mengatur prasetel dengan tiga jenis grup virtual: Semua, Terbaru, dan Favorit</li>
+  <li>Riwayat cuplikan dan manajemen cabang bergaya Git</li>
+  <li>Penulisan atomik dengan verifikasi CRC32 dan persistensi multi-redundan SHA-256</li>
+  <li>Ekspor dan impor file paket prasetel (.ceprstpkg)</li>
+  <li>Salin, potong, dan tempel berbasis clipboard</li>
+  <li>Pencarian multi-sumbu dengan dukungan ekspresi reguler</li>
+  <li>Antarmuka dalam 8 bahasa (Jepang, Inggris, Tionghoa Sederhana, Tionghoa Tradisional, Korea, Spanyol, Arab, Indonesia)</li>
+  <li>Antarmuka responsif yang otomatis beralih ke tata letak mobile di bawah lebar 400px</li>
+</ul>
+<p>
+Label linimasa menampilkan jumlah efek saat ini dan nama prasetel yang diterapkan, misalnya «Efek Gabungan Aktif: 3 [NamaPrasetel]», sehingga memudahkan identifikasi konten sekilas.
+</p>
+<p>
+<strong>Output AviUtl (.exo) tidak didukung.</strong>
+</p>
+<hr>
+
+<h2 id="requirements">2. Persyaratan Sistem</h2>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Item</th><th>Persyaratan</th></tr>
+  <tr><td>OS</td><td>Windows 10 / 11 (64bit)</td></tr>
+  <tr><td>YukkuriMovieMaker4</td><td>Versi terbaru direkomendasikan</td></tr>
+  <tr><td>Runtime</td><td>.NET 10.0</td></tr>
+  <tr><td>GPU</td><td>GPU kompatibel Direct2D</td></tr>
+</table>
+<hr>
+
+<h2 id="install">3. Instalasi</h2>
+<ol>
+  <li>Unduh file <code>.ymme</code> terbaru dari halaman <a href="https://github.com/routersys/YMM4-CombinedEffect/releases">Releases</a> di GitHub.</li>
+  <li>Pastikan YMM4 tidak sedang berjalan.</li>
+  <li>Klik dua kali file <code>.ymme</code> yang diunduh untuk menginstalnya.</li>
+  <li>Jalankan YMM4 dan pilih item di linimasa.</li>
+  <li>Pilih <strong>«Efek Gabungan»</strong> dari menu Tambah Efek Video.</li>
+</ol>
+<p>Setelah instalasi, panel manajemen prasetel dan daftar efek akan muncul di panel properti.</p>
+<hr>
+
+<h2 id="quickstart">4. Memulai</h2>
+<ol>
+  <li>Pilih item video atau gambar di linimasa.</li>
+  <li>Tambahkan «Efek Gabungan» dari menu Tambah Efek Video.</li>
+  <li>Tambahkan dan konfigurasikan efek di bagian «Efek Aktif» di bagian bawah panel properti.</li>
+  <li>Klik tombol «+ (Tambah)» di panel manajemen prasetel, masukkan nama, dan simpan prasetel.</li>
+  <li>Untuk menerapkan konfigurasi yang sama pada item lain, pilih prasetel dan klik tombol «✓ (Terapkan)».</li>
+</ol>
+<hr>
+
+<h2 id="ui">5. Tata Letak Antarmuka</h2>
+<p>Panel properti menampilkan bagian-bagian berikut dari atas ke bawah.</p>
+
+<h3>5-1. Panel Manajemen Prasetel (PresetManagerControl)</h3>
+<p>Ini adalah area utama untuk mengelola prasetel, dibagi menjadi dua kolom.</p>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Area</th><th>Keterangan</th></tr>
+  <tr><td>Kolom kiri (daftar grup)</td><td>Menampilkan grup yang ditentukan pengguna dan grup virtual (Semua, Terbaru, Favorit). Klik untuk memilih, klik dua kali untuk mengganti nama, seret dan lepas untuk mengurutkan ulang (grup virtual tidak dapat dipindah). Gunakan tombol + untuk menambah grup dan tombol - untuk menghapusnya.</td></tr>
+  <tr><td>Atas kolom kanan (bilah pencarian)</td><td>Memfilter prasetel berdasarkan kata kunci. Klik ikon di kanan untuk mengubah target pencarian.</td></tr>
+  <tr><td>Tengah kolom kanan (daftar prasetel)</td><td>Mencantumkan prasetel di grup yang dipilih. Setiap baris menampilkan bintang (toggle favorit), nama, jumlah efek, dan ikon info (tooltip menampilkan daftar efek). Pemilihan berganda (Ctrl+klik, Shift+klik) didukung.</td></tr>
+  <tr><td>Bawah kolom kanan (tombol aksi)</td><td>Dari kiri: Tambah (+), Hapus (-), Perbarui (↺), Terapkan (✓). Tombol memperluas labelnya saat hover.</td></tr>
+  <tr><td>Gagang ubah ukuran bawah</td><td>Seret untuk mengubah tinggi panel.</td></tr>
+</table>
+
+<h3>5-2. Pembagi Kisi</h3>
+<p>Seret batas antara dua kolom untuk menyesuaikan lebar kolom grup. Nilai dipulihkan saat startup berikutnya.</p>
+
+<h3>5-3. Tata Letak Mobile (di bawah 400px lebar)</h3>
+<p>Saat lebar kontrol turun di bawah 400px, daftar grup disembunyikan dan tombol menu hamburger (≡) muncul. Mengkliknya membuka daftar grup sebagai popup.</p>
+
+<h3>5-4. Efek Aktif (VideoEffectSelector)</h3>
+<p>Pemilih efek video standar YMM4 ditampilkan di bawah panel manajemen prasetel. Gunakan untuk menambah, menghapus, mengurutkan ulang, dan mengaktifkan/menonaktifkan efek.</p>
+<hr>
+
+<h2 id="groups">6. Manajemen Grup</h2>
+<p>Prasetel dapat diorganisir ke dalam grup. Ada «grup nyata» dan «grup virtual».</p>
+
+<h3>6-1. Menambahkan Grup</h3>
+<ol>
+  <li>Klik tombol «+» di bagian bawah daftar grup.</li>
+  <li>Masukkan nama grup di kotak dialog dan klik «OK».</li>
+  <li>Grup baru ditambahkan ke daftar dan dipilih secara otomatis.</li>
+</ol>
+
+<h3>6-2. Menghapus Grup</h3>
+<ol>
+  <li>Pilih grup yang ingin dihapus dari daftar grup.</li>
+  <li>Klik tombol «-» di bagian bawah daftar grup.</li>
+  <li>Klik «OK» di kotak konfirmasi untuk menghapus grup beserta semua prasetelnya.</li>
+</ol>
+<p><strong>Catatan:</strong> Grup «Bawaan» dan grup virtual (Semua, Terbaru, Favorit) tidak dapat dihapus.</p>
+
+<h3>6-3. Mengganti Nama Grup</h3>
+<p>Gunakan salah satu metode berikut:</p>
+<ul>
+  <li>Klik dua kali pada grup untuk membuka kotak dialog dan masukkan nama baru.</li>
+  <li>Klik kanan pada grup dan pilih «Ganti Nama» dari menu konteks.</li>
+</ul>
+<p><strong>Catatan:</strong> Grup virtual tidak dapat diganti namanya.</p>
+
+<h3>6-4. Mengurutkan Ulang Grup</h3>
+<p>Seret dan lepas grup nyata untuk mengubah urutannya. Grup virtual selalu berada di bagian atas daftar dan tidak dapat dipindah.</p>
+<hr>
+
+<h2 id="presets">7. Manajemen Prasetel</h2>
+
+<h3>7-1. Menambahkan Prasetel (Menyimpan)</h3>
+<ol>
+  <li>Atur efek yang ingin disimpan di «Efek Aktif».</li>
+  <li>Pilih grup tujuan di daftar grup (jika grup virtual dipilih, akan disimpan ke grup nyata pertama).</li>
+  <li>Klik tombol «+ (Tambah)» di bagian bawah kolom kanan.</li>
+  <li>Masukkan nama prasetel di kotak dialog dan klik «OK».</li>
+  <li>Konfigurasi efek saat ini disimpan sebagai prasetel dan ditambahkan ke daftar.</li>
+</ol>
+
+<h3>7-2. Menghapus Prasetel</h3>
+<ol>
+  <li>Pilih prasetel yang akan dihapus (Ctrl+klik atau Shift+klik untuk multi-pilih).</li>
+  <li>Klik tombol «- (Hapus)» atau klik kanan dan pilih «Hapus».</li>
+  <li>Klik «OK» di kotak konfirmasi untuk menghapus.</li>
+</ol>
+<p>Memilih beberapa prasetel dan menghapusnya akan menghapus semua prasetel yang dipilih sekaligus.</p>
+
+<h3>7-3. Mengganti Nama Prasetel</h3>
+<ul>
+  <li>Klik dua kali pada prasetel untuk membuka kotak dialog dan masukkan nama baru.</li>
+  <li>Klik kanan dan pilih «Ganti Nama».</li>
+</ul>
+
+<h3>7-4. Mengosongkan Prasetel (Mengosongkan Isi)</h3>
+<p>Menghapus semua efek yang tersimpan dalam prasetel, membiarkan prasetel kosong. Prasetel itu sendiri tetap ada.</p>
+<ol>
+  <li>Klik kanan pada prasetel yang dituju.</li>
+  <li>Pilih «Kosongkan Prasetel» dari menu konteks.</li>
+  <li>Klik «OK» di kotak konfirmasi.</li>
+</ol>
+
+<h3>7-5. Mengurutkan Ulang Prasetel</h3>
+<p>Seret dan lepas prasetel dalam daftar untuk mengubah urutannya. Pengurutan ulang tidak tersedia saat menampilkan grup virtual (Semua, Favorit, Terbaru).</p>
+<hr>
+
+<h2 id="virtual-groups">8. Grup Virtual</h2>
+<p>Grup virtual adalah grup khusus yang selalu muncul di bagian atas daftar grup. Grup ini tidak dapat dihapus, diganti namanya, atau diurutkan ulang.</p>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Nama Grup</th><th>Isi</th><th>Urutan</th></tr>
+  <tr><td>Semua</td><td>Menampilkan semua prasetel dari semua grup nyata.</td><td>Abjad (menaik)</td></tr>
+  <tr><td>Terbaru</td><td>Menampilkan 10 prasetel yang baru-baru ini diterapkan.</td><td>Terbaru diterapkan lebih dulu</td></tr>
+  <tr><td>Favorit</td><td>Menampilkan semua prasetel yang ditandai bintang.</td><td>Abjad (menaik)</td></tr>
+</table>
+<p>Saat grup virtual dipilih dan Anda menambahkan atau menempel prasetel, prasetel tersebut disimpan ke grup nyata pertama.</p>
+<hr>
+
+<h2 id="apply">9. Menerapkan Prasetel</h2>
+
+<h3>9-1. Menerapkan Satu Prasetel</h3>
+<ol>
+  <li>Pilih prasetel yang ingin diterapkan dari daftar.</li>
+  <li>Klik tombol «✓ (Terapkan)» atau klik kanan dan pilih «Terapkan».</li>
+  <li>Konfigurasi efek prasetel dimuat ke item di linimasa.</li>
+</ol>
+<p><strong>Menerapkan prasetel yang sama lagi:</strong> Jika Anda mencoba menerapkan prasetel yang isinya identik dengan efek saat ini, kotak konfirmasi akan muncul. Klik «OK» untuk menambahkan (menumpuk) efek di atas yang sudah ada. Klik «Batal» untuk membatalkan.</p>
+
+<h3>9-2. Menerapkan Beberapa Prasetel Sekaligus</h3>
+<ol>
+  <li>Pilih beberapa prasetel menggunakan Ctrl+klik atau Shift+klik.</li>
+  <li>Klik tombol «✓ (Terapkan)».</li>
+  <li>Efek dari semua prasetel yang dipilih digabungkan secara berurutan dan diterapkan.</li>
+</ol>
+<p>Tidak ada kotak konfirmasi duplikat yang ditampilkan untuk multi-pilih. Juga, saat 2 atau lebih prasetel dipilih, daftar «Terbaru» dan JSON prasetel tidak diperbarui.</p>
+
+<h3>9-3. Pembaruan Label Setelah Penerapan</h3>
+<p>Setelah menerapkan satu prasetel, label linimasa diperbarui untuk menampilkan «Efek Gabungan Aktif: 3 [NamaPrasetel]». Nama prasetel tetap ditampilkan meskipun efek diubah secara manual sesudahnya.</p>
+<hr>
+
+<h2 id="update">10. Memperbarui Prasetel</h2>
+<p>Menimpa prasetel yang dipilih dengan konfigurasi efek saat ini.</p>
+<ol>
+  <li>Pilih prasetel yang ingin diperbarui dari daftar.</li>
+  <li>Ubah efek di «Efek Aktif».</li>
+  <li>Konfirmasi bahwa tombol «↺ (Perbarui)» aktif (hanya diaktifkan saat ada perubahan).</li>
+  <li>Klik «↺ (Perbarui)» atau klik kanan dan pilih «Perbarui».</li>
+</ol>
+<p>
+<strong>Kapan tombol Perbarui menjadi aktif:</strong> Tombol hanya aktif saat prasetel yang dipilih sama dengan prasetel yang terakhir diterapkan dan konfigurasi efek saat ini berbeda dari yang tersimpan di prasetel. Jika parameter efek diubah, status tombol dievaluasi otomatis setelah debounce 50ms.
+</p>
+<hr>
+
+<h2 id="search">11. Pencarian Prasetel</h2>
+<p>Masukkan kata kunci di kotak pencarian untuk memfilter prasetel secara real time.</p>
+
+<h3>11-1. Beralih Mode Pencarian</h3>
+<p>Klik ikon filter di ujung kanan kotak pencarian untuk membuka menu dan mengubah target pencarian.</p>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Mode Pencarian</th><th>Target</th></tr>
+  <tr><td>Nama Prasetel (default)</td><td>Nama prasetel</td></tr>
+  <tr><td>Nama Efek</td><td>Label semua efek yang terkandung dalam prasetel (daftar dipisahkan baris baru)</td></tr>
+  <tr><td>Jumlah Efek</td><td>Jumlah efek dalam prasetel. Input numerik memprioritaskan pencocokan tepat; kembali ke pencocokan parsial jika tidak ada pencocokan tepat.</td></tr>
+  <tr><td>Data Mentah (JSON)</td><td>JSON mentah dari konfigurasi efek yang diserialisasi. Cari berdasarkan nama tipe efek atau nilai parameter.</td></tr>
+  <tr><td>Semua</td><td>Menampilkan prasetel yang cocok dengan nama, nama efek, atau JSON mentah</td></tr>
+</table>
+
+<h3>11-2. Pencarian dengan Ekspresi Reguler</h3>
+<p>Ekspresi reguler (tidak peka huruf besar-kecil) dapat digunakan di semua mode pencarian.</p>
+<ul>
+  <li>Contoh: <code>^blur</code> &rarr; Mencari prasetel yang namanya dimulai dengan «blur»</li>
+  <li>Contoh: <code>color|shadow</code> &rarr; Mencari prasetel yang namanya mengandung «color» atau «shadow»</li>
+  <li>Contoh: <code>[0-9]+</code> &rarr; Mencari prasetel yang namanya mengandung angka</li>
+</ul>
+<p>Jika pola ekspresi reguler yang tidak valid dimasukkan, pencarian kembali ke pencocokan parsial string yang tidak peka huruf besar-kecil.</p>
+<hr>
+
+<h2 id="favorite">12. Favorit</h2>
+<p>Tandai prasetel yang sering digunakan sebagai favorit untuk mengaksesnya dengan cepat dari grup virtual «Favorit».</p>
+
+<h3>12-1. Menandai / Membatalkan Tanda Favorit</h3>
+<p>Klik tombol bintang di awal setiap baris di daftar prasetel.</p>
+<ul>
+  <li>Bintang kuning (emas) menunjukkan prasetel ditandai sebagai favorit.</li>
+  <li>Bintang abu-abu menunjukkan bukan favorit.</li>
+</ul>
+<p>Perubahan disimpan ke file prasetel segera.</p>
+
+<h3>12-2. Melihat Grup Favorit</h3>
+<p>Pilih «Favorit» di daftar grup untuk menampilkan semua prasetel berbintang dalam urutan abjad. Jika Anda membatalkan tanda favorit prasetel saat melihat grup Favorit, prasetel tersebut langsung hilang dari daftar.</p>
+<hr>
+
+<h2 id="clipboard">13. Salin, Potong &amp; Tempel</h2>
+<p>Gunakan clipboard untuk menyalin, memotong, dan menempel prasetel. Data ditulis ke clipboard dalam format JSON yang sama dengan paket prasetel, sehingga Anda juga dapat memeriksanya dan mengeditnya di editor teks.</p>
+
+<h3>13-1. Salin</h3>
+<ol>
+  <li>Pilih prasetel yang akan disalin (multi-pilih didukung).</li>
+  <li>Klik kanan dan pilih «Salin».</li>
+</ol>
+<p>Prasetel asli tidak berubah.</p>
+
+<h3>13-2. Potong</h3>
+<ol>
+  <li>Pilih prasetel yang akan dipindahkan (multi-pilih didukung).</li>
+  <li>Klik kanan dan pilih «Potong».</li>
+</ol>
+<p>Prasetel disalin ke clipboard dan aslinya dihapus secara bersamaan. Tidak ada kotak konfirmasi yang ditampilkan.</p>
+
+<h3>13-3. Tempel</h3>
+<ol>
+  <li>Pilih grup tujuan di daftar grup.</li>
+  <li>Klik kanan pada area kosong di daftar prasetel atau prasetel mana pun dan pilih «Tempel».</li>
+</ol>
+<p>
+Hanya tersedia saat clipboard mengandung JSON paket prasetel yang valid.
+Prasetel yang ditempel diberi GUID baru (berbeda dari ID asli).
+Jika grup virtual dipilih, prasetel ditambahkan ke grup nyata pertama.
+</p>
+
+<h3>13-4. Format Data Clipboard</h3>
+<p>Data yang ditulis ke clipboard menggunakan format JSON berikut:</p>
+<pre>
+{
+  "FormatId": "CombinedEffect.PresetExchange",
+  "Version": 1,
+  "ExportedAtUtc": "2025-01-01T00:00:00+00:00",
+  "Presets": [
+    {
+      "Id": "...",
+      "Name": "Nama Prasetel",
+      "IsFavorite": false,
+      "SerializedEffects": "..."
+    }
+  ]
+}
+</pre>
+<hr>
+
+<h2 id="exchange">14. Ekspor &amp; Impor Prasetel</h2>
+<p>Prasetel dapat diekspor dan diimpor sebagai file paket (ekstensi <code>.ceprstpkg</code>), memungkinkan berbagi antar lingkungan dan pengguna.</p>
+
+<h3>14-1. Ekspor</h3>
+<ol>
+  <li>Pilih prasetel yang akan diekspor (Ctrl+klik atau Shift+klik untuk multi-pilih).</li>
+  <li>Klik kanan dan pilih «Ekspor».</li>
+  <li>Kotak dialog simpan file terbuka. Tentukan tujuan dan nama file, lalu simpan.</li>
+</ol>
+<ul>
+  <li>Prasetel tunggal: Nama prasetel digunakan sebagai nama file default (karakter yang tidak diizinkan dalam nama file diganti dengan _).</li>
+  <li>Beberapa prasetel: Nama paket default «CombinedEffect_Prasetel» digunakan.</li>
+</ul>
+
+<h3>14-2. Impor</h3>
+<ol>
+  <li>Pilih grup yang ingin ditambahi prasetel yang diimpor.</li>
+  <li>Klik kanan pada area kosong di daftar prasetel dan pilih «Impor».</li>
+  <li>Kotak dialog pemilihan file terbuka. Pilih file <code>.ceprstpkg</code> (beberapa file dapat dipilih sekaligus).</li>
+  <li>Prasetel yang diimpor ditambahkan ke grup saat ini.</li>
+</ol>
+<p>Prasetel yang diimpor diberi GUID baru sehingga tidak akan konflik dengan prasetel yang sudah ada.</p>
+
+<h3>14-3. Kompatibilitas Versi</h3>
+<p>File paket menyertakan nomor versi format. Versi saat ini adalah <code>1</code>. Pesan kesalahan ditampilkan jika Anda mencoba mengimpor paket dengan versi lebih tinggi dari yang didukung.</p>
+<hr>
+
+<h2 id="history">15. Riwayat Cuplikan &amp; Manajemen Cabang</h2>
+<p>Setiap prasetel memiliki jendela manajemen riwayat bergaya Git. Anda dapat menyimpan perubahan konfigurasi efek sebagai cuplikan dan mengelolanya dengan cabang.</p>
+
+<h3>15-1. Membuka Jendela Riwayat</h3>
+<ol>
+  <li>Klik kanan pada prasetel yang ingin dikelola.</li>
+  <li>Pilih «Manajemen Riwayat» dari menu konteks.</li>
+  <li>Jendela manajemen riwayat terbuka (satu jendela per prasetel).</li>
+</ol>
+
+<h3>15-2. Tata Letak Jendela Riwayat</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Panel</th><th>Keterangan</th></tr>
+  <tr><td>Kiri (daftar cabang)</td><td>Mencantumkan semua cabang untuk prasetel. Klik untuk memilih cabang; riwayat cuplikannya ditampilkan di tengah. Masukkan nama cabang di kotak teks di bawahnya dan klik «Buat Cabang Baru» untuk menambahkan cabang baru.</td></tr>
+  <tr><td>Tengah (daftar cuplikan)</td><td>Mencantumkan cuplikan dari HEAD cabang yang dipilih ke belakang. Setiap baris menampilkan ikon commit (diisi untuk HEAD saat ini), tag, pesan, tanggal/waktu, ringkasan diff, dan ID. Klik kanan untuk menu konteks. Masukkan pesan di bawahnya dan klik «Simpan Cuplikan Baru» untuk menyimpan konfigurasi saat ini. Gunakan tombol «Kembali ke Ini» di bawahnya untuk kembali ke cuplikan yang dipilih.</td></tr>
+  <tr><td>Kanan (tampilan diff)</td><td>Menampilkan perbedaan antara cuplikan yang dipilih dan konfigurasi efek saat ini. Penambahan ditandai hijau, penghapusan merah, dan modifikasi kuning. Perubahan jumlah efek dan nilai properti sebelum/sesudah ditampilkan dalam font Consolas.</td></tr>
+</table>
+
+<h3>15-3. Membuat Cuplikan</h3>
+<ol>
+  <li>Buka jendela manajemen riwayat.</li>
+  <li>Masukkan pesan yang mendeskripsikan perubahan di kotak teks di bagian bawah panel tengah.</li>
+  <li>Klik «Simpan Cuplikan Baru».</li>
+  <li>Konfigurasi efek prasetel saat ini disimpan sebagai cuplikan dan HEAD cabang yang dipilih diperbarui.</li>
+</ol>
+
+<h3>15-4. Kembali ke Cuplikan (Revert)</h3>
+<ol>
+  <li>Pilih cuplikan yang ingin dikembalikan.</li>
+  <li>Klik tombol «Kembali ke Ini».</li>
+  <li>Prasetel dan item Efek Gabungan di linimasa dikembalikan ke keadaan cuplikan yang dipilih.</li>
+</ol>
+
+<h3>15-5. Membuat Cabang</h3>
+<ol>
+  <li>Masukkan nama cabang baru di kotak teks di bagian bawah panel kiri.</li>
+  <li>Klik «Buat Cabang Baru».</li>
+  <li>Cabang baru dibuat mulai dari cuplikan yang saat ini dipilih (atau HEAD cabang saat ini).</li>
+</ol>
+
+<h3>15-6. Operasi Menu Konteks</h3>
+<p>Mengklik kanan cuplikan membuka menu konteks.</p>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Operasi</th><th>Keterangan</th></tr>
+  <tr><td>Gabungkan ke Saat Ini</td><td>Menambahkan efek cuplikan yang dipilih ke akhir efek saat ini.</td></tr>
+  <tr><td>Pertahankan Perubahan (Soft)</td><td>Memindahkan HEAD cabang yang dipilih ke cuplikan yang dipilih tanpa mengubah efek linimasa.</td></tr>
+  <tr><td>Buang Perubahan (Hard)</td><td>Melakukan Pertahankan Perubahan (Soft) dan Revert secara bersamaan.</td></tr>
+  <tr><td>Kelola Tag</td><td>Membuka jendela manajemen tag untuk cuplikan.</td></tr>
+</table>
+
+<h3>15-7. Membaca Ringkasan Diff</h3>
+<p>Ringkasan diff ditampilkan di kolom «Perubahan» di daftar cuplikan.</p>
+<ul>
+  <li>«Ditambahkan (+N)»: Cuplikan memiliki N efek lebih banyak dari keadaan saat ini</li>
+  <li>«Dihapus (N)»: Cuplikan memiliki N efek lebih sedikit dari keadaan saat ini</li>
+  <li>«Dimodifikasi»: Jumlah efek sama, tetapi parameter telah berubah</li>
+  <li>(kosong): Identik dengan konfigurasi efek saat ini</li>
+</ul>
+
+<h3>15-8. Lokasi Penyimpanan Data Riwayat</h3>
+<p>Data riwayat disimpan di folder <code>History/</code> di bawah direktori plugin. Subfolder dibuat per prasetel; info cabang disimpan sebagai <code>branches.json</code> dan setiap cuplikan sebagai <code>{ID}.json</code>.</p>
+<hr>
+
+<h2 id="tags">16. Manajemen Tag</h2>
+<p>Anda dapat melampirkan beberapa tag ke cuplikan untuk pengorganisasian. Tag ditampilkan dalam warna hijau di daftar cuplikan.</p>
+
+<h3>16-1. Menambahkan Tag</h3>
+<ol>
+  <li>Klik kanan pada cuplikan yang ingin diberi tag.</li>
+  <li>Pilih «Kelola Tag» dari menu konteks.</li>
+  <li>Jendela manajemen tag terbuka.</li>
+  <li>Masukkan nama tag di kotak teks di bagian atas dan klik «Tambah».</li>
+</ol>
+<p>Nama tag duplikat tidak diizinkan.</p>
+
+<h3>16-2. Menghapus Tag</h3>
+<ol>
+  <li>Buka jendela manajemen tag.</li>
+  <li>Klik tombol «Hapus» di sebelah tag yang ingin dihapus.</li>
+</ol>
+<hr>
+
+<h2 id="clear">17. Hapus Efek Sekaligus</h2>
+<p>Anda dapat menghapus semua efek yang dinonaktifkan (tidak dicentang) dari item Efek Gabungan sekaligus.</p>
+<ol>
+  <li>Klik kanan pada area kosong di daftar prasetel.</li>
+  <li>Pilih «Bersihkan» &rarr; «Hapus Efek yang Tidak Dipilih» dari menu konteks.</li>
+  <li>Klik «OK» di kotak konfirmasi.</li>
+  <li>Semua efek yang saat ini dinonaktifkan dihapus.</li>
+</ol>
+<p>Efek yang diaktifkan tidak terpengaruh. Jika tidak ada efek yang dinonaktifkan, tidak ada yang terjadi.</p>
+<hr>
+
+<h2 id="responsive">18. Antarmuka Responsif &amp; Tata Letak</h2>
+
+<h3>18-1. Menyesuaikan Tinggi Panel</h3>
+<p>Seret gagang ubah ukuran (garis ganda) di bagian bawah panel manajemen prasetel untuk mengubah tingginya. Tinggi minimum adalah 200px. Pengaturan disimpan saat Anda melepas seret dan dipulihkan saat startup berikutnya.</p>
+
+<h3>18-2. Menyesuaikan Lebar Kolom Grup</h3>
+<p>Seret pembagi kisi (batas antara daftar grup dan daftar prasetel) ke kiri atau kanan untuk menyesuaikan lebar kolom grup. Lebar minimum adalah 120px dan maksimum 400px. Pengaturan disimpan saat seret selesai.</p>
+
+<h3>18-3. Tata Letak Mobile</h3>
+<p>Saat lebar kontrol turun di bawah 400px, perubahan berikut terjadi:</p>
+<ul>
+  <li>Panel daftar grup disembunyikan.</li>
+  <li>Pembagi kisi disembunyikan.</li>
+  <li>Tombol menu hamburger (≡) muncul di sebelah kiri bilah pencarian.</li>
+  <li>Mengkliknya membuka daftar grup sebagai popup. Memilih grup menutup popup.</li>
+</ul>
+<p>Saat lebar kontrol kembali ke 400px atau lebih, tata letak otomatis beralih kembali ke mode desktop.</p>
+<hr>
+
+<h2 id="persistence">19. Penyimpanan Data &amp; Persistensi Aman</h2>
+<p>Semua data prasetel, konfigurasi grup, dan data riwayat disimpan sebagai file JSON. Mekanisme redundansi dan verifikasi integritas berikut mencegah kehilangan data akibat satu kegagalan.</p>
+
+<h3>19-1. Penulisan Atomik</h3>
+<p>Penulisan file mengikuti langkah-langkah berikut:</p>
+<ol>
+  <li>Menulis ke file sementara (<code>.tmp</code>).</li>
+  <li>Menggunakan <code>File.Replace</code> untuk menukar file sementara dengan file utama, dan memindahkan file lama ke cadangan (<code>.bak</code>).</li>
+  <li>Bahkan jika aplikasi crash saat penulisan, file utama atau cadangan selalu dalam keadaan valid.</li>
+</ol>
+
+<h3>19-2. Verifikasi CRC32</h3>
+<p>Checksum CRC32 dihitung dan ditambahkan ke file saat penulisan. Saat pembacaan, checksum diverifikasi; jika tidak cocok, file cadangan digunakan untuk pemulihan.</p>
+
+<h3>19-3. Penyimpanan Multi-Redundan SHA-256</h3>
+<p>Data prasetel dan registri grup disimpan di dua lokasi:</p>
+<ul>
+  <li><strong>Penyimpanan utama</strong>: Folder <code>presets/</code> di bawah direktori plugin</li>
+  <li><strong>Penyimpanan cadangan</strong>: Folder <code>user/backup/CombinedEffect/</code></li>
+</ul>
+<p>Saat startup, kedua lokasi dibandingkan dengan hash SHA-256 dan timestamp yang tersimpan di <code>CombinedEffectSettings</code>. Jika inkonsistensi terdeteksi, data yang benar digunakan untuk memperbaiki (menyembuhkan) yang lain secara otomatis.</p>
+
+<h3>19-4. Penulisan dengan Debounce</h3>
+<p>Operasi perubahan berturut-turut di-debounce selama 300ms (100ms untuk penghapusan) dan ditulis bersama, mengurangi beban I/O.</p>
+
+<h3>19-5. Logging</h3>
+<p>Log operasi dan log kesalahan disimpan di <code>user/log/CombinedEffect/</code>.</p>
+<ul>
+  <li>File log baru dibuat saat file saat ini melebihi 512 KB.</li>
+  <li>File log yang lebih dari 31 hari dihapus otomatis (diperiksa setiap jam).</li>
+</ul>
+<hr>
+
+<h2 id="migration">20. Migrasi dari Versi Lama</h2>
+<p>Jika file data versi lama ada di jalur berikut, migrasi otomatis dilakukan saat startup pertama.</p>
+<pre>%AppData%\YukkuriMovieMaker4\user\plugins\CombinedEffect\presets.json</pre>
+<p>Setelah migrasi, file lama diubah namanya menjadi <code>presets.json.migrated</code>. File lama tidak dihapus jika migrasi gagal.</p>
+<p>Migrasi mencakup:</p>
+<ul>
+  <li>Daftar grup dalam format lama (grup yang setara dengan virtual «Semua» dan «Favorit» dikecualikan)</li>
+  <li>Prasetel yang termasuk dalam setiap grup (nama, status favorit, konfigurasi efek)</li>
+</ul>
+<hr>
+
+<h2 id="files">21. Struktur File &amp; Folder</h2>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Jalur (relatif terhadap direktori plugin)</th><th>Isi</th></tr>
+  <tr><td><code>presets/</code></td><td>Folder penyimpanan data prasetel utama</td></tr>
+  <tr><td><code>presets/groups.json</code></td><td>Konfigurasi grup (nama grup dan daftar ID prasetel)</td></tr>
+  <tr><td><code>presets/{GUID}.json</code></td><td>Data setiap prasetel (nama, favorit, JSON konfigurasi efek)</td></tr>
+  <tr><td><code>presets/recent_ids.json</code></td><td>Daftar ID prasetel yang baru-baru ini digunakan (maks 10)</td></tr>
+  <tr><td><code>presets/UISettings.json</code></td><td>Pengaturan antarmuka (tinggi panel, lebar kolom grup)</td></tr>
+  <tr><td><code>History/</code></td><td>Folder penyimpanan data riwayat cuplikan</td></tr>
+  <tr><td><code>History/{GUID Prasetel}/branches.json</code></td><td>Daftar cabang untuk prasetel tersebut</td></tr>
+  <tr><td><code>History/{GUID Prasetel}/{GUID Cuplikan}.json</code></td><td>Data setiap cuplikan</td></tr>
+  <tr><td><code>user/backup/CombinedEffect/</code></td><td>Penyimpanan cadangan (relatif terhadap direktori instalasi YMM4)</td></tr>
+  <tr><td><code>user/log/CombinedEffect/</code></td><td>Folder penyimpanan file log (relatif terhadap direktori instalasi YMM4)</td></tr>
+</table>
+<p>Data prasetel disimpan di penyimpanan utama maupun cadangan. Jika satu hilang, yang lain dapat digunakan untuk pemulihan. Jika keduanya dihapus, prasetel tidak dapat dipulihkan.</p>
+<hr>
+
+<h2 id="multilang">22. Dukungan Multibahasa</h2>
+<p>Seluruh antarmuka beralih secara otomatis berdasarkan pengaturan bahasa YMM4. Tidak ada konfigurasi tambahan yang diperlukan.</p>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Kode Bahasa</th><th>Bahasa</th></tr>
+  <tr><td>ja-jp</td><td>Jepang</td></tr>
+  <tr><td>en-us</td><td>Inggris</td></tr>
+  <tr><td>zh-cn</td><td>Tionghoa Sederhana</td></tr>
+  <tr><td>zh-tw</td><td>Tionghoa Tradisional</td></tr>
+  <tr><td>ko-kr</td><td>Korea</td></tr>
+  <tr><td>es-es</td><td>Spanyol</td></tr>
+  <tr><td>ar-sa</td><td>Arab</td></tr>
+  <tr><td>id-id</td><td>Indonesia</td></tr>
+</table>
+<hr>
+
+<h2 id="params">23. Referensi Parameter</h2>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Parameter</th><th>Tipe</th><th>Default</th><th>Dapat Dianimasikan</th><th>Keterangan</th></tr>
+  <tr><td>Efek Aktif (Effects)</td><td>ImmutableList&lt;IVideoEffect&gt;</td><td>(kosong)</td><td>Tidak</td><td>Daftar efek video yang akan dikelola. Gunakan pemilih efek standar YMM4 untuk menambah, menghapus, mengurutkan ulang, dan mengaktifkan/menonaktifkan efek. Diproses sebagai pipeline dari atas ke bawah. Efek yang dinonaktifkan dilewati.</td></tr>
+  <tr><td>SelectedPresetJson</td><td>String (JSON)</td><td>(string kosong)</td><td>Tidak</td><td>Properti internal yang menyimpan informasi tentang prasetel yang saat ini diterapkan. Diatur otomatis saat prasetel diterapkan. Pengeditan langsung tidak direkomendasikan. Digunakan untuk menampilkan nama prasetel di label linimasa.</td></tr>
+  <tr><td>PresetManagerVisible</td><td>bool</td><td>true</td><td>Tidak</td><td>Flag internal yang mengontrol visibilitas panel manajemen prasetel. Dikecualikan dari serialisasi JSON ([JsonIgnore]).</td></tr>
+</table>
+
+<h3>Format Tampilan Label</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Keadaan</th><th>Format</th><th>Contoh</th></tr>
+  <tr><td>Tanpa prasetel diterapkan</td><td>{Nama Efek} Aktif: {N}</td><td>Efek Gabungan Aktif: 3</td></tr>
+  <tr><td>Prasetel diterapkan</td><td>{Nama Efek} Aktif: {N} [{Nama Prasetel}]</td><td>Efek Gabungan Aktif: 3 [Set Efek A]</td></tr>
+</table>
+<hr>
+
+<h2 id="operations">24. Referensi Cepat</h2>
+
+<h3>Operasi Grup</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Operasi</th><th>Metode</th><th>Batasan</th></tr>
+  <tr><td>Tambah grup</td><td>Tombol «+» di bagian bawah daftar grup</td><td>Tidak ada</td></tr>
+  <tr><td>Hapus grup</td><td>Tombol «-» di bagian bawah daftar grup</td><td>Grup bawaan dan virtual tidak dapat dihapus</td></tr>
+  <tr><td>Ganti nama grup</td><td>Klik dua kali, atau klik kanan &rarr; «Ganti Nama»</td><td>Grup virtual tidak dapat diganti namanya</td></tr>
+  <tr><td>Urutkan ulang grup</td><td>Seret dan lepas</td><td>Grup virtual tidak dapat dipindah</td></tr>
+</table>
+
+<h3>Operasi Prasetel</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Operasi</th><th>Metode</th><th>Catatan</th></tr>
+  <tr><td>Tambah prasetel</td><td>Tombol «+ (Tambah)»</td><td>Disimpan ke grup nyata pertama saat grup virtual dipilih</td></tr>
+  <tr><td>Hapus prasetel</td><td>Tombol «- (Hapus)», atau klik kanan &rarr; «Hapus»</td><td>Kotak konfirmasi ditampilkan. Multi-pilih didukung.</td></tr>
+  <tr><td>Ganti nama prasetel</td><td>Klik dua kali, atau klik kanan &rarr; «Ganti Nama»</td><td>Tidak ada</td></tr>
+  <tr><td>Urutkan ulang prasetel</td><td>Seret dan lepas</td><td>Tidak tersedia saat melihat grup virtual</td></tr>
+  <tr><td>Terapkan prasetel</td><td>Tombol «✓ (Terapkan)», atau klik kanan &rarr; «Terapkan»</td><td>Kotak konfirmasi untuk konten identik</td></tr>
+  <tr><td>Perbarui prasetel</td><td>Tombol «↺ (Perbarui)», atau klik kanan &rarr; «Perbarui»</td><td>Hanya aktif saat efek berubah</td></tr>
+  <tr><td>Kosongkan prasetel</td><td>Klik kanan &rarr; «Kosongkan Prasetel»</td><td>Kotak konfirmasi ditampilkan. Hanya tersedia saat prasetel memiliki 1+ efek.</td></tr>
+  <tr><td>Toggle favorit</td><td>Klik tombol bintang</td><td>Tidak ada</td></tr>
+  <tr><td>Salin</td><td>Klik kanan &rarr; «Salin»</td><td>Multi-pilih didukung</td></tr>
+  <tr><td>Potong</td><td>Klik kanan &rarr; «Potong»</td><td>Tanpa kotak konfirmasi. Multi-pilih didukung.</td></tr>
+  <tr><td>Tempel</td><td>Klik kanan &rarr; «Tempel»</td><td>Membutuhkan JSON valid di clipboard</td></tr>
+  <tr><td>Ekspor</td><td>Klik kanan &rarr; «Ekspor»</td><td>Multi-pilih. Format .ceprstpkg.</td></tr>
+  <tr><td>Impor</td><td>Klik kanan area kosong &rarr; «Impor»</td><td>Beberapa file dapat dipilih</td></tr>
+  <tr><td>Hapus efek yang tidak dipilih</td><td>Klik kanan area kosong &rarr; «Bersihkan» &rarr; «Hapus Efek yang Tidak Dipilih»</td><td>Kotak konfirmasi ditampilkan</td></tr>
+  <tr><td>Buka riwayat</td><td>Klik kanan &rarr; «Manajemen Riwayat»</td><td>Satu jendela per prasetel</td></tr>
+</table>
+
+<h3>Operasi Riwayat</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Operasi</th><th>Metode</th><th>Keterangan</th></tr>
+  <tr><td>Simpan cuplikan</td><td>Masukkan pesan &rarr; Tombol «Simpan Cuplikan Baru»</td><td>Dinonaktifkan jika pesan kosong</td></tr>
+  <tr><td>Kembali ke cuplikan</td><td>Pilih cuplikan &rarr; Tombol «Kembali ke Ini»</td><td>Diterapkan ke prasetel dan linimasa</td></tr>
+  <tr><td>Buat cabang</td><td>Masukkan nama cabang &rarr; Tombol «Buat Cabang Baru»</td><td>Dinonaktifkan jika nama cabang kosong</td></tr>
+  <tr><td>Gabungkan</td><td>Klik kanan cuplikan &rarr; «Gabungkan ke Saat Ini»</td><td>Menambahkan efek ke akhir saat ini</td></tr>
+  <tr><td>Pertahankan Perubahan (Soft Reset)</td><td>Klik kanan cuplikan &rarr; «Pertahankan Perubahan (Soft)»</td><td>Hanya memindahkan HEAD, tanpa perubahan efek</td></tr>
+  <tr><td>Buang Perubahan (Hard Reset)</td><td>Klik kanan cuplikan &rarr; «Buang Perubahan (Hard)»</td><td>Soft Reset + Revert secara bersamaan</td></tr>
+  <tr><td>Kelola tag</td><td>Klik kanan cuplikan &rarr; «Kelola Tag»</td><td>Membuka jendela manajemen tag</td></tr>
+</table>
+<hr>
+
+<h2 id="caution">25. Catatan &amp; Peringatan</h2>
+<ul>
+  <li>Output format AviUtl (.exo) tidak didukung.</li>
+  <li>Menyarangkan «Efek Gabungan» di dalam «Efek Gabungan» lain tidak direkomendasikan.</li>
+  <li>Grup virtual «Semua», «Favorit», dan «Terbaru» tidak dapat dihapus, diganti namanya, atau diurutkan ulang.</li>
+  <li>Grup «Bawaan» tidak dapat dihapus.</li>
+  <li>Menambahkan atau menempel prasetel saat grup virtual dipilih menyimpannya ke grup nyata pertama.</li>
+  <li>Mengimpor file paket memberikan ID baru yang berbeda dari GUID asli. Oleh karena itu, prasetel yang diimpor tidak mewarisi riwayat cuplikan.</li>
+  <li>Operasi Potong menghapus prasetel tanpa kotak konfirmasi. Tindakan ini tidak dapat langsung dibatalkan, jadi gunakan dengan hati-hati.</li>
+  <li>Data prasetel disimpan di penyimpanan utama dan cadangan. Menghapus satu folder mungkin masih memungkinkan pemulihan, tetapi menghapus keduanya akan mengakibatkan kehilangan data permanen.</li>
+  <li>Data riwayat disimpan di folder <code>History/</code>. Menghapus folder ini akan menghapus semua riwayat.</li>
+  <li>Riwayat cuplikan bertumbuh tanpa batas. Jika ada terlalu banyak cuplikan yang tidak diperlukan, Anda dapat menghapus file <code>.json</code> yang tidak diinginkan secara manual di folder <code>History/{GUID Prasetel}/</code> (jangan hapus <code>branches.json</code>).</li>
+  <li>Hanya efek yang didukung oleh sistem plugin YMM4 yang disimpan sebagai bagian dari konfigurasi efek prasetel. Efek yang tidak didukung mungkin dilewati saat pemuatan.</li>
+  <li>Karena penulisan dengan debounce, ada penundaan hingga 300ms antara operasi perubahan dan penulisan file yang sebenarnya. Jika YMM4 segera dihentikan paksa, operasi terakhir mungkin tidak tersimpan.</li>
+</ul>
+<hr>
+
+<h2 id="license">26. Penafian &amp; Lisensi</h2>
+<p>Plugin ini dirilis di bawah Lisensi MIT.</p>
+<p>
+<strong>PERANGKAT LUNAK INI DISEDIAKAN «APA ADANYA», TANPA GARANSI DALAM BENTUK APA PUN, TERSURAT MAUPUN TERSIRAT, TERMASUK NAMUN TIDAK TERBATAS PADA GARANSI KELAYAKAN JUAL, KESESUAIAN UNTUK TUJUAN TERTENTU, DAN NON-PELANGGARAN.</strong>
+</p>
+<p>Penulis tidak bertanggung jawab atas kerusakan apa pun yang timbul dari penggunaan atau ketidakmampuan menggunakan plugin ini. Gunakan dengan risiko Anda sendiri.</p>
+<p>
+Penulis: routersys &nbsp;/&nbsp;
+Lisensi: <a href="https://github.com/routersys/YMM4-CombinedEffect/blob/main/LICENSE">MIT License</a> &nbsp;/&nbsp;
+Repositori: <a href="https://github.com/routersys/YMM4-CombinedEffect">https://github.com/routersys/YMM4-CombinedEffect</a>
+</p>
+<hr>
+<p>Akhir dokumen.</p>
+
+</body>
+</html>

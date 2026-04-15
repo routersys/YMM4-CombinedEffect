@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Combined Effect User Manual</title>
+</head>
+<body>
+
+<p>
+[<a href="index.htm">日本語</a>]
+[<strong>English</strong>]
+[<a href="index_zh-cn.htm">中文（简体）</a>]
+[<a href="index_zh-tw.htm">中文（繁體）</a>]
+[<a href="index_ko.htm">한국어</a>]
+[<a href="index_es.htm">Español</a>]
+[<a href="index_ar.htm">العربية</a>]
+[<a href="index_id.htm">Indonesia</a>]
+</p>
+
+<h1>Combined Effect for YMM4 — User Manual</h1>
+<p>Version: 2.1.0 &nbsp;/&nbsp; Supported OS: Windows 10 / 11 (64bit) &nbsp;/&nbsp; Runtime: .NET 10.0</p>
+<hr>
+
+<h2>Table of Contents</h2>
+<ol>
+  <li><a href="#overview">Overview</a></li>
+  <li><a href="#requirements">System Requirements</a></li>
+  <li><a href="#install">Installation</a></li>
+  <li><a href="#quickstart">Getting Started</a></li>
+  <li><a href="#ui">UI Layout</a></li>
+  <li><a href="#groups">Group Management</a></li>
+  <li><a href="#presets">Preset Management</a></li>
+  <li><a href="#virtual-groups">Virtual Groups</a></li>
+  <li><a href="#apply">Applying Presets</a></li>
+  <li><a href="#update">Updating Presets</a></li>
+  <li><a href="#search">Preset Search</a></li>
+  <li><a href="#favorite">Favorites</a></li>
+  <li><a href="#clipboard">Copy, Cut &amp; Paste</a></li>
+  <li><a href="#exchange">Export &amp; Import Presets</a></li>
+  <li><a href="#history">Snapshot History &amp; Branch Management</a></li>
+  <li><a href="#tags">Tag Management</a></li>
+  <li><a href="#clear">Bulk Delete Effects</a></li>
+  <li><a href="#responsive">Responsive UI &amp; Layout</a></li>
+  <li><a href="#persistence">Data Storage &amp; Safe Persistence</a></li>
+  <li><a href="#migration">Migration from Older Versions</a></li>
+  <li><a href="#files">File &amp; Folder Structure</a></li>
+  <li><a href="#multilang">Multilingual Support</a></li>
+  <li><a href="#params">Parameter Reference</a></li>
+  <li><a href="#operations">Quick Reference</a></li>
+  <li><a href="#caution">Notes &amp; Cautions</a></li>
+  <li><a href="#license">Disclaimer &amp; License</a></li>
+</ol>
+<hr>
+
+<h2 id="overview">1. Overview</h2>
+<p>
+"Combined Effect" is a video effect plugin for YukkuriMovieMaker4 (YMM4).
+It allows you to store multiple video effects inside a single "Combined Effect" item, and manage them through grouping, preset saving, and recall.
+</p>
+<p>Key features:</p>
+<ul>
+  <li>Apply multiple effects in sequence within a single item</li>
+  <li>Save, recall, and share named presets</li>
+  <li>Organize presets with three virtual group types: All, Recent, and Favorites</li>
+  <li>Git-like snapshot history and branch management</li>
+  <li>Atomic writes with CRC32 verification and SHA-256 multi-redundant persistence</li>
+  <li>Export and import preset package files (.ceprstpkg)</li>
+  <li>Clipboard-based copy, cut, and paste</li>
+  <li>Multi-axis search with regular expression support</li>
+  <li>8-language UI (Japanese, English, Simplified Chinese, Traditional Chinese, Korean, Spanish, Arabic, Indonesian)</li>
+  <li>Responsive UI that automatically switches to a mobile layout below 400px width</li>
+</ul>
+<p>
+The timeline label displays the current effect count and applied preset name, e.g. "Combined Effect Active: 3 [PresetName]", making it easy to identify contents at a glance.
+</p>
+<p>
+<strong>AviUtl output (.exo) is not supported.</strong>
+</p>
+<hr>
+
+<h2 id="requirements">2. System Requirements</h2>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Item</th><th>Requirement</th></tr>
+  <tr><td>OS</td><td>Windows 10 / 11 (64bit)</td></tr>
+  <tr><td>YukkuriMovieMaker4</td><td>Latest version recommended</td></tr>
+  <tr><td>Runtime</td><td>.NET 10.0</td></tr>
+  <tr><td>GPU</td><td>Direct2D compatible GPU</td></tr>
+</table>
+<hr>
+
+<h2 id="install">3. Installation</h2>
+<ol>
+  <li>Download the latest <code>.ymme</code> file from the <a href="https://github.com/routersys/YMM4-CombinedEffect/releases">Releases</a> page on GitHub.</li>
+  <li>Make sure YMM4 is not running.</li>
+  <li>Double-click the downloaded <code>.ymme</code> file to install.</li>
+  <li>Launch YMM4 and select an item on the timeline.</li>
+  <li>Select <strong>"Combined Effect"</strong> from the Add Video Effect menu.</li>
+</ol>
+<p>After installation, the preset management panel and effect list will appear in the properties panel.</p>
+<hr>
+
+<h2 id="quickstart">4. Getting Started</h2>
+<ol>
+  <li>Select a video or image item on the timeline.</li>
+  <li>Add "Combined Effect" from the Add Video Effect menu.</li>
+  <li>Add and configure effects in the "Active Effects" section at the bottom of the properties panel.</li>
+  <li>Click the "+ (Add)" button in the preset management panel, enter a name, and save the preset.</li>
+  <li>To apply the same configuration to another item, select the preset and click the "✓ (Apply)" button.</li>
+</ol>
+<hr>
+
+<h2 id="ui">5. UI Layout</h2>
+<p>The properties panel displays the following sections from top to bottom.</p>
+
+<h3>5-1. Preset Management Panel (PresetManagerControl)</h3>
+<p>This is the main area for managing presets, divided into two columns.</p>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Area</th><th>Description</th></tr>
+  <tr><td>Left column (Group list)</td><td>Displays user-defined groups and virtual groups (All, Recent, Favorites). Click to select, double-click to rename, drag and drop to reorder (virtual groups cannot be moved). Use the + button to add groups and the - button to remove them.</td></tr>
+  <tr><td>Right column top (Search bar)</td><td>Filter presets by keyword. Click the icon on the right to change the search target.</td></tr>
+  <tr><td>Right column center (Preset list)</td><td>Lists presets in the selected group. Each row shows a star (favorite toggle), name, effect count, and an info icon (tooltip shows effect list). Multiple selection (Ctrl+click, Shift+click) is supported.</td></tr>
+  <tr><td>Right column bottom (Action buttons)</td><td>From left: Add (+), Remove (-), Update (↺), Apply (✓). Buttons expand their labels on mouse hover.</td></tr>
+  <tr><td>Bottom resize handle</td><td>Drag to change the panel height.</td></tr>
+</table>
+
+<h3>5-2. Grid Splitter</h3>
+<p>Drag the border between the two columns to adjust the group column width. The value is restored on next launch.</p>
+
+<h3>5-3. Mobile Layout (below 400px width)</h3>
+<p>When the control width drops below 400px, the group list is hidden and a hamburger menu button (≡) appears. Clicking it opens the group list as a popup.</p>
+
+<h3>5-4. Active Effects (VideoEffectSelector)</h3>
+<p>The YMM4 standard video effect selector is displayed below the preset management panel. Use it to add, remove, reorder, and enable/disable effects.</p>
+<hr>
+
+<h2 id="groups">6. Group Management</h2>
+<p>Presets can be organized into groups. There are "real groups" and "virtual groups".</p>
+
+<h3>6-1. Adding a Group</h3>
+<ol>
+  <li>Click the "+" button at the bottom of the group list.</li>
+  <li>Enter a group name in the dialog and click "OK".</li>
+  <li>The new group is added to the list and automatically selected.</li>
+</ol>
+
+<h3>6-2. Removing a Group</h3>
+<ol>
+  <li>Select the group you want to remove from the group list.</li>
+  <li>Click the "-" button at the bottom of the group list.</li>
+  <li>Click "OK" in the confirmation dialog to delete the group and all its presets.</li>
+</ol>
+<p><strong>Note:</strong> The "Default" group and virtual groups (All, Recent, Favorites) cannot be deleted.</p>
+
+<h3>6-3. Renaming a Group</h3>
+<p>Use one of the following methods:</p>
+<ul>
+  <li>Double-click the group to open a dialog and enter a new name.</li>
+  <li>Right-click the group and select "Rename" from the context menu.</li>
+</ul>
+<p><strong>Note:</strong> Virtual groups cannot be renamed.</p>
+
+<h3>6-4. Reordering Groups</h3>
+<p>Drag and drop real groups to change their order. Virtual groups are always fixed at the top of the list and cannot be moved.</p>
+<hr>
+
+<h2 id="presets">7. Preset Management</h2>
+
+<h3>7-1. Adding a Preset (Saving)</h3>
+<ol>
+  <li>Set up the effects you want to save in "Active Effects".</li>
+  <li>Select the target group in the group list (if a virtual group is selected, it will be saved to the first real group).</li>
+  <li>Click the "+ (Add)" button at the bottom of the right column.</li>
+  <li>Enter a preset name in the dialog and click "OK".</li>
+  <li>The current effect configuration is saved as a preset and added to the list.</li>
+</ol>
+
+<h3>7-2. Removing a Preset</h3>
+<ol>
+  <li>Select the preset(s) to remove (Ctrl+click or Shift+click for multiple).</li>
+  <li>Click the "- (Remove)" button or right-click and select "Remove".</li>
+  <li>Click "OK" in the confirmation dialog to delete.</li>
+</ol>
+<p>Selecting multiple presets and deleting will remove all selected presets at once.</p>
+
+<h3>7-3. Renaming a Preset</h3>
+<ul>
+  <li>Double-click the preset to open a dialog and enter a new name.</li>
+  <li>Right-click and select "Rename".</li>
+</ul>
+
+<h3>7-4. Clearing a Preset (Emptying Contents)</h3>
+<p>Removes all effects stored in a preset, leaving the preset itself empty.</p>
+<ol>
+  <li>Right-click the target preset.</li>
+  <li>Select "Empty Preset" from the context menu.</li>
+  <li>Click "OK" in the confirmation dialog.</li>
+</ol>
+
+<h3>7-5. Reordering Presets</h3>
+<p>Drag and drop presets within the list to change their order. Reordering is not available while viewing virtual groups (All, Favorites, Recent).</p>
+<hr>
+
+<h2 id="virtual-groups">8. Virtual Groups</h2>
+<p>Virtual groups are special groups that always appear at the top of the group list. They cannot be deleted, renamed, or reordered.</p>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Group Name</th><th>Contents</th><th>Sort Order</th></tr>
+  <tr><td>All</td><td>Displays all presets from all real groups.</td><td>Alphabetical (ascending)</td></tr>
+  <tr><td>Recent</td><td>Shows the last 10 recently applied presets.</td><td>Most recently applied first</td></tr>
+  <tr><td>Favorites</td><td>Displays all star-marked presets.</td><td>Alphabetical (ascending)</td></tr>
+</table>
+<p>When a virtual group is selected and you add or paste a preset, it is saved to the first real group.</p>
+<hr>
+
+<h2 id="apply">9. Applying Presets</h2>
+
+<h3>9-1. Applying a Single Preset</h3>
+<ol>
+  <li>Select the preset you want to apply from the list.</li>
+  <li>Click the "✓ (Apply)" button or right-click and select "Apply".</li>
+  <li>The preset's effect configuration is loaded into the item on the timeline.</li>
+</ol>
+<p><strong>Applying the same preset again:</strong> If you try to apply a preset whose content is identical to the current effects, a confirmation dialog appears. Click "OK" to append (stack) the effects on top of the existing ones. Click "Cancel" to abort.</p>
+
+<h3>9-2. Applying Multiple Presets at Once</h3>
+<ol>
+  <li>Select multiple presets using Ctrl+click or Shift+click.</li>
+  <li>Click the "✓ (Apply)" button.</li>
+  <li>The effects from all selected presets are merged in order and applied.</li>
+</ol>
+<p>No duplicate confirmation dialog is shown for multi-selection. Also, when 2 or more presets are selected, the "Recent" list and preset JSON are not updated.</p>
+
+<h3>9-3. Label Update After Applying</h3>
+<p>After applying a single preset, the timeline label is updated to show "Combined Effect Active: 3 [PresetName]". The preset name remains displayed even if effects are manually changed afterwards.</p>
+<hr>
+
+<h2 id="update">10. Updating Presets</h2>
+<p>Overwrites the selected preset with the current effect configuration.</p>
+<ol>
+  <li>Select the preset you want to update from the list.</li>
+  <li>Modify the effects in "Active Effects".</li>
+  <li>Confirm that the "↺ (Update)" button is active (only enabled when there are changes).</li>
+  <li>Click "↺ (Update)" or right-click and select "Update".</li>
+</ol>
+<p>
+<strong>When the Update button becomes active:</strong> The button is enabled only when the selected preset is the same as the most recently applied preset, and the current effect configuration differs from what is saved in the preset. If an effect parameter is changed, the button state is automatically evaluated after a 50ms debounce.
+</p>
+<hr>
+
+<h2 id="search">11. Preset Search</h2>
+<p>Enter a keyword in the search box to filter presets in real time.</p>
+
+<h3>11-1. Switching Search Mode</h3>
+<p>Click the filter icon at the right end of the search box to open a menu and switch the search target.</p>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Search Mode</th><th>Target</th></tr>
+  <tr><td>Preset Name (default)</td><td>The name of the preset</td></tr>
+  <tr><td>Effect Name</td><td>Labels of all effects contained in the preset (newline-separated list)</td></tr>
+  <tr><td>Effect Count</td><td>Number of effects in the preset. Numeric input prioritizes exact match; falls back to partial string match if no exact match is found.</td></tr>
+  <tr><td>Raw Data (JSON)</td><td>Raw JSON of the serialized effect configuration. Search by effect type name or parameter values.</td></tr>
+  <tr><td>All</td><td>Displays presets matching the name, effect names, or raw JSON</td></tr>
+</table>
+
+<h3>11-2. Regular Expression Search</h3>
+<p>Regular expressions (case-insensitive) can be used in all search modes.</p>
+<ul>
+  <li>Example: <code>^blur</code> &rarr; Search for presets whose name starts with "blur"</li>
+  <li>Example: <code>color|shadow</code> &rarr; Search for presets whose name contains "color" or "shadow"</li>
+  <li>Example: <code>[0-9]+</code> &rarr; Search for presets whose name contains a number</li>
+</ul>
+<p>If an invalid regex pattern is entered, the search falls back to case-insensitive partial string matching.</p>
+<hr>
+
+<h2 id="favorite">12. Favorites</h2>
+<p>Mark frequently used presets as favorites to access them quickly from the "Favorites" virtual group.</p>
+
+<h3>12-1. Marking / Unmarking Favorites</h3>
+<p>Click the star button at the left end of each preset row.</p>
+<ul>
+  <li>A yellow (gold) star indicates the preset is marked as a favorite.</li>
+  <li>A gray star indicates it is not a favorite.</li>
+</ul>
+<p>Changes are saved to the preset file immediately.</p>
+
+<h3>12-2. Viewing the Favorites Group</h3>
+<p>Select "Favorites" in the group list to display all starred presets in alphabetical order. If you unmark a preset while viewing the Favorites group, it disappears from the list immediately.</p>
+<hr>
+
+<h2 id="clipboard">13. Copy, Cut &amp; Paste</h2>
+<p>Use the clipboard to copy, cut, and paste presets. Data is written to the clipboard in the same JSON format as preset packages, so you can also inspect and edit it in a text editor.</p>
+
+<h3>13-1. Copy</h3>
+<ol>
+  <li>Select the preset(s) to copy (multiple selection supported).</li>
+  <li>Right-click and select "Copy".</li>
+</ol>
+<p>The original presets remain unchanged.</p>
+
+<h3>13-2. Cut</h3>
+<ol>
+  <li>Select the preset(s) to move (multiple selection supported).</li>
+  <li>Right-click and select "Cut".</li>
+</ol>
+<p>The presets are copied to the clipboard and the originals are deleted simultaneously. No confirmation dialog is shown.</p>
+
+<h3>13-3. Paste</h3>
+<ol>
+  <li>Select the destination group in the group list.</li>
+  <li>Right-click on a blank area of the preset list or any preset and select "Paste".</li>
+</ol>
+<p>
+This is only available when the clipboard contains valid preset package JSON.
+Pasted presets are assigned new GUIDs (different from the original IDs).
+If a virtual group is selected, the presets are added to the first real group.
+</p>
+
+<h3>13-4. Clipboard Data Format</h3>
+<p>The data written to the clipboard uses the following JSON format:</p>
+<pre>
+{
+  "FormatId": "CombinedEffect.PresetExchange",
+  "Version": 1,
+  "ExportedAtUtc": "2025-01-01T00:00:00+00:00",
+  "Presets": [
+    {
+      "Id": "...",
+      "Name": "Preset Name",
+      "IsFavorite": false,
+      "SerializedEffects": "..."
+    }
+  ]
+}
+</pre>
+<hr>
+
+<h2 id="exchange">14. Export &amp; Import Presets</h2>
+<p>Presets can be exported and imported as package files (extension <code>.ceprstpkg</code>), enabling sharing between environments and users.</p>
+
+<h3>14-1. Export</h3>
+<ol>
+  <li>Select the preset(s) to export (Ctrl+click or Shift+click for multiple).</li>
+  <li>Right-click and select "Export".</li>
+  <li>A file save dialog opens. Specify a destination and file name, then save.</li>
+</ol>
+<ul>
+  <li>Single preset: The preset name is used as the default file name (characters not allowed in file names are replaced with _).</li>
+  <li>Multiple presets: The default bundle name "CombinedEffect_Presets" is used.</li>
+</ul>
+
+<h3>14-2. Import</h3>
+<ol>
+  <li>Select the group to which you want to add imported presets.</li>
+  <li>Right-click on a blank area of the preset list and select "Import".</li>
+  <li>A file selection dialog opens. Select a <code>.ceprstpkg</code> file (multiple files can be selected at once).</li>
+  <li>The imported presets are added to the current group.</li>
+</ol>
+<p>Imported presets are assigned new GUIDs, so they will not conflict with existing presets.</p>
+
+<h3>14-3. Version Compatibility</h3>
+<p>Package files include a format version number. The current version is <code>1</code>. An error message is displayed if you try to import a package with a version higher than what is supported.</p>
+<hr>
+
+<h2 id="history">15. Snapshot History &amp; Branch Management</h2>
+<p>Each preset has a Git-like history management window. You can save effect configuration changes as snapshots and manage them with branches.</p>
+
+<h3>15-1. Opening the History Window</h3>
+<ol>
+  <li>Right-click the preset you want to manage.</li>
+  <li>Select "History Management" from the context menu.</li>
+  <li>The history management window opens (one window per preset).</li>
+</ol>
+
+<h3>15-2. History Window Layout</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Panel</th><th>Description</th></tr>
+  <tr><td>Left (Branch list)</td><td>Lists all branches for the preset. Click to select a branch; its snapshot history is shown in the center. Enter a branch name in the text box at the bottom and click "Create New Branch" to add a new branch.</td></tr>
+  <tr><td>Center (Snapshot list)</td><td>Lists snapshots from the HEAD of the selected branch backwards. Each row shows a commit icon (filled for current HEAD), tags, message, date/time, diff summary, and ID. Right-click for a context menu. Enter a message at the bottom and click "Save New Snapshot" to save the current configuration. Use the "Revert to This" button at the bottom to roll back to the selected snapshot.</td></tr>
+  <tr><td>Right (Diff view)</td><td>Shows the diff between the selected snapshot and the current effect configuration. Additions are green, deletions are red, and modifications are yellow. Effect count changes and before/after property values are displayed in Consolas font.</td></tr>
+</table>
+
+<h3>15-3. Creating a Snapshot</h3>
+<ol>
+  <li>Open the history management window.</li>
+  <li>Enter a message describing the changes in the text box at the bottom of the center panel.</li>
+  <li>Click "Save New Snapshot".</li>
+  <li>The current preset's effect configuration is saved as a snapshot and the HEAD of the selected branch is updated.</li>
+</ol>
+
+<h3>15-4. Reverting to a Snapshot</h3>
+<ol>
+  <li>Select the snapshot you want to revert to.</li>
+  <li>Click the "Revert to This" button.</li>
+  <li>The preset and the Combined Effect item on the timeline are restored to the state of the selected snapshot.</li>
+</ol>
+
+<h3>15-5. Creating a Branch</h3>
+<ol>
+  <li>Enter a new branch name in the text box at the bottom of the left panel.</li>
+  <li>Click "Create New Branch".</li>
+  <li>A new branch is created starting from the currently selected snapshot (or the current branch HEAD).</li>
+</ol>
+
+<h3>15-6. Context Menu Operations</h3>
+<p>Right-clicking a snapshot opens a context menu.</p>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Operation</th><th>Description</th></tr>
+  <tr><td>Merge to Current</td><td>Appends the selected snapshot's effects to the end of the current effects.</td></tr>
+  <tr><td>Keep Changes (Soft)</td><td>Moves the HEAD of the selected branch to the chosen snapshot without changing the timeline effects.</td></tr>
+  <tr><td>Discard Changes (Hard)</td><td>Performs Keep Changes (Soft) and Revert simultaneously.</td></tr>
+  <tr><td>Manage Tags</td><td>Opens the tag management window for the snapshot.</td></tr>
+</table>
+
+<h3>15-7. Reading the Diff Summary</h3>
+<p>A diff summary is shown in the "Changes" column of the snapshot list.</p>
+<ul>
+  <li>"Added (+N)": The snapshot has N more effects than the current state</li>
+  <li>"Removed (N)": The snapshot has N fewer effects than the current state</li>
+  <li>"Modified": Same effect count, but parameters have changed</li>
+  <li>(empty): Identical to the current effect configuration</li>
+</ul>
+
+<h3>15-8. History Data Storage Location</h3>
+<p>History data is saved in the <code>History/</code> folder under the plugin directory. A subfolder is created per preset; branch info is stored as <code>branches.json</code> and each snapshot as <code>{ID}.json</code>.</p>
+<hr>
+
+<h2 id="tags">16. Tag Management</h2>
+<p>You can attach multiple tags to snapshots for organization. Tags are displayed in green in the snapshot list.</p>
+
+<h3>16-1. Adding a Tag</h3>
+<ol>
+  <li>Right-click the snapshot you want to tag.</li>
+  <li>Select "Manage Tags" from the context menu.</li>
+  <li>The tag management window opens.</li>
+  <li>Enter a tag name in the text box at the top and click "Add".</li>
+</ol>
+<p>Duplicate tag names are not allowed.</p>
+
+<h3>16-2. Removing a Tag</h3>
+<ol>
+  <li>Open the tag management window.</li>
+  <li>Click the "Remove" button next to the tag you want to delete.</li>
+</ol>
+<hr>
+
+<h2 id="clear">17. Bulk Delete Effects</h2>
+<p>You can remove all disabled (unchecked) effects from the Combined Effect item at once.</p>
+<ol>
+  <li>Right-click on a blank area of the preset list.</li>
+  <li>Select "Clear" &rarr; "Remove Unselected Effects" from the context menu.</li>
+  <li>Click "OK" in the confirmation dialog.</li>
+  <li>All currently disabled effects are removed.</li>
+</ol>
+<p>Enabled effects are not affected. If there are no disabled effects, nothing happens.</p>
+<hr>
+
+<h2 id="responsive">18. Responsive UI &amp; Layout</h2>
+
+<h3>18-1. Adjusting Panel Height</h3>
+<p>Drag the resize handle (double line) at the bottom of the preset management panel to change its height. The minimum height is 200px. The setting is saved when you release the drag and is restored on next launch.</p>
+
+<h3>18-2. Adjusting Group Column Width</h3>
+<p>Drag the grid splitter (border between the group list and preset list) left or right to adjust the group column width. The minimum width is 120px and the maximum is 400px. The setting is saved when dragging is complete.</p>
+
+<h3>18-3. Mobile Layout</h3>
+<p>When the control width drops below 400px, the following changes occur:</p>
+<ul>
+  <li>The group list panel is hidden.</li>
+  <li>The grid splitter is hidden.</li>
+  <li>A hamburger menu button (≡) appears to the left of the search bar.</li>
+  <li>Clicking it opens the group list as a popup. Selecting a group closes the popup.</li>
+</ul>
+<p>When the control width returns to 400px or more, the layout automatically switches back to desktop mode.</p>
+<hr>
+
+<h2 id="persistence">19. Data Storage &amp; Safe Persistence</h2>
+<p>All preset data, group configurations, and history data are saved as JSON files. The following mechanisms for redundancy and integrity verification prevent data loss from a single failure.</p>
+
+<h3>19-1. Atomic Write</h3>
+<p>File writes follow these steps:</p>
+<ol>
+  <li>Write to a temporary file (<code>.tmp</code>).</li>
+  <li>Use <code>File.Replace</code> to swap the temp file with the main file, and move the old file to backup (<code>.bak</code>).</li>
+  <li>Even if the application crashes mid-write, either the main or backup file is always in a valid state.</li>
+</ol>
+
+<h3>19-2. CRC32 Verification</h3>
+<p>A CRC32 checksum is calculated and appended to the file on write. On read, the checksum is verified; if it does not match, the backup file is used for recovery.</p>
+
+<h3>19-3. SHA-256 Multi-Redundant Storage</h3>
+<p>Preset data and group registry are saved in two locations:</p>
+<ul>
+  <li><strong>Main storage</strong>: The <code>presets/</code> folder under the plugin directory</li>
+  <li><strong>Backup storage</strong>: The <code>user/backup/CombinedEffect/</code> folder</li>
+</ul>
+<p>On startup, both locations are compared against the SHA-256 hash and timestamp stored in <code>CombinedEffectSettings</code>. If an inconsistency is detected, the correct data is used to automatically repair (heal) the other.</p>
+
+<h3>19-4. Debounced Writes</h3>
+<p>Consecutive change operations are debounced for 300ms (100ms for deletions) and written together, reducing I/O load.</p>
+
+<h3>19-5. Logging</h3>
+<p>Operation logs and error logs are saved under <code>user/log/CombinedEffect/</code>.</p>
+<ul>
+  <li>A new log file is created when the current file exceeds 512 KB.</li>
+  <li>Log files older than 31 days are automatically deleted (checked every hour).</li>
+</ul>
+<hr>
+
+<h2 id="migration">20. Migration from Older Versions</h2>
+<p>If an older version data file exists at the path below, it is automatically migrated on first launch.</p>
+<pre>%AppData%\YukkuriMovieMaker4\user\plugins\CombinedEffect\presets.json</pre>
+<p>After migration, the old file is renamed to <code>presets.json.migrated</code>. The old file is not deleted if migration fails.</p>
+<p>Migration covers:</p>
+<ul>
+  <li>Group list in the old format (groups equivalent to the virtual "All" and "Favorites" groups are excluded)</li>
+  <li>Presets belonging to each group (name, favorite status, effect configuration)</li>
+</ul>
+<hr>
+
+<h2 id="files">21. File &amp; Folder Structure</h2>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Path (relative to plugin directory)</th><th>Contents</th></tr>
+  <tr><td><code>presets/</code></td><td>Main preset data storage folder</td></tr>
+  <tr><td><code>presets/groups.json</code></td><td>Group configuration (group names and preset ID lists)</td></tr>
+  <tr><td><code>presets/{GUID}.json</code></td><td>Individual preset data (name, favorite, effect config JSON)</td></tr>
+  <tr><td><code>presets/recent_ids.json</code></td><td>List of recently used preset IDs (max 10)</td></tr>
+  <tr><td><code>presets/UISettings.json</code></td><td>UI settings (panel height, group column width)</td></tr>
+  <tr><td><code>History/</code></td><td>Snapshot history data storage folder</td></tr>
+  <tr><td><code>History/{PresetGUID}/branches.json</code></td><td>Branch list for that preset</td></tr>
+  <tr><td><code>History/{PresetGUID}/{SnapshotGUID}.json</code></td><td>Individual snapshot data</td></tr>
+  <tr><td><code>user/backup/CombinedEffect/</code></td><td>Backup storage (relative to YMM4 install directory)</td></tr>
+  <tr><td><code>user/log/CombinedEffect/</code></td><td>Log file storage folder (relative to YMM4 install directory)</td></tr>
+</table>
+<p>Preset data is stored in both main storage and backup storage. If one is lost, the other can be used for recovery. If both are deleted, presets cannot be recovered.</p>
+<hr>
+
+<h2 id="multilang">22. Multilingual Support</h2>
+<p>The entire UI automatically switches based on the YMM4 language setting. No additional configuration is needed.</p>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Language Code</th><th>Language</th></tr>
+  <tr><td>ja-jp</td><td>Japanese</td></tr>
+  <tr><td>en-us</td><td>English</td></tr>
+  <tr><td>zh-cn</td><td>Simplified Chinese</td></tr>
+  <tr><td>zh-tw</td><td>Traditional Chinese</td></tr>
+  <tr><td>ko-kr</td><td>Korean</td></tr>
+  <tr><td>es-es</td><td>Spanish</td></tr>
+  <tr><td>ar-sa</td><td>Arabic</td></tr>
+  <tr><td>id-id</td><td>Indonesian</td></tr>
+</table>
+<hr>
+
+<h2 id="params">23. Parameter Reference</h2>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Animatable</th><th>Description</th></tr>
+  <tr><td>Active Effects (Effects)</td><td>ImmutableList&lt;IVideoEffect&gt;</td><td>(empty)</td><td>No</td><td>The list of video effects to manage. Use the YMM4 standard effect selector to add, remove, reorder, and enable/disable effects. They are processed as a pipeline from top to bottom. Disabled effects are skipped.</td></tr>
+  <tr><td>SelectedPresetJson</td><td>String (JSON)</td><td>(empty string)</td><td>No</td><td>Internal property holding information about the currently applied preset. Set automatically when a preset is applied. Direct editing is not recommended. Used to display the preset name in the timeline label.</td></tr>
+  <tr><td>PresetManagerVisible</td><td>bool</td><td>true</td><td>No</td><td>Internal flag controlling the visibility of the preset management panel. Excluded from JSON serialization ([JsonIgnore]).</td></tr>
+</table>
+
+<h3>Label Display Format</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>State</th><th>Format</th><th>Example</th></tr>
+  <tr><td>No preset applied</td><td>{Effect Name} Active: {N}</td><td>Combined Effect Active: 3</td></tr>
+  <tr><td>Preset applied</td><td>{Effect Name} Active: {N} [{Preset Name}]</td><td>Combined Effect Active: 3 [Effect Set A]</td></tr>
+</table>
+<hr>
+
+<h2 id="operations">24. Quick Reference</h2>
+
+<h3>Group Operations</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Operation</th><th>Method</th><th>Restriction</th></tr>
+  <tr><td>Add group</td><td>"+" button at bottom of group list</td><td>None</td></tr>
+  <tr><td>Remove group</td><td>"-" button at bottom of group list</td><td>Default and virtual groups cannot be removed</td></tr>
+  <tr><td>Rename group</td><td>Double-click, or right-click &rarr; "Rename"</td><td>Virtual groups cannot be renamed</td></tr>
+  <tr><td>Reorder groups</td><td>Drag and drop</td><td>Virtual groups cannot be moved</td></tr>
+</table>
+
+<h3>Preset Operations</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Operation</th><th>Method</th><th>Notes</th></tr>
+  <tr><td>Add preset</td><td>"+ (Add)" button</td><td>Saved to first real group when a virtual group is selected</td></tr>
+  <tr><td>Remove preset</td><td>"- (Remove)" button, or right-click &rarr; "Remove"</td><td>Confirmation dialog shown. Multiple selection supported.</td></tr>
+  <tr><td>Rename preset</td><td>Double-click, or right-click &rarr; "Rename"</td><td>None</td></tr>
+  <tr><td>Reorder presets</td><td>Drag and drop</td><td>Not available when viewing virtual groups</td></tr>
+  <tr><td>Apply preset</td><td>"✓ (Apply)" button, or right-click &rarr; "Apply"</td><td>Confirmation dialog for identical content</td></tr>
+  <tr><td>Update preset</td><td>"↺ (Update)" button, or right-click &rarr; "Update"</td><td>Only enabled when effects have changed</td></tr>
+  <tr><td>Empty preset</td><td>Right-click &rarr; "Empty Preset"</td><td>Confirmation dialog shown. Only available when preset has 1+ effects.</td></tr>
+  <tr><td>Toggle favorite</td><td>Click the star button</td><td>None</td></tr>
+  <tr><td>Copy</td><td>Right-click &rarr; "Copy"</td><td>Multiple selection supported</td></tr>
+  <tr><td>Cut</td><td>Right-click &rarr; "Cut"</td><td>No confirmation dialog. Multiple selection supported.</td></tr>
+  <tr><td>Paste</td><td>Right-click &rarr; "Paste"</td><td>Requires valid JSON in clipboard</td></tr>
+  <tr><td>Export</td><td>Right-click &rarr; "Export"</td><td>Multiple selection. .ceprstpkg format.</td></tr>
+  <tr><td>Import</td><td>Right-click blank area &rarr; "Import"</td><td>Multiple files can be selected</td></tr>
+  <tr><td>Remove unselected effects</td><td>Right-click blank &rarr; "Clear" &rarr; "Remove Unselected Effects"</td><td>Confirmation dialog shown</td></tr>
+  <tr><td>Open history</td><td>Right-click &rarr; "History Management"</td><td>One window per preset</td></tr>
+</table>
+
+<h3>History Operations</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Operation</th><th>Method</th><th>Description</th></tr>
+  <tr><td>Save snapshot</td><td>Enter message &rarr; "Save New Snapshot" button</td><td>Disabled if message is empty</td></tr>
+  <tr><td>Revert to snapshot</td><td>Select snapshot &rarr; "Revert to This" button</td><td>Applied to both preset and timeline</td></tr>
+  <tr><td>Create branch</td><td>Enter branch name &rarr; "Create New Branch" button</td><td>Disabled if branch name is empty</td></tr>
+  <tr><td>Merge</td><td>Right-click snapshot &rarr; "Merge to Current"</td><td>Appends effects to current end</td></tr>
+  <tr><td>Keep Changes (Soft Reset)</td><td>Right-click snapshot &rarr; "Keep Changes (Soft)"</td><td>Moves HEAD only, no effect changes</td></tr>
+  <tr><td>Discard Changes (Hard Reset)</td><td>Right-click snapshot &rarr; "Discard Changes (Hard)"</td><td>Soft Reset + Revert simultaneously</td></tr>
+  <tr><td>Manage tags</td><td>Right-click snapshot &rarr; "Manage Tags"</td><td>Opens tag management window</td></tr>
+</table>
+<hr>
+
+<h2 id="caution">25. Notes &amp; Cautions</h2>
+<ul>
+  <li>AviUtl format (.exo) output is not supported.</li>
+  <li>Nesting a "Combined Effect" inside another "Combined Effect" is not recommended.</li>
+  <li>The "All", "Favorites", and "Recent" virtual groups cannot be deleted, renamed, or reordered.</li>
+  <li>The "Default" group cannot be deleted.</li>
+  <li>Adding or pasting a preset while a virtual group is selected saves it to the first real group.</li>
+  <li>Importing a package file assigns new IDs that differ from the original GUIDs. Therefore, imported presets do not inherit snapshot history.</li>
+  <li>The Cut operation deletes presets without a confirmation dialog. This action cannot be undone immediately, so use it with care.</li>
+  <li>Preset data is stored in both main storage and backup storage. Deleting one folder may still allow recovery, but deleting both will result in permanent data loss.</li>
+  <li>History data is stored in the <code>History/</code> folder. Deleting this folder will erase all history.</li>
+  <li>Snapshot history grows without limit. If there are too many unnecessary snapshots, you can manually delete unwanted <code>.json</code> files in the <code>History/{PresetGUID}/</code> folder (do not delete <code>branches.json</code>).</li>
+  <li>Only effects supported by the YMM4 plugin system are saved as part of a preset's effect configuration. Unsupported effects may be skipped when loading.</li>
+  <li>Due to debounced writes, there is a delay of up to 300ms between a change operation and the actual file write. If YMM4 is force-quit immediately, the last operation may not be saved.</li>
+</ul>
+<hr>
+
+<h2 id="license">26. Disclaimer &amp; License</h2>
+<p>This plugin is released under the MIT License.</p>
+<p>
+<strong>THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.</strong>
+</p>
+<p>The author shall not be liable for any damages arising from the use or inability to use this plugin. Use at your own risk.</p>
+<p>
+Author: routersys &nbsp;/&nbsp;
+License: <a href="https://github.com/routersys/YMM4-CombinedEffect/blob/main/LICENSE">MIT License</a> &nbsp;/&nbsp;
+Repository: <a href="https://github.com/routersys/YMM4-CombinedEffect">https://github.com/routersys/YMM4-CombinedEffect</a>
+</p>
+<hr>
+<p>End of document.</p>
+
+</body>
+</html>

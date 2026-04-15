@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Efectos Combinados — Manual de Usuario</title>
+</head>
+<body>
+
+<p>
+[<a href="index.htm">日本語</a>]
+[<a href="index_en.htm">English</a>]
+[<a href="index_zh-cn.htm">中文（简体）</a>]
+[<a href="index_zh-tw.htm">中文（繁體）</a>]
+[<a href="index_ko.htm">한국어</a>]
+[<strong>Español</strong>]
+[<a href="index_ar.htm">العربية</a>]
+[<a href="index_id.htm">Indonesia</a>]
+</p>
+
+<h1>Efectos Combinados for YMM4 — Manual de Usuario</h1>
+<p>Versión: 2.1.0 &nbsp;/&nbsp; SO compatible: Windows 10 / 11 (64bit) &nbsp;/&nbsp; Runtime: .NET 10.0</p>
+<hr>
+
+<h2>Índice</h2>
+<ol>
+  <li><a href="#overview">Descripción general</a></li>
+  <li><a href="#requirements">Requisitos del sistema</a></li>
+  <li><a href="#install">Instalación</a></li>
+  <li><a href="#quickstart">Primeros pasos</a></li>
+  <li><a href="#ui">Disposición de la interfaz</a></li>
+  <li><a href="#groups">Gestión de grupos</a></li>
+  <li><a href="#presets">Gestión de ajustes preestablecidos</a></li>
+  <li><a href="#virtual-groups">Grupos virtuales</a></li>
+  <li><a href="#apply">Aplicar ajustes preestablecidos</a></li>
+  <li><a href="#update">Actualizar ajustes preestablecidos</a></li>
+  <li><a href="#search">Búsqueda de ajustes preestablecidos</a></li>
+  <li><a href="#favorite">Favoritos</a></li>
+  <li><a href="#clipboard">Copiar, cortar y pegar</a></li>
+  <li><a href="#exchange">Exportar e importar ajustes preestablecidos</a></li>
+  <li><a href="#history">Historial de instantáneas y gestión de ramas</a></li>
+  <li><a href="#tags">Gestión de etiquetas</a></li>
+  <li><a href="#clear">Eliminación masiva de efectos</a></li>
+  <li><a href="#responsive">Interfaz responsiva y ajuste del diseño</a></li>
+  <li><a href="#persistence">Almacenamiento de datos y persistencia segura</a></li>
+  <li><a href="#migration">Migración desde versiones anteriores</a></li>
+  <li><a href="#files">Estructura de archivos y carpetas</a></li>
+  <li><a href="#multilang">Compatibilidad multilingüe</a></li>
+  <li><a href="#params">Referencia de parámetros</a></li>
+  <li><a href="#operations">Referencia rápida</a></li>
+  <li><a href="#caution">Notas y advertencias</a></li>
+  <li><a href="#license">Aviso legal y licencia</a></li>
+</ol>
+<hr>
+
+<h2 id="overview">1. Descripción general</h2>
+<p>
+«Efectos Combinados» es un complemento de efectos de vídeo para YukkuriMovieMaker4 (YMM4).
+Permite almacenar múltiples efectos de vídeo en un solo elemento «Efectos Combinados» y gestionarlos mediante agrupación, guardado de ajustes preestablecidos y recuperación.
+</p>
+<p>Características principales:</p>
+<ul>
+  <li>Aplicar varios efectos en secuencia dentro de un único elemento</li>
+  <li>Guardar, recuperar y compartir ajustes preestablecidos con nombre</li>
+  <li>Organizar ajustes con tres tipos de grupos virtuales: Todo, Reciente y Favoritos</li>
+  <li>Historial de instantáneas y gestión de ramas al estilo Git</li>
+  <li>Escritura atómica con verificación CRC32 y persistencia multirredundante SHA-256</li>
+  <li>Exportar e importar archivos de paquete de ajustes preestablecidos (.ceprstpkg)</li>
+  <li>Copiar, cortar y pegar mediante el portapapeles</li>
+  <li>Búsqueda multieje con soporte de expresiones regulares</li>
+  <li>Interfaz en 8 idiomas (japonés, inglés, chino simplificado, chino tradicional, coreano, español, árabe, indonesio)</li>
+  <li>Interfaz responsiva que cambia automáticamente al diseño móvil por debajo de 400px de ancho</li>
+</ul>
+<p>
+La etiqueta de la línea de tiempo muestra el recuento de efectos actual y el nombre del ajuste aplicado, p. ej. «Efectos Combinados Activo: 3 [NombreAjuste]», lo que facilita identificar el contenido de un vistazo.
+</p>
+<p>
+<strong>La salida de AviUtl (.exo) no es compatible.</strong>
+</p>
+<hr>
+
+<h2 id="requirements">2. Requisitos del sistema</h2>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Elemento</th><th>Requisito</th></tr>
+  <tr><td>SO</td><td>Windows 10 / 11 (64bit)</td></tr>
+  <tr><td>YukkuriMovieMaker4</td><td>Se recomienda la versión más reciente</td></tr>
+  <tr><td>Runtime</td><td>.NET 10.0</td></tr>
+  <tr><td>GPU</td><td>GPU compatible con Direct2D</td></tr>
+</table>
+<hr>
+
+<h2 id="install">3. Instalación</h2>
+<ol>
+  <li>Descargue el archivo <code>.ymme</code> más reciente desde la página <a href="https://github.com/routersys/YMM4-CombinedEffect/releases">Releases</a> en GitHub.</li>
+  <li>Asegúrese de que YMM4 no esté en ejecución.</li>
+  <li>Haga doble clic en el archivo <code>.ymme</code> descargado para instalarlo.</li>
+  <li>Inicie YMM4 y seleccione un elemento en la línea de tiempo.</li>
+  <li>Seleccione <strong>«Efectos Combinados»</strong> en el menú Agregar efecto de vídeo.</li>
+</ol>
+<p>Tras la instalación, el panel de gestión de ajustes preestablecidos y la lista de efectos aparecerán en el panel de propiedades.</p>
+<hr>
+
+<h2 id="quickstart">4. Primeros pasos</h2>
+<ol>
+  <li>Seleccione un elemento de vídeo o imagen en la línea de tiempo.</li>
+  <li>Agregue «Efectos Combinados» desde el menú Agregar efecto de vídeo.</li>
+  <li>Agregue y configure efectos en la sección «Efectos Activos» en la parte inferior del panel de propiedades.</li>
+  <li>Haga clic en el botón «+ (Agregar)» en el panel de gestión de ajustes, introduzca un nombre y guarde el ajuste.</li>
+  <li>Para aplicar la misma configuración a otro elemento, seleccione el ajuste y haga clic en el botón «✓ (Aplicar)».</li>
+</ol>
+<hr>
+
+<h2 id="ui">5. Disposición de la interfaz</h2>
+<p>El panel de propiedades muestra las siguientes secciones de arriba abajo.</p>
+
+<h3>5-1. Panel de gestión de ajustes preestablecidos (PresetManagerControl)</h3>
+<p>Es el área principal de gestión de ajustes, dividida en dos columnas.</p>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Área</th><th>Descripción</th></tr>
+  <tr><td>Columna izquierda (lista de grupos)</td><td>Muestra los grupos definidos por el usuario y los grupos virtuales (Todo, Reciente, Favoritos). Haga clic para seleccionar, doble clic para cambiar el nombre, arrastre y suelte para reordenar (los grupos virtuales no se pueden mover). Use el botón + para agregar grupos y el botón - para eliminarlos.</td></tr>
+  <tr><td>Parte superior columna derecha (barra de búsqueda)</td><td>Filtra los ajustes por palabra clave. Haga clic en el icono de la derecha para cambiar el destino de búsqueda.</td></tr>
+  <tr><td>Centro columna derecha (lista de ajustes)</td><td>Lista los ajustes del grupo seleccionado. Cada fila muestra una estrella (alternar favorito), nombre, recuento de efectos e icono de información (el tooltip muestra la lista de efectos). Se admite selección múltiple (Ctrl+clic, Mayús+clic).</td></tr>
+  <tr><td>Parte inferior columna derecha (botones de acción)</td><td>De izquierda a derecha: Agregar (+), Eliminar (-), Actualizar (↺), Aplicar (✓). Los botones amplían sus etiquetas al pasar el ratón por encima.</td></tr>
+  <tr><td>Controlador de redimensión inferior</td><td>Arrastre para cambiar la altura del panel.</td></tr>
+</table>
+
+<h3>5-2. Divisor de cuadrícula</h3>
+<p>Arrastre el borde entre las dos columnas para ajustar el ancho de la columna de grupos. El valor se restaura al siguiente inicio.</p>
+
+<h3>5-3. Diseño móvil (menos de 400px de ancho)</h3>
+<p>Cuando el ancho del control cae por debajo de 400px, la lista de grupos se oculta y aparece un botón de menú hamburguesa (≡). Al hacer clic se abre la lista de grupos como una ventana emergente.</p>
+
+<h3>5-4. Efectos Activos (VideoEffectSelector)</h3>
+<p>El selector de efectos de vídeo estándar de YMM4 se muestra debajo del panel de gestión de ajustes. Úselo para agregar, eliminar, reordenar y activar/desactivar efectos.</p>
+<hr>
+
+<h2 id="groups">6. Gestión de grupos</h2>
+<p>Los ajustes preestablecidos se pueden organizar en grupos. Existen «grupos reales» y «grupos virtuales».</p>
+
+<h3>6-1. Agregar un grupo</h3>
+<ol>
+  <li>Haga clic en el botón «+» en la parte inferior de la lista de grupos.</li>
+  <li>Introduzca un nombre de grupo en el cuadro de diálogo y haga clic en «OK».</li>
+  <li>El nuevo grupo se agrega a la lista y se selecciona automáticamente.</li>
+</ol>
+
+<h3>6-2. Eliminar un grupo</h3>
+<ol>
+  <li>Seleccione el grupo que desea eliminar en la lista de grupos.</li>
+  <li>Haga clic en el botón «-» en la parte inferior de la lista de grupos.</li>
+  <li>Haga clic en «OK» en el cuadro de confirmación para eliminar el grupo y todos sus ajustes.</li>
+</ol>
+<p><strong>Nota:</strong> El grupo «Por defecto» y los grupos virtuales (Todo, Reciente, Favoritos) no se pueden eliminar.</p>
+
+<h3>6-3. Cambiar el nombre de un grupo</h3>
+<p>Utilice uno de los siguientes métodos:</p>
+<ul>
+  <li>Haga doble clic en el grupo para abrir un cuadro de diálogo e introduzca un nuevo nombre.</li>
+  <li>Haga clic derecho en el grupo y seleccione «Renombrar» en el menú contextual.</li>
+</ul>
+<p><strong>Nota:</strong> Los grupos virtuales no se pueden renombrar.</p>
+
+<h3>6-4. Reordenar grupos</h3>
+<p>Arrastre y suelte los grupos reales para cambiar su orden. Los grupos virtuales siempre están fijos en la parte superior de la lista y no se pueden mover.</p>
+<hr>
+
+<h2 id="presets">7. Gestión de ajustes preestablecidos</h2>
+
+<h3>7-1. Agregar un ajuste preestablecido (guardar)</h3>
+<ol>
+  <li>Configure los efectos que desea guardar en «Efectos Activos».</li>
+  <li>Seleccione el grupo de destino en la lista de grupos (si se selecciona un grupo virtual, se guardará en el primer grupo real).</li>
+  <li>Haga clic en el botón «+ (Agregar)» en la parte inferior de la columna derecha.</li>
+  <li>Introduzca un nombre de ajuste en el cuadro de diálogo y haga clic en «OK».</li>
+  <li>La configuración de efectos actual se guarda como ajuste preestablecido y se agrega a la lista.</li>
+</ol>
+
+<h3>7-2. Eliminar un ajuste preestablecido</h3>
+<ol>
+  <li>Seleccione el/los ajuste(s) a eliminar (Ctrl+clic o Mayús+clic para selección múltiple).</li>
+  <li>Haga clic en el botón «- (Eliminar)» o haga clic derecho y seleccione «Eliminar».</li>
+  <li>Haga clic en «OK» en el cuadro de confirmación para eliminar.</li>
+</ol>
+<p>Al seleccionar varios ajustes y eliminarlos, todos los seleccionados se eliminan a la vez.</p>
+
+<h3>7-3. Cambiar el nombre de un ajuste preestablecido</h3>
+<ul>
+  <li>Haga doble clic en el ajuste para abrir un cuadro de diálogo e introduzca un nuevo nombre.</li>
+  <li>Haga clic derecho y seleccione «Renombrar».</li>
+</ul>
+
+<h3>7-4. Vaciar un ajuste preestablecido</h3>
+<p>Elimina todos los efectos almacenados en un ajuste preestablecido, dejándolo vacío. El ajuste en sí permanece.</p>
+<ol>
+  <li>Haga clic derecho en el ajuste de destino.</li>
+  <li>Seleccione «Vaciar Ajuste» en el menú contextual.</li>
+  <li>Haga clic en «OK» en el cuadro de confirmación.</li>
+</ol>
+
+<h3>7-5. Reordenar ajustes preestablecidos</h3>
+<p>Arrastre y suelte los ajustes dentro de la lista para cambiar su orden. El reordenamiento no está disponible cuando se visualizan grupos virtuales (Todo, Favoritos, Reciente).</p>
+<hr>
+
+<h2 id="virtual-groups">8. Grupos virtuales</h2>
+<p>Los grupos virtuales son grupos especiales que siempre aparecen en la parte superior de la lista de grupos. No se pueden eliminar, renombrar ni reordenar.</p>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Nombre del grupo</th><th>Contenido</th><th>Orden</th></tr>
+  <tr><td>Todo</td><td>Muestra todos los ajustes de todos los grupos reales.</td><td>Alfabético (ascendente)</td></tr>
+  <tr><td>Reciente</td><td>Muestra los últimos 10 ajustes aplicados recientemente.</td><td>Más reciente primero</td></tr>
+  <tr><td>Favoritos</td><td>Muestra todos los ajustes marcados con estrella.</td><td>Alfabético (ascendente)</td></tr>
+</table>
+<p>Cuando se selecciona un grupo virtual y se agrega o pega un ajuste, este se guarda en el primer grupo real.</p>
+<hr>
+
+<h2 id="apply">9. Aplicar ajustes preestablecidos</h2>
+
+<h3>9-1. Aplicar un único ajuste preestablecido</h3>
+<ol>
+  <li>Seleccione el ajuste que desea aplicar en la lista.</li>
+  <li>Haga clic en el botón «✓ (Aplicar)» o haga clic derecho y seleccione «Aplicar».</li>
+  <li>La configuración de efectos del ajuste se carga en el elemento de la línea de tiempo.</li>
+</ol>
+<p><strong>Aplicar el mismo ajuste de nuevo:</strong> Si intenta aplicar un ajuste cuyo contenido es idéntico a los efectos actuales, aparece un cuadro de confirmación. Haga clic en «OK» para agregar (apilar) los efectos sobre los existentes. Haga clic en «Cancelar» para cancelar.</p>
+
+<h3>9-2. Aplicar varios ajustes preestablecidos a la vez</h3>
+<ol>
+  <li>Seleccione varios ajustes con Ctrl+clic o Mayús+clic.</li>
+  <li>Haga clic en el botón «✓ (Aplicar)».</li>
+  <li>Los efectos de todos los ajustes seleccionados se combinan en orden y se aplican.</li>
+</ol>
+<p>No se muestra ningún cuadro de confirmación de duplicados para la selección múltiple. Además, cuando se seleccionan 2 o más ajustes, la lista «Reciente» y el JSON del ajuste no se actualizan.</p>
+
+<h3>9-3. Actualización de la etiqueta tras la aplicación</h3>
+<p>Tras aplicar un único ajuste, la etiqueta de la línea de tiempo se actualiza para mostrar «Efectos Combinados Activo: 3 [NombreAjuste]». El nombre del ajuste permanece visible incluso si los efectos se modifican manualmente después.</p>
+<hr>
+
+<h2 id="update">10. Actualizar ajustes preestablecidos</h2>
+<p>Sobrescribe el ajuste preestablecido seleccionado con la configuración de efectos actual.</p>
+<ol>
+  <li>Seleccione el ajuste que desea actualizar en la lista.</li>
+  <li>Modifique los efectos en «Efectos Activos».</li>
+  <li>Confirme que el botón «↺ (Actualizar)» está activo (solo se activa cuando hay cambios en los efectos).</li>
+  <li>Haga clic en «↺ (Actualizar)» o haga clic derecho y seleccione «Actualizar».</li>
+</ol>
+<p>
+<strong>Cuándo se activa el botón Actualizar:</strong> El botón solo se activa cuando el ajuste seleccionado es el mismo que el último ajuste aplicado y la configuración de efectos actual difiere de lo guardado en el ajuste. Si se cambia un parámetro de efecto, el estado del botón se evalúa automáticamente tras un retardo de 50ms.
+</p>
+<hr>
+
+<h2 id="search">11. Búsqueda de ajustes preestablecidos</h2>
+<p>Introduzca una palabra clave en el cuadro de búsqueda para filtrar los ajustes en tiempo real.</p>
+
+<h3>11-1. Cambiar el modo de búsqueda</h3>
+<p>Haga clic en el icono de filtro al final derecho del cuadro de búsqueda para abrir un menú y cambiar el destino de búsqueda.</p>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Modo de búsqueda</th><th>Destino</th></tr>
+  <tr><td>Nombre del preajuste (predeterminado)</td><td>El nombre del ajuste preestablecido</td></tr>
+  <tr><td>Nombre del efecto</td><td>Etiquetas de todos los efectos del ajuste (lista separada por saltos de línea)</td></tr>
+  <tr><td>Recuento de efectos</td><td>Número de efectos en el ajuste. La entrada numérica prioriza la coincidencia exacta; vuelve a la coincidencia parcial si no hay coincidencia exacta.</td></tr>
+  <tr><td>Datos en bruto (JSON)</td><td>JSON sin procesar de la configuración de efectos serializada. Busque por nombre de tipo de efecto o valores de parámetros.</td></tr>
+  <tr><td>Todo</td><td>Muestra los ajustes que coincidan con el nombre, los nombres de efectos o el JSON en bruto</td></tr>
+</table>
+
+<h3>11-2. Búsqueda con expresiones regulares</h3>
+<p>Se pueden usar expresiones regulares (sin distinción de mayúsculas y minúsculas) en todos los modos de búsqueda.</p>
+<ul>
+  <li>Ejemplo: <code>^blur</code> &rarr; Busca ajustes cuyo nombre empiece por «blur»</li>
+  <li>Ejemplo: <code>color|shadow</code> &rarr; Busca ajustes cuyo nombre contenga «color» o «shadow»</li>
+  <li>Ejemplo: <code>[0-9]+</code> &rarr; Busca ajustes cuyo nombre contenga un número</li>
+</ul>
+<p>Si se introduce un patrón de expresión regular no válido, la búsqueda vuelve a la coincidencia parcial de cadenas sin distinción de mayúsculas y minúsculas.</p>
+<hr>
+
+<h2 id="favorite">12. Favoritos</h2>
+<p>Marque los ajustes de uso frecuente como favoritos para acceder a ellos rápidamente desde el grupo virtual «Favoritos».</p>
+
+<h3>12-1. Marcar/desmarcar favoritos</h3>
+<p>Haga clic en el botón de estrella al inicio de cada fila en la lista de ajustes.</p>
+<ul>
+  <li>Una estrella amarilla (dorada) indica que el ajuste está marcado como favorito.</li>
+  <li>Una estrella gris indica que no es un favorito.</li>
+</ul>
+<p>Los cambios se guardan en el archivo de ajustes de forma inmediata.</p>
+
+<h3>12-2. Ver el grupo Favoritos</h3>
+<p>Seleccione «Favoritos» en la lista de grupos para mostrar todos los ajustes con estrella en orden alfabético. Si desmarca un ajuste mientras visualiza el grupo Favoritos, desaparece de la lista de inmediato.</p>
+<hr>
+
+<h2 id="clipboard">13. Copiar, cortar y pegar</h2>
+<p>Use el portapapeles para copiar, cortar y pegar ajustes preestablecidos. Los datos se escriben en el portapapeles en el mismo formato JSON que los paquetes de ajustes, por lo que también puede inspeccionarlos y editarlos en un editor de texto.</p>
+
+<h3>13-1. Copiar</h3>
+<ol>
+  <li>Seleccione el/los ajuste(s) a copiar (se admite selección múltiple).</li>
+  <li>Haga clic derecho y seleccione «Copiar».</li>
+</ol>
+<p>Los ajustes originales permanecen sin cambios.</p>
+
+<h3>13-2. Cortar</h3>
+<ol>
+  <li>Seleccione el/los ajuste(s) a mover (se admite selección múltiple).</li>
+  <li>Haga clic derecho y seleccione «Cortar».</li>
+</ol>
+<p>Los ajustes se copian al portapapeles y los originales se eliminan simultáneamente. No se muestra ningún cuadro de confirmación.</p>
+
+<h3>13-3. Pegar</h3>
+<ol>
+  <li>Seleccione el grupo de destino en la lista de grupos.</li>
+  <li>Haga clic derecho en un área en blanco de la lista de ajustes o en cualquier ajuste y seleccione «Pegar».</li>
+</ol>
+<p>
+Solo está disponible cuando el portapapeles contiene JSON de paquete de ajustes válido.
+A los ajustes pegados se les asignan nuevos GUID (diferentes de los ID originales).
+Si se selecciona un grupo virtual, los ajustes se agregan al primer grupo real.
+</p>
+
+<h3>13-4. Formato de datos del portapapeles</h3>
+<p>Los datos escritos en el portapapeles usan el siguiente formato JSON:</p>
+<pre>
+{
+  "FormatId": "CombinedEffect.PresetExchange",
+  "Version": 1,
+  "ExportedAtUtc": "2025-01-01T00:00:00+00:00",
+  "Presets": [
+    {
+      "Id": "...",
+      "Name": "Nombre del ajuste",
+      "IsFavorite": false,
+      "SerializedEffects": "..."
+    }
+  ]
+}
+</pre>
+<hr>
+
+<h2 id="exchange">14. Exportar e importar ajustes preestablecidos</h2>
+<p>Los ajustes preestablecidos se pueden exportar e importar como archivos de paquete (extensión <code>.ceprstpkg</code>), lo que permite compartirlos entre entornos y usuarios.</p>
+
+<h3>14-1. Exportar</h3>
+<ol>
+  <li>Seleccione el/los ajuste(s) a exportar (Ctrl+clic o Mayús+clic para selección múltiple).</li>
+  <li>Haga clic derecho y seleccione «Exportar».</li>
+  <li>Se abre un cuadro de diálogo para guardar el archivo. Especifique un destino y nombre de archivo, luego guarde.</li>
+</ol>
+<ul>
+  <li>Ajuste único: El nombre del ajuste se usa como nombre de archivo predeterminado (los caracteres no permitidos en nombres de archivo se reemplazan con _).</li>
+  <li>Varios ajustes: Se usa el nombre de paquete predeterminado «CombinedEffect_Preajustes».</li>
+</ul>
+
+<h3>14-2. Importar</h3>
+<ol>
+  <li>Seleccione el grupo al que desea agregar los ajustes importados.</li>
+  <li>Haga clic derecho en un área en blanco de la lista de ajustes y seleccione «Importar».</li>
+  <li>Se abre un cuadro de selección de archivos. Seleccione un archivo <code>.ceprstpkg</code> (se pueden seleccionar varios archivos a la vez).</li>
+  <li>Los ajustes importados se agregan al grupo actual.</li>
+</ol>
+<p>A los ajustes importados se les asignan nuevos GUID, por lo que no entrarán en conflicto con los ajustes existentes.</p>
+
+<h3>14-3. Compatibilidad de versiones</h3>
+<p>Los archivos de paquete incluyen un número de versión de formato. La versión actual es <code>1</code>. Si intenta importar un paquete con una versión superior a la compatible, se mostrará un mensaje de error.</p>
+<hr>
+
+<h2 id="history">15. Historial de instantáneas y gestión de ramas</h2>
+<p>Cada ajuste preestablecido dispone de una ventana de gestión del historial al estilo Git. Puede guardar los cambios de configuración de efectos como instantáneas y gestionarlos con ramas.</p>
+
+<h3>15-1. Abrir la ventana de historial</h3>
+<ol>
+  <li>Haga clic derecho en el ajuste que desea gestionar.</li>
+  <li>Seleccione «Gestión de historial» en el menú contextual.</li>
+  <li>Se abre la ventana de gestión del historial (una ventana por ajuste).</li>
+</ol>
+
+<h3>15-2. Diseño de la ventana de historial</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Panel</th><th>Descripción</th></tr>
+  <tr><td>Izquierda (lista de ramas)</td><td>Lista todas las ramas del ajuste. Haga clic para seleccionar una rama; su historial de instantáneas se muestra en el centro. Introduzca un nombre de rama en el cuadro de texto inferior y haga clic en «Crear Nueva Rama» para agregar una nueva rama.</td></tr>
+  <tr><td>Centro (lista de instantáneas)</td><td>Lista las instantáneas desde el HEAD de la rama seleccionada hacia atrás. Cada fila muestra un icono de confirmación (relleno para el HEAD actual), etiquetas, mensaje, fecha/hora, resumen de diferencias e ID. Haga clic derecho para acceder al menú contextual. Introduzca un mensaje en la parte inferior y haga clic en «Guardar Nueva Instantánea» para guardar la configuración actual. Use el botón «Revertir a Esto» en la parte inferior para volver a la instantánea seleccionada.</td></tr>
+  <tr><td>Derecha (vista de diferencias)</td><td>Muestra las diferencias entre la instantánea seleccionada y la configuración de efectos actual. Las adiciones son verdes, las eliminaciones son rojas y las modificaciones son amarillas. Los cambios en el recuento de efectos y los valores de propiedades antes/después se muestran en fuente Consolas.</td></tr>
+</table>
+
+<h3>15-3. Crear una instantánea</h3>
+<ol>
+  <li>Abra la ventana de gestión del historial.</li>
+  <li>Introduzca un mensaje que describa los cambios en el cuadro de texto en la parte inferior del panel central.</li>
+  <li>Haga clic en «Guardar Nueva Instantánea».</li>
+  <li>La configuración de efectos actual del ajuste se guarda como instantánea y el HEAD de la rama seleccionada se actualiza.</li>
+</ol>
+
+<h3>15-4. Revertir a una instantánea</h3>
+<ol>
+  <li>Seleccione la instantánea a la que desea revertir.</li>
+  <li>Haga clic en el botón «Revertir a Esto».</li>
+  <li>El ajuste y el elemento Efectos Combinados en la línea de tiempo se restauran al estado de la instantánea seleccionada.</li>
+</ol>
+
+<h3>15-5. Crear una rama</h3>
+<ol>
+  <li>Introduzca un nuevo nombre de rama en el cuadro de texto en la parte inferior del panel izquierdo.</li>
+  <li>Haga clic en «Crear Nueva Rama».</li>
+  <li>Se crea una nueva rama a partir de la instantánea seleccionada actualmente (o el HEAD de la rama actual).</li>
+</ol>
+
+<h3>15-6. Operaciones del menú contextual</h3>
+<p>Al hacer clic derecho en una instantánea se abre un menú contextual.</p>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Operación</th><th>Descripción</th></tr>
+  <tr><td>Fusionar en Actual</td><td>Agrega los efectos de la instantánea seleccionada al final de los efectos actuales.</td></tr>
+  <tr><td>Mantener Cambios (Soft)</td><td>Mueve el HEAD de la rama seleccionada a la instantánea elegida sin cambiar los efectos de la línea de tiempo.</td></tr>
+  <tr><td>Descartar Cambios (Hard)</td><td>Realiza Mantener Cambios (Soft) y Revertir simultáneamente.</td></tr>
+  <tr><td>Administrar Etiquetas</td><td>Abre la ventana de gestión de etiquetas para la instantánea.</td></tr>
+</table>
+
+<h3>15-7. Leer el resumen de diferencias</h3>
+<p>Se muestra un resumen de diferencias en la columna «Cambios» de la lista de instantáneas.</p>
+<ul>
+  <li>«Agregado (+N)»: La instantánea tiene N efectos más que el estado actual</li>
+  <li>«Eliminado (N)»: La instantánea tiene N efectos menos que el estado actual</li>
+  <li>«Modificado»: Mismo recuento de efectos, pero los parámetros han cambiado</li>
+  <li>(vacío): Idéntico a la configuración de efectos actual</li>
+</ul>
+
+<h3>15-8. Ubicación de almacenamiento de datos del historial</h3>
+<p>Los datos del historial se guardan en la carpeta <code>History/</code> bajo el directorio del complemento. Se crea una subcarpeta por ajuste; la información de ramas se almacena como <code>branches.json</code> y cada instantánea como <code>{ID}.json</code>.</p>
+<hr>
+
+<h2 id="tags">16. Gestión de etiquetas</h2>
+<p>Puede adjuntar varias etiquetas a las instantáneas para organizarlas. Las etiquetas se muestran en verde en la lista de instantáneas.</p>
+
+<h3>16-1. Agregar una etiqueta</h3>
+<ol>
+  <li>Haga clic derecho en la instantánea a la que desea etiquetar.</li>
+  <li>Seleccione «Administrar Etiquetas» en el menú contextual.</li>
+  <li>Se abre la ventana de gestión de etiquetas.</li>
+  <li>Introduzca un nombre de etiqueta en el cuadro de texto superior y haga clic en «Añadir».</li>
+</ol>
+<p>No se permiten nombres de etiqueta duplicados.</p>
+
+<h3>16-2. Eliminar una etiqueta</h3>
+<ol>
+  <li>Abra la ventana de gestión de etiquetas.</li>
+  <li>Haga clic en el botón «Eliminar» junto a la etiqueta que desea borrar.</li>
+</ol>
+<hr>
+
+<h2 id="clear">17. Eliminación masiva de efectos</h2>
+<p>Puede eliminar de una vez todos los efectos desactivados (sin marca) del elemento Efectos Combinados.</p>
+<ol>
+  <li>Haga clic derecho en un área en blanco de la lista de ajustes.</li>
+  <li>Seleccione «Limpiar» &rarr; «Eliminar efectos no seleccionados» en el menú contextual.</li>
+  <li>Haga clic en «OK» en el cuadro de confirmación.</li>
+  <li>Todos los efectos actualmente desactivados son eliminados.</li>
+</ol>
+<p>Los efectos activados no se ven afectados. Si no hay efectos desactivados, no ocurre nada.</p>
+<hr>
+
+<h2 id="responsive">18. Interfaz responsiva y ajuste del diseño</h2>
+
+<h3>18-1. Ajustar la altura del panel</h3>
+<p>Arrastre el controlador de redimensión (doble línea) en la parte inferior del panel de gestión de ajustes para cambiar su altura. La altura mínima es de 200px. La configuración se guarda al soltar el arrastre y se restaura en el siguiente inicio.</p>
+
+<h3>18-2. Ajustar el ancho de la columna de grupos</h3>
+<p>Arrastre el divisor de cuadrícula (borde entre la lista de grupos y la lista de ajustes) hacia la izquierda o derecha para ajustar el ancho de la columna de grupos. El ancho mínimo es de 120px y el máximo de 400px. La configuración se guarda al finalizar el arrastre.</p>
+
+<h3>18-3. Diseño móvil</h3>
+<p>Cuando el ancho del control cae por debajo de 400px, ocurren los siguientes cambios:</p>
+<ul>
+  <li>El panel de lista de grupos se oculta.</li>
+  <li>El divisor de cuadrícula se oculta.</li>
+  <li>Aparece un botón de menú hamburguesa (≡) a la izquierda de la barra de búsqueda.</li>
+  <li>Al hacer clic se abre la lista de grupos como una ventana emergente. Al seleccionar un grupo, la ventana emergente se cierra.</li>
+</ul>
+<p>Cuando el ancho del control vuelve a 400px o más, el diseño cambia automáticamente de nuevo al modo de escritorio.</p>
+<hr>
+
+<h2 id="persistence">19. Almacenamiento de datos y persistencia segura</h2>
+<p>Todos los datos de ajustes preestablecidos, configuraciones de grupos e historial se guardan como archivos JSON. Los siguientes mecanismos de redundancia y verificación de integridad evitan la pérdida de datos por un único fallo.</p>
+
+<h3>19-1. Escritura atómica</h3>
+<p>Las escrituras en archivos siguen estos pasos:</p>
+<ol>
+  <li>Escritura en un archivo temporal (<code>.tmp</code>).</li>
+  <li>Uso de <code>File.Replace</code> para intercambiar el archivo temporal con el archivo principal, y mover el archivo antiguo al de respaldo (<code>.bak</code>).</li>
+  <li>Incluso si la aplicación se cierra abruptamente durante la escritura, el archivo principal o el de respaldo siempre estará en un estado válido.</li>
+</ol>
+
+<h3>19-2. Verificación CRC32</h3>
+<p>Se calcula una suma de verificación CRC32 y se añade al archivo al escribir. Al leer, se verifica la suma; si no coincide, se utiliza el archivo de respaldo para la recuperación.</p>
+
+<h3>19-3. Almacenamiento multirredundante SHA-256</h3>
+<p>Los datos de ajustes preestablecidos y el registro de grupos se guardan en dos ubicaciones:</p>
+<ul>
+  <li><strong>Almacenamiento principal</strong>: Carpeta <code>presets/</code> bajo el directorio del complemento</li>
+  <li><strong>Almacenamiento de respaldo</strong>: Carpeta <code>user/backup/CombinedEffect/</code></li>
+</ul>
+<p>Al inicio, ambas ubicaciones se comparan con el hash SHA-256 y la marca de tiempo almacenados en <code>CombinedEffectSettings</code>. Si se detecta una inconsistencia, los datos correctos se usan para reparar automáticamente (sanar) el otro.</p>
+
+<h3>19-4. Escrituras con debounce</h3>
+<p>Las operaciones de cambio consecutivas se agrupan con un debounce de 300ms (100ms para eliminaciones) y se escriben juntas, reduciendo la carga de E/S.</p>
+
+<h3>19-5. Registro</h3>
+<p>Los registros de operaciones y errores se guardan en <code>user/log/CombinedEffect/</code>.</p>
+<ul>
+  <li>Se crea un nuevo archivo de registro cuando el actual supera los 512 KB.</li>
+  <li>Los archivos de registro con más de 31 días se eliminan automáticamente (verificado cada hora).</li>
+</ul>
+<hr>
+
+<h2 id="migration">20. Migración desde versiones anteriores</h2>
+<p>Si existe un archivo de datos de una versión anterior en la ruta indicada a continuación, se migrará automáticamente en el primer inicio.</p>
+<pre>%AppData%\YukkuriMovieMaker4\user\plugins\CombinedEffect\presets.json</pre>
+<p>Tras la migración, el archivo antiguo se renombra a <code>presets.json.migrated</code>. El archivo antiguo no se elimina si la migración falla.</p>
+<p>La migración incluye:</p>
+<ul>
+  <li>Lista de grupos en formato antiguo (se excluyen los grupos equivalentes a los virtuales «Todo» y «Favoritos»)</li>
+  <li>Ajustes preestablecidos pertenecientes a cada grupo (nombre, estado de favorito, configuración de efectos)</li>
+</ul>
+<hr>
+
+<h2 id="files">21. Estructura de archivos y carpetas</h2>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Ruta (relativa al directorio del complemento)</th><th>Contenido</th></tr>
+  <tr><td><code>presets/</code></td><td>Carpeta principal de almacenamiento de datos de ajustes</td></tr>
+  <tr><td><code>presets/groups.json</code></td><td>Configuración de grupos (nombres de grupo y listas de ID de ajustes)</td></tr>
+  <tr><td><code>presets/{GUID}.json</code></td><td>Datos de cada ajuste preestablecido (nombre, favorito, JSON de configuración de efectos)</td></tr>
+  <tr><td><code>presets/recent_ids.json</code></td><td>Lista de ID de ajustes usados recientemente (máx. 10)</td></tr>
+  <tr><td><code>presets/UISettings.json</code></td><td>Configuración de la interfaz (altura del panel, ancho de columna de grupos)</td></tr>
+  <tr><td><code>History/</code></td><td>Carpeta de almacenamiento de datos del historial de instantáneas</td></tr>
+  <tr><td><code>History/{GUID del ajuste}/branches.json</code></td><td>Lista de ramas de ese ajuste</td></tr>
+  <tr><td><code>History/{GUID del ajuste}/{GUID de instantánea}.json</code></td><td>Datos de cada instantánea</td></tr>
+  <tr><td><code>user/backup/CombinedEffect/</code></td><td>Almacenamiento de respaldo (relativo al directorio de instalación de YMM4)</td></tr>
+  <tr><td><code>user/log/CombinedEffect/</code></td><td>Carpeta de almacenamiento de archivos de registro (relativa al directorio de instalación de YMM4)</td></tr>
+</table>
+<p>Los datos de ajustes se almacenan tanto en el almacenamiento principal como en el de respaldo. Si se pierde uno, el otro puede usarse para la recuperación. Si ambos se eliminan, los ajustes no se pueden recuperar.</p>
+<hr>
+
+<h2 id="multilang">22. Compatibilidad multilingüe</h2>
+<p>Toda la interfaz cambia automáticamente según la configuración de idioma de YMM4. No se necesita configuración adicional.</p>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Código de idioma</th><th>Idioma</th></tr>
+  <tr><td>ja-jp</td><td>Japonés</td></tr>
+  <tr><td>en-us</td><td>Inglés</td></tr>
+  <tr><td>zh-cn</td><td>Chino simplificado</td></tr>
+  <tr><td>zh-tw</td><td>Chino tradicional</td></tr>
+  <tr><td>ko-kr</td><td>Coreano</td></tr>
+  <tr><td>es-es</td><td>Español</td></tr>
+  <tr><td>ar-sa</td><td>Árabe</td></tr>
+  <tr><td>id-id</td><td>Indonesio</td></tr>
+</table>
+<hr>
+
+<h2 id="params">23. Referencia de parámetros</h2>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Parámetro</th><th>Tipo</th><th>Predeterminado</th><th>Animable</th><th>Descripción</th></tr>
+  <tr><td>Efectos Activos (Effects)</td><td>ImmutableList&lt;IVideoEffect&gt;</td><td>(vacío)</td><td>No</td><td>La lista de efectos de vídeo a gestionar. Use el selector de efectos estándar de YMM4 para agregar, eliminar, reordenar y activar/desactivar efectos. Se procesan en cadena de arriba abajo. Los efectos desactivados se omiten.</td></tr>
+  <tr><td>SelectedPresetJson</td><td>String (JSON)</td><td>(cadena vacía)</td><td>No</td><td>Propiedad interna que almacena información sobre el ajuste actualmente aplicado. Se establece automáticamente al aplicar un ajuste. No se recomienda editarlo directamente. Se usa para mostrar el nombre del ajuste en la etiqueta de la línea de tiempo.</td></tr>
+  <tr><td>PresetManagerVisible</td><td>bool</td><td>true</td><td>No</td><td>Indicador interno que controla la visibilidad del panel de gestión de ajustes. Excluido de la serialización JSON ([JsonIgnore]).</td></tr>
+</table>
+
+<h3>Formato de visualización de la etiqueta</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Estado</th><th>Formato</th><th>Ejemplo</th></tr>
+  <tr><td>Sin ajuste aplicado</td><td>{Nombre del efecto} Activo: {N}</td><td>Efectos Combinados Activo: 3</td></tr>
+  <tr><td>Ajuste aplicado</td><td>{Nombre del efecto} Activo: {N} [{Nombre del ajuste}]</td><td>Efectos Combinados Activo: 3 [Conjunto de efectos A]</td></tr>
+</table>
+<hr>
+
+<h2 id="operations">24. Referencia rápida</h2>
+
+<h3>Operaciones de grupo</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Operación</th><th>Método</th><th>Restricción</th></tr>
+  <tr><td>Agregar grupo</td><td>Botón «+» en la parte inferior de la lista de grupos</td><td>Ninguna</td></tr>
+  <tr><td>Eliminar grupo</td><td>Botón «-» en la parte inferior de la lista de grupos</td><td>Los grupos por defecto y virtuales no se pueden eliminar</td></tr>
+  <tr><td>Renombrar grupo</td><td>Doble clic, o clic derecho &rarr; «Renombrar»</td><td>Los grupos virtuales no se pueden renombrar</td></tr>
+  <tr><td>Reordenar grupos</td><td>Arrastrar y soltar</td><td>Los grupos virtuales no se pueden mover</td></tr>
+</table>
+
+<h3>Operaciones de ajustes preestablecidos</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Operación</th><th>Método</th><th>Notas</th></tr>
+  <tr><td>Agregar ajuste</td><td>Botón «+ (Agregar)»</td><td>Se guarda en el primer grupo real si se selecciona un grupo virtual</td></tr>
+  <tr><td>Eliminar ajuste</td><td>Botón «- (Eliminar)», o clic derecho &rarr; «Eliminar»</td><td>Se muestra cuadro de confirmación. Se admite selección múltiple.</td></tr>
+  <tr><td>Renombrar ajuste</td><td>Doble clic, o clic derecho &rarr; «Renombrar»</td><td>Ninguna</td></tr>
+  <tr><td>Reordenar ajustes</td><td>Arrastrar y soltar</td><td>No disponible al ver grupos virtuales</td></tr>
+  <tr><td>Aplicar ajuste</td><td>Botón «✓ (Aplicar)», o clic derecho &rarr; «Aplicar»</td><td>Cuadro de confirmación para contenido idéntico</td></tr>
+  <tr><td>Actualizar ajuste</td><td>Botón «↺ (Actualizar)», o clic derecho &rarr; «Actualizar»</td><td>Solo activo cuando los efectos han cambiado</td></tr>
+  <tr><td>Vaciar ajuste</td><td>Clic derecho &rarr; «Vaciar Ajuste»</td><td>Se muestra cuadro de confirmación. Solo disponible cuando el ajuste tiene 1+ efectos.</td></tr>
+  <tr><td>Alternar favorito</td><td>Hacer clic en el botón de estrella</td><td>Ninguna</td></tr>
+  <tr><td>Copiar</td><td>Clic derecho &rarr; «Copiar»</td><td>Se admite selección múltiple</td></tr>
+  <tr><td>Cortar</td><td>Clic derecho &rarr; «Cortar»</td><td>Sin cuadro de confirmación. Se admite selección múltiple.</td></tr>
+  <tr><td>Pegar</td><td>Clic derecho &rarr; «Pegar»</td><td>Requiere JSON válido en el portapapeles</td></tr>
+  <tr><td>Exportar</td><td>Clic derecho &rarr; «Exportar»</td><td>Selección múltiple. Formato .ceprstpkg.</td></tr>
+  <tr><td>Importar</td><td>Clic derecho en área en blanco &rarr; «Importar»</td><td>Se pueden seleccionar varios archivos</td></tr>
+  <tr><td>Eliminar efectos no seleccionados</td><td>Clic derecho en área en blanco &rarr; «Limpiar» &rarr; «Eliminar efectos no seleccionados»</td><td>Se muestra cuadro de confirmación</td></tr>
+  <tr><td>Abrir historial</td><td>Clic derecho &rarr; «Gestión de historial»</td><td>Una ventana por ajuste</td></tr>
+</table>
+
+<h3>Operaciones del historial</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Operación</th><th>Método</th><th>Descripción</th></tr>
+  <tr><td>Guardar instantánea</td><td>Introducir mensaje &rarr; Botón «Guardar Nueva Instantánea»</td><td>Desactivado si el mensaje está vacío</td></tr>
+  <tr><td>Revertir a instantánea</td><td>Seleccionar instantánea &rarr; Botón «Revertir a Esto»</td><td>Se aplica tanto al ajuste como a la línea de tiempo</td></tr>
+  <tr><td>Crear rama</td><td>Introducir nombre de rama &rarr; Botón «Crear Nueva Rama»</td><td>Desactivado si el nombre de rama está vacío</td></tr>
+  <tr><td>Fusionar</td><td>Clic derecho en instantánea &rarr; «Fusionar en Actual»</td><td>Agrega efectos al final actual</td></tr>
+  <tr><td>Mantener Cambios (Soft Reset)</td><td>Clic derecho en instantánea &rarr; «Mantener Cambios (Soft)»</td><td>Solo mueve el HEAD, sin cambios de efectos</td></tr>
+  <tr><td>Descartar Cambios (Hard Reset)</td><td>Clic derecho en instantánea &rarr; «Descartar Cambios (Hard)»</td><td>Soft Reset + Revertir simultáneamente</td></tr>
+  <tr><td>Administrar etiquetas</td><td>Clic derecho en instantánea &rarr; «Administrar Etiquetas»</td><td>Abre la ventana de gestión de etiquetas</td></tr>
+</table>
+<hr>
+
+<h2 id="caution">25. Notas y advertencias</h2>
+<ul>
+  <li>La salida en formato AviUtl (.exo) no es compatible.</li>
+  <li>No se recomienda anidar «Efectos Combinados» dentro de otro «Efectos Combinados».</li>
+  <li>Los grupos virtuales «Todo», «Favoritos» y «Reciente» no se pueden eliminar, renombrar ni reordenar.</li>
+  <li>El grupo «Por defecto» no se puede eliminar.</li>
+  <li>Agregar o pegar un ajuste mientras se selecciona un grupo virtual lo guarda en el primer grupo real.</li>
+  <li>Importar un archivo de paquete asigna nuevos ID diferentes de los GUID originales. Por lo tanto, los ajustes importados no heredan el historial de instantáneas.</li>
+  <li>La operación Cortar elimina ajustes sin cuadro de confirmación. Esta acción no se puede deshacer inmediatamente, así que úsela con cuidado.</li>
+  <li>Los datos de ajustes se almacenan tanto en el almacenamiento principal como en el de respaldo. Eliminar una carpeta puede permitir la recuperación, pero eliminar ambas resultará en pérdida permanente de datos.</li>
+  <li>Los datos del historial se almacenan en la carpeta <code>History/</code>. Eliminar esta carpeta borrará todo el historial.</li>
+  <li>El historial de instantáneas crece sin límite. Si hay demasiadas instantáneas innecesarias, puede eliminar manualmente los archivos <code>.json</code> no deseados en la carpeta <code>History/{GUID del ajuste}/</code> (no elimine <code>branches.json</code>).</li>
+  <li>Solo los efectos admitidos por el sistema de complementos de YMM4 se guardan como parte de la configuración de efectos de un ajuste. Los efectos no admitidos pueden omitirse al cargar.</li>
+  <li>Debido a las escrituras con debounce, hay un retraso de hasta 300ms entre una operación de cambio y la escritura real en el archivo. Si YMM4 se cierra forzosamente de inmediato, es posible que la última operación no se guarde.</li>
+</ul>
+<hr>
+
+<h2 id="license">26. Aviso legal y licencia</h2>
+<p>Este complemento se publica bajo la Licencia MIT.</p>
+<p>
+<strong>ESTE SOFTWARE SE PROPORCIONA «TAL CUAL», SIN GARANTÍA DE NINGÚN TIPO, EXPRESA O IMPLÍCITA, INCLUYENDO PERO NO LIMITADO A LAS GARANTÍAS DE COMERCIABILIDAD, IDONEIDAD PARA UN PROPÓSITO PARTICULAR Y NO INFRACCIÓN.</strong>
+</p>
+<p>El autor no será responsable de ningún daño derivado del uso o la imposibilidad de uso de este complemento. Úselo bajo su propia responsabilidad.</p>
+<p>
+Autor: routersys &nbsp;/&nbsp;
+Licencia: <a href="https://github.com/routersys/YMM4-CombinedEffect/blob/main/LICENSE">MIT License</a> &nbsp;/&nbsp;
+Repositorio: <a href="https://github.com/routersys/YMM4-CombinedEffect">https://github.com/routersys/YMM4-CombinedEffect</a>
+</p>
+<hr>
+<p>Fin del documento.</p>
+
+</body>
+</html>
