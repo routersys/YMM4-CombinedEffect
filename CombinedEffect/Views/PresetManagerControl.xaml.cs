@@ -7,7 +7,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using YukkuriMovieMaker.Commons;
 
 namespace CombinedEffect.Views;

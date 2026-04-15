@@ -154,4 +154,7 @@
 <data name="PresetExchangeMigrator_UnsupportedVersion" xml:space="preserve"><value>Preset exchange format version {0} is not supported. Maximum supported version is {1}.</value></data>
 <data name="Error_InvalidPresetPackage" xml:space="preserve"><value>File '{0}' does not contain a valid preset exchange package.</value></data>
 <data name="Error_UnrecognizedFormatId" xml:space="preserve"><value>File '{0}' has an unrecognized format ID '{1}'. Expected '{2}'.</value></data>
+<data name="Menu_Copy" xml:space="preserve"><value>Copy</value></data>
+<data name="Menu_Paste" xml:space="preserve"><value>Paste</value></data>
+<data name="Menu_Cut" xml:space="preserve"><value>Cut</value></data>
 </root>

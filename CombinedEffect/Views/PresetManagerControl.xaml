@@ -359,6 +359,9 @@
                              PreviewMouseWheel="ListBox_PreviewMouseWheel">
                         <ListBox.ContextMenu>
                             <ContextMenu>
+                                <MenuItem Header="{x:Static loc:Texts.Menu_Paste}"
+                                          Command="{Binding PlacementTarget.DataContext.PastePresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                <Separator/>
                                 <MenuItem Header="{x:Static loc:Texts.PresetManager_ExchangeImport}"
                                           Command="{Binding PlacementTarget.DataContext.ImportPresetsCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                                 <Separator/>
@@ -386,7 +389,16 @@
                                                       CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                                             <MenuItem Header="{x:Static loc:Texts.PresetManager_RemovePreset}"
                                                       Command="{Binding PlacementTarget.Tag.DataContext.RemovePresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                      CommandParameter="{Binding PlacementTarget.Tag.SelectedItems, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                            <Separator/>
+                                            <MenuItem Header="{x:Static loc:Texts.Menu_Copy}"
+                                                      Command="{Binding PlacementTarget.Tag.DataContext.CopyPresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      CommandParameter="{Binding PlacementTarget.Tag.SelectedItems, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                            <MenuItem Header="{x:Static loc:Texts.Menu_Cut}"
+                                                      Command="{Binding PlacementTarget.Tag.DataContext.CutPresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      CommandParameter="{Binding PlacementTarget.Tag.SelectedItems, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                            <MenuItem Header="{x:Static loc:Texts.Menu_Paste}"
+                                                      Command="{Binding PlacementTarget.Tag.DataContext.PastePresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                                             <Separator/>
                                             <MenuItem Header="{x:Static loc:Texts.PresetManager_ClearPreset}"
                                                       Command="{Binding PlacementTarget.Tag.DataContext.ClearPresetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
@@ -474,7 +486,7 @@
                                     <TextBlock Grid.Column="1" Text="{x:Static loc:Texts.PresetManager_AddPreset}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Style="{StaticResource AnimatedTextBlockStyle}" />
                                 </Grid>
                             </Button>
-                            <Button Command="{Binding RemovePresetCommand}" Padding="0" Height="28" MinWidth="28" ToolTip="{x:Static loc:Texts.PresetManager_RemovePreset}" HorizontalContentAlignment="Left" VerticalContentAlignment="Stretch">
+                            <Button Command="{Binding RemovePresetCommand}" CommandParameter="{Binding SelectedItems, ElementName=PresetListBox}" Padding="0" Height="28" MinWidth="28" ToolTip="{x:Static loc:Texts.PresetManager_RemovePreset}" HorizontalContentAlignment="Left" VerticalContentAlignment="Stretch">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>

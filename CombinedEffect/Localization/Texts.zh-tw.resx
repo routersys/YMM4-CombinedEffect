@@ -154,4 +154,7 @@
 <data name="PresetExchangeMigrator_UnsupportedVersion" xml:space="preserve"><value>不支援預設交換格式版本 {0}。支援的最大版本為 {1}。</value></data>
 <data name="Error_InvalidPresetPackage" xml:space="preserve"><value>檔案 '{0}' 不包含有效的預設交換套件。</value></data>
 <data name="Error_UnrecognizedFormatId" xml:space="preserve"><value>檔案 '{0}' 具有無法識別的格式 ID '{1}'。預期為 '{2}'。</value></data>
+<data name="Menu_Copy" xml:space="preserve"><value>複製</value></data>
+<data name="Menu_Paste" xml:space="preserve"><value>貼上</value></data>
+<data name="Menu_Cut" xml:space="preserve"><value>剪下</value></data>
 </root>

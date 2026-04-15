@@ -154,4 +154,7 @@
 <data name="PresetExchangeMigrator_UnsupportedVersion" xml:space="preserve"><value>Versi format pertukaran prasetel {0} tidak didukung. Versi maksimum yang didukung adalah {1}.</value></data>
 <data name="Error_InvalidPresetPackage" xml:space="preserve"><value>File '{0}' tidak berisi paket pertukaran prasetel yang valid.</value></data>
 <data name="Error_UnrecognizedFormatId" xml:space="preserve"><value>File '{0}' memiliki ID format yang tidak dikenal '{1}'. Diharapkan '{2}'.</value></data>
+<data name="Menu_Copy" xml:space="preserve"><value>Salin</value></data>
+<data name="Menu_Paste" xml:space="preserve"><value>Tempel</value></data>
+<data name="Menu_Cut" xml:space="preserve"><value>Potong</value></data>
 </root>

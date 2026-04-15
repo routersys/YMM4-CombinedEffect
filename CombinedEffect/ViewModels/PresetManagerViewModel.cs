@@ -115,6 +115,9 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
     public ICommand SetSearchModeCommand { get; private set; } = null!;
     public ICommand ExportPresetsCommand { get; private set; } = null!;
     public ICommand ImportPresetsCommand { get; private set; } = null!;
+    public ICommand CopyPresetCommand { get; private set; } = null!;
+    public ICommand PastePresetCommand { get; private set; } = null!;
+    public ICommand CutPresetCommand { get; private set; } = null!;
 
     public event EventHandler? BeginEdit;
     public event EventHandler? EndEdit;
@@ -129,7 +132,7 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
         RemoveGroupCommand = new RelayCommand<object>(_ => ExecuteRemoveGroup(), _ => CanRemoveGroup());
         RenameGroupCommand = new RelayCommand<PresetGroup>(ExecuteRenameGroup, CanRenameGroup);
         AddPresetCommand = new RelayCommand<object>(_ => ExecuteAddPreset());
-        RemovePresetCommand = new RelayCommand<PresetItemViewModel>(ExecuteRemovePreset, CanRemovePreset);
+        RemovePresetCommand = new RelayCommand<IList>(ExecuteRemovePreset, list => ResolveExportTargets(list).Count > 0);
         RenamePresetCommand = new RelayCommand<PresetItemViewModel>(ExecuteRenamePreset, CanRenamePreset);
         ApplyPresetCommand = new RelayCommand<IList>(ExecuteApplyPreset, list => list is not null && list.Count > 0);
         UpdatePresetCommand = new RelayCommand<PresetItemViewModel>(ExecuteUpdatePreset, CanUpdatePreset);
@@ -141,6 +144,9 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
         SetSearchModeCommand = new RelayCommand<object>(ExecuteSetSearchMode);
         ExportPresetsCommand = new RelayCommand<IList>(ExecuteExportPresets, CanExportPresets);
         ImportPresetsCommand = new RelayCommand<object>(_ => ExecuteImportPresets());
+        CopyPresetCommand = new RelayCommand<IList>(ExecuteCopyPreset, list => ResolveExportTargets(list).Count > 0);
+        PastePresetCommand = new RelayCommand<object>(_ => ExecutePastePreset(), _ => Clipboard.ContainsText());
+        CutPresetCommand = new RelayCommand<IList>(ExecuteCutPreset, list => ResolveExportTargets(list).Count > 0);
 
         _effect.PropertyChanged += OnEffectPropertyChanged;
         AttachEffectHandlers(_effect.Effects);
@@ -246,8 +252,6 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
 
     private static bool CanRenameGroup(PresetGroup? group) =>
         group is not null && !IsVirtualGroup(group);
-
-    private bool CanRemovePreset(PresetItemViewModel? presetVm) => (presetVm ?? SelectedPreset) is not null;
 
     private bool CanRenamePreset(PresetItemViewModel? presetVm) => (presetVm ?? SelectedPreset) is not null;
 
@@ -426,6 +430,76 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
         }
     }
 
+    private void ExecuteCopyPreset(IList? selectedItems)
+    {
+        var targets = ResolveExportTargets(selectedItems);
+        if (targets.Count == 0) return;
+
+        var package = new PresetExchangePackage
+        {
+            FormatId = PresetExchangeFormat.FormatId,
+            Version = PresetExchangeFormat.Version,
+            ExportedAtUtc = DateTimeOffset.UtcNow,
+            Presets = [.. targets.Select(p => new EffectPreset
+            {
+                Id = p.Model.Id,
+                Name = p.Model.Name,
+                IsFavorite = p.Model.IsFavorite,
+                SerializedEffects = p.Model.SerializedEffects
+            })]
+        };
+        var json = JsonConvert.SerializeObject(package, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+        Clipboard.SetText(json);
+    }
+
+    private void ExecuteCutPreset(IList? selectedItems)
+    {
+        ExecuteCopyPreset(selectedItems);
+        RemoveTargets(selectedItems, true);
+    }
+
+    private void ExecutePastePreset()
+    {
+        try
+        {
+            var json = Clipboard.GetText();
+            if (string.IsNullOrWhiteSpace(json)) return;
+            var package = JsonConvert.DeserializeObject<PresetExchangePackage>(json, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+            if (package is null || package.FormatId != PresetExchangeFormat.FormatId) return;
+            package = PresetExchangeMigrator.Migrate(package);
+            if (package.Presets.Count == 0) return;
+
+            var targetGroup = SelectedGroup;
+            if (targetGroup is null || IsVirtualGroup(targetGroup))
+                targetGroup = Groups.FirstOrDefault(g => !IsVirtualGroup(g));
+            if (targetGroup is null) return;
+
+            PresetItemViewModel? firstImported = null;
+            foreach (var preset in package.Presets)
+            {
+                if (string.IsNullOrWhiteSpace(preset.Name))
+                    preset.Name = Texts.PresetManager_NewPreset;
+
+                preset.Id = Guid.NewGuid();
+                var vm = new PresetItemViewModel(preset, _serialization);
+                _presetCache[preset.Id] = vm;
+                targetGroup.PresetIds.Add(preset.Id);
+                _persistence.SavePreset(preset);
+                firstImported ??= vm;
+            }
+
+            PersistRegistry();
+            SelectedGroup = targetGroup;
+            RefreshDisplayedPresets();
+            if (firstImported is not null)
+                SelectedPreset = firstImported;
+        }
+        catch (Exception)
+        {
+            MessageBox.Show(Texts.PresetManager_ExchangeImportError);
+        }
+    }
+
     private void ExecuteImportPresets()
     {
         var filePaths = _presetExchangeDialog.ShowImportDialog();
@@ -549,21 +623,30 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
         _persistence.SavePreset(target.Model);
     }
 
-    private void ExecuteRemovePreset(PresetItemViewModel? presetVm)
-    {
-        var target = presetVm ?? SelectedPreset;
-        if (target is null) return;
-        var confirmWindow = new ConfirmationDialogWindow(Texts.Confirm_DeletePreset, Texts.Confirm_Delete);
-        if (confirmWindow.ShowDialog() != true) return;
+    private void ExecuteRemovePreset(IList? selectedItems) => RemoveTargets(selectedItems, false);
 
-        var id = target.Model.Id;
-        if (_historyWindows.TryGetValue(id, out var window))
-            window.Close();
-        foreach (var group in Groups.Where(g => !IsVirtualGroup(g)))
-            group.PresetIds.Remove(id);
-        if (SelectedPreset == target)
-            SelectedPreset = null;
-        PurgePreset(id);
+    private void RemoveTargets(IList? selectedItems, bool skipConfirm)
+    {
+        var targets = ResolveExportTargets(selectedItems);
+        if (targets.Count == 0) return;
+
+        if (!skipConfirm)
+        {
+            var confirmWindow = new ConfirmationDialogWindow(Texts.Confirm_DeletePreset, Texts.Confirm_Delete);
+            if (confirmWindow.ShowDialog() != true) return;
+        }
+
+        var ids = targets.Select(t => t.Model.Id).ToList();
+        foreach (var id in ids)
+        {
+            if (_historyWindows.TryGetValue(id, out var window))
+                window.Close();
+            foreach (var group in Groups.Where(g => !IsVirtualGroup(g)))
+                group.PresetIds.Remove(id);
+            if (SelectedPreset?.Model.Id == id)
+                SelectedPreset = null;
+            PurgePreset(id);
+        }
         RefreshDisplayedPresets();
         PersistRegistry();
     }

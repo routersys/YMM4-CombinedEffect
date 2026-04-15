@@ -154,4 +154,7 @@
 <data name="PresetExchangeMigrator_UnsupportedVersion" xml:space="preserve"><value>إصدار تنسيق تبادل الإعدادات المسبقة {0} غير مدعوم. الحد الأقصى للإصدار المدعوم هو {1}.</value></data>
 <data name="Error_InvalidPresetPackage" xml:space="preserve"><value>الملف '{0}' لا يحتوي على حزمة تبادل إعدادات مسبقة صالحة.</value></data>
 <data name="Error_UnrecognizedFormatId" xml:space="preserve"><value>الملف '{0}' يحتوي على معرّف تنسيق غير معروف '{1}'. المتوقع '{2}'.</value></data>
+<data name="Menu_Copy" xml:space="preserve"><value>نسخ</value></data>
+<data name="Menu_Paste" xml:space="preserve"><value>لصق</value></data>
+<data name="Menu_Cut" xml:space="preserve"><value>قص</value></data>
 </root>

@@ -154,4 +154,7 @@
 <data name="PresetExchangeMigrator_UnsupportedVersion" xml:space="preserve"><value>프리셋 교환 형식 버전 {0}은(는) 지원되지 않습니다. 지원되는 최대 버전은 {1}입니다.</value></data>
 <data name="Error_InvalidPresetPackage" xml:space="preserve"><value>'{0}' 파일에 유효한 프리셋 교환 패키지가 포함되어 있지 않습니다.</value></data>
 <data name="Error_UnrecognizedFormatId" xml:space="preserve"><value>'{0}' 파일의 형식 ID '{1}'을(를) 인식할 수 없습니다. 예상되는 형식 ID는 '{2}'입니다.</value></data>
+<data name="Menu_Copy" xml:space="preserve"><value>복사</value></data>
+<data name="Menu_Paste" xml:space="preserve"><value>붙여넣기</value></data>
+<data name="Menu_Cut" xml:space="preserve"><value>잘라내기</value></data>
 </root>
