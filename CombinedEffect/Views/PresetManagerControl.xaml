@@ -548,7 +548,9 @@
             </Grid>
         </Border>
 
-        <Thumb Grid.Row="1" Height="6" Cursor="SizeNS" Margin="5,0,5,5" DragDelta="Thumb_DragDelta">
+        <Thumb Grid.Row="1" Height="6" Cursor="SizeNS" Margin="5,0,5,5"
+               DragDelta="Thumb_DragDelta"
+               DragCompleted="Thumb_DragCompleted">
             <Thumb.Template>
                 <ControlTemplate TargetType="Thumb">
                     <Border Background="Transparent">

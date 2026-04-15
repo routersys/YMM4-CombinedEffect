@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Threading.Channels;
 
 namespace CombinedEffect.Infrastructure;
@@ -9,7 +10,7 @@ internal sealed class AsyncDebouncer : IDisposable
     private readonly Channel<WriteRequest> _channel = Channel.CreateUnbounded<WriteRequest>(
         new UnboundedChannelOptions { SingleReader = true, AllowSynchronousContinuations = false });
 
-    private readonly Dictionary<string, CancellationTokenSource> _pending = new();
+    private readonly ConcurrentDictionary<string, CancellationTokenSource> _pending = new();
     private readonly CancellationTokenSource _workerCts = new();
     private bool _disposed;
 
@@ -27,7 +28,7 @@ internal sealed class AsyncDebouncer : IDisposable
         {
             await foreach (var request in _channel.Reader.ReadAllAsync(_workerCts.Token).ConfigureAwait(false))
             {
-                if (_pending.TryGetValue(request.Key, out var existingCts))
+                if (_pending.TryRemove(request.Key, out var existingCts))
                 {
                     existingCts.Cancel();
                     existingCts.Dispose();
@@ -49,15 +50,12 @@ internal sealed class AsyncDebouncer : IDisposable
         {
             await Task.Delay(delay, cts.Token).ConfigureAwait(false);
             if (!cts.Token.IsCancellationRequested)
-            {
                 await action().ConfigureAwait(false);
-            }
         }
         catch { }
         finally
         {
-            if (_pending.TryGetValue(key, out var stored) && ReferenceEquals(stored, cts))
-                _pending.Remove(key);
+            _pending.TryRemove(new KeyValuePair<string, CancellationTokenSource>(key, cts));
         }
     }
 

@@ -94,13 +94,10 @@ internal static class AtomicFileWriter
     private static T WithRetry<T>(Func<T> action, int maxRetries = 3)
     {
         var delay = 50;
-        for (var i = 0; i < maxRetries; i++)
+        for (var i = 1; i < maxRetries; i++)
         {
-            try
-            {
-                return action();
-            }
-            catch (IOException) when (i < maxRetries - 1)
+            try { return action(); }
+            catch (IOException)
             {
                 Thread.Sleep(delay);
                 delay *= 2;
@@ -112,13 +109,10 @@ internal static class AtomicFileWriter
     private static async Task<T> WithRetryAsync<T>(Func<Task<T>> action, int maxRetries = 3)
     {
         var delay = 50;
-        for (var i = 0; i < maxRetries; i++)
+        for (var i = 1; i < maxRetries; i++)
         {
-            try
-            {
-                return await action().ConfigureAwait(false);
-            }
-            catch (IOException) when (i < maxRetries - 1)
+            try { return await action().ConfigureAwait(false); }
+            catch (IOException)
             {
                 await Task.Delay(delay).ConfigureAwait(false);
                 delay *= 2;

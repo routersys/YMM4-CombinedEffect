@@ -17,7 +17,7 @@ internal sealed class HistoryRepository : IHistoryRepository, IDisposable
     private readonly SemaphoreSlim _ioLock = new(1, 1);
     private readonly AsyncDebouncer _debouncer = new();
     private readonly ConcurrentDictionary<Guid, List<HistoryBranch>> _branchCache = new();
-    private readonly ConcurrentDictionary<Guid, Dictionary<Guid, HistorySnapshot>> _snapshotCache = new();
+    private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<Guid, HistorySnapshot>> _snapshotCache = new();
     private bool _disposed;
 
     public HistoryRepository()
@@ -99,7 +99,7 @@ internal sealed class HistoryRepository : IHistoryRepository, IDisposable
                 var snap = JsonConvert.DeserializeObject<HistorySnapshot>(content, Settings);
                 if (snap is not null)
                 {
-                    var d = _snapshotCache.GetOrAdd(presetId, _ => new Dictionary<Guid, HistorySnapshot>());
+                    var d = _snapshotCache.GetOrAdd(presetId, _ => new ConcurrentDictionary<Guid, HistorySnapshot>());
                     d[snapshotId] = snap;
                 }
                 return snap;
@@ -111,7 +111,7 @@ internal sealed class HistoryRepository : IHistoryRepository, IDisposable
 
     public void SaveSnapshot(Guid presetId, HistorySnapshot snapshot)
     {
-        var dict = _snapshotCache.GetOrAdd(presetId, _ => new Dictionary<Guid, HistorySnapshot>());
+        var dict = _snapshotCache.GetOrAdd(presetId, _ => new ConcurrentDictionary<Guid, HistorySnapshot>());
         dict[snapshot.Id] = snapshot;
 
         var json = JsonConvert.SerializeObject(snapshot, Settings);
@@ -145,7 +145,7 @@ internal sealed class HistoryRepository : IHistoryRepository, IDisposable
                 var files = Directory.GetFiles(dir, "*.json")
                     .Where(f => !f.EndsWith("branches.json", StringComparison.OrdinalIgnoreCase));
                 var snapshots = new List<HistorySnapshot>();
-                var newDict = new Dictionary<Guid, HistorySnapshot>();
+                var newDict = new ConcurrentDictionary<Guid, HistorySnapshot>();
                 foreach (var file in files)
                 {
                     var content = AtomicFileWriter.ReadVerified(file);

@@ -23,7 +23,7 @@ internal sealed class HistoryManagerViewModel : ObservableBase, IDisposable
     private readonly Effect.CombinedEffect _effect;
     private readonly Guid _presetId;
 
-    private bool _disposed;
+    private volatile bool _disposed;
 
     public HistoryManagerViewModel(PresetItemViewModel presetVm, ItemProperty[] itemProperties)
     {
@@ -134,38 +134,39 @@ internal sealed class HistoryManagerViewModel : ObservableBase, IDisposable
 
     private async void RefreshSnapshots()
     {
-        var branch = SelectedBranch;
-        if (branch is null)
+        try
         {
-            await Application.Current.Dispatcher.InvokeAsync(Snapshots.Clear);
-            return;
-        }
-
-        var snaps = (await _repository.LoadAllSnapshotsAsync(_presetId).ConfigureAwait(false)).ToDictionary(s => s.Id);
-        var currentJson = _presetVm.Model.SerializedEffects;
-
-        var currentId = branch.HeadSnapshotId;
-        var newSnapshots = new List<HistorySnapshotViewModel>();
-        while (currentId != Guid.Empty && snaps.TryGetValue(currentId, out var s))
-        {
-            var vm = new HistorySnapshotViewModel(s)
+            var branch = SelectedBranch;
+            if (branch is null)
             {
-                IsCurrent = s.Id == branch.HeadSnapshotId,
-            };
-            if (s.SerializedEffects != currentJson)
-                vm.DiffSummary = CalculateDiffSummary(currentJson, s.SerializedEffects);
-            newSnapshots.Add(vm);
-            currentId = s.ParentId;
-        }
-
-        await Application.Current.Dispatcher.InvokeAsync(() =>
-        {
-            Snapshots.Clear();
-            foreach (var vm in newSnapshots)
-            {
-                Snapshots.Add(vm);
+                await Application.Current.Dispatcher.InvokeAsync(Snapshots.Clear);
+                return;
             }
-        });
+
+            var snaps = (await _repository.LoadAllSnapshotsAsync(_presetId).ConfigureAwait(false)).ToDictionary(s => s.Id);
+            if (_disposed) return;
+            var currentJson = _presetVm.Model.SerializedEffects;
+
+            var currentId = branch.HeadSnapshotId;
+            var newSnapshots = new List<HistorySnapshotViewModel>();
+            while (currentId != Guid.Empty && snaps.TryGetValue(currentId, out var s))
+            {
+                var vm = new HistorySnapshotViewModel(s) { IsCurrent = s.Id == branch.HeadSnapshotId };
+                if (s.SerializedEffects != currentJson)
+                    vm.DiffSummary = CalculateDiffSummary(currentJson, s.SerializedEffects);
+                newSnapshots.Add(vm);
+                currentId = s.ParentId;
+            }
+
+            if (_disposed) return;
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                Snapshots.Clear();
+                foreach (var vm in newSnapshots)
+                    Snapshots.Add(vm);
+            });
+        }
+        catch { }
     }
 
     private string CalculateDiffSummary(string currentJson, string snapshotJson)

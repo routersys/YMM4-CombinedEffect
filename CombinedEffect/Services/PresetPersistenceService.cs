@@ -5,6 +5,8 @@ using CombinedEffect.Services.Interfaces;
 using CombinedEffect.Settings;
 using Newtonsoft.Json;
 using System.Collections.Concurrent;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace CombinedEffect.Services;
 
@@ -35,10 +37,45 @@ internal sealed class PresetPersistenceService : IPresetPersistenceService, IDis
 
     private static string ComputeHash(string content)
     {
-        using var sha256 = System.Security.Cryptography.SHA256.Create();
-        var bytes = System.Text.Encoding.UTF8.GetBytes(content);
-        var hashBytes = sha256.ComputeHash(bytes);
-        return Convert.ToHexString(hashBytes);
+        var bytes = Encoding.UTF8.GetBytes(content);
+        Span<byte> hash = stackalloc byte[32];
+        SHA256.HashData(bytes, hash);
+        return Convert.ToHexString(hash);
+    }
+
+    private static (string? Content, bool HealDisk, bool HealHost, bool HealMeta) SelectContent(
+        (long Timestamp, string Json)? disk, string? host, long metaTimestamp, string? metaHash)
+    {
+        var diskHash = disk.HasValue ? ComputeHash(disk.Value.Json) : null;
+        var hostHash = host is not null ? ComputeHash(host) : null;
+
+        var diskMatchesMeta = diskHash is not null && diskHash == metaHash;
+        var hostMatchesMeta = hostHash is not null && hostHash == metaHash;
+
+        string? content;
+        bool healDisk, healHost, healMeta;
+
+        if (diskMatchesMeta)
+        {
+            content = disk!.Value.Json;
+            (healDisk, healHost, healMeta) = (false, !hostMatchesMeta, false);
+        }
+        else if (hostMatchesMeta)
+        {
+            content = host;
+            (healDisk, healHost, healMeta) = (true, false, false);
+        }
+        else
+        {
+            content = diskHash is not null && hostHash is not null
+                ? (disk!.Value.Timestamp > metaTimestamp ? disk.Value.Json : host)
+                : diskHash is not null ? disk!.Value.Json
+                : hostHash is not null ? host
+                : null;
+            (healDisk, healHost, healMeta) = (true, true, true);
+        }
+
+        return (content, healDisk, healHost, healMeta);
     }
 
     private void SyncMetaToSettings()
@@ -57,46 +94,12 @@ internal sealed class PresetPersistenceService : IPresetPersistenceService, IDis
                 var settings = CombinedEffectSettings.Instance;
                 var diskData = _mainDisk.ReadRegistry();
                 var hostJson = _backupStorage.ReadRegistry();
-
                 var metaTime = settings.RegistryBackupTimestamp;
                 var metaHash = settings.RegistryBackupHash;
 
-                var diskHash = diskData != null ? ComputeHash(diskData.Value.Json) : null;
-                var hostHash = hostJson != null ? ComputeHash(hostJson) : null;
+                var (finalContent, healDisk, healHost, healMeta) = SelectContent(diskData, hostJson, metaTime, metaHash);
 
-                var diskMatchesMeta = diskHash != null && diskHash == metaHash;
-                var hostMatchesMeta = hostHash != null && hostHash == metaHash;
-
-                string? finalContent = null;
-                var healDisk = false;
-                var healHost = false;
-                var healMeta = false;
-
-                if (diskMatchesMeta)
-                {
-                    finalContent = diskData!.Value.Json;
-                    if (!hostMatchesMeta) healHost = true;
-                }
-                else if (hostMatchesMeta)
-                {
-                    finalContent = hostJson;
-                    if (!diskMatchesMeta) healDisk = true;
-                }
-                else
-                {
-                    if (diskHash != null && hostHash != null)
-                    {
-                        finalContent = diskData!.Value.Timestamp > metaTime ? diskData.Value.Json : hostJson;
-                    }
-                    else if (diskHash != null) finalContent = diskData!.Value.Json;
-                    else if (hostHash != null) finalContent = hostJson;
-
-                    healMeta = true;
-                    healDisk = true;
-                    healHost = true;
-                }
-
-                if (finalContent == null) return CreateDefaultRegistry();
+                if (finalContent is null) return CreateDefaultRegistry();
 
                 var registry = JsonConvert.DeserializeObject<GroupRegistry>(finalContent, Settings) ?? CreateDefaultRegistry();
 
@@ -110,7 +113,7 @@ internal sealed class PresetPersistenceService : IPresetPersistenceService, IDis
                     _logger.LogInfo("Restored Registry Backup Storage");
                     await _backupStorage.WriteRegistryAsync(finalContent).ConfigureAwait(false);
                 }
-                if (healMeta || (healDisk && diskData == null) || (healHost && hostJson == null))
+                if (healMeta || (healDisk && !diskData.HasValue) || (healHost && hostJson is null))
                 {
                     settings.RegistryBackupHash = ComputeHash(finalContent);
                     settings.RegistryBackupTimestamp = DateTime.UtcNow.Ticks;
@@ -165,46 +168,12 @@ internal sealed class PresetPersistenceService : IPresetPersistenceService, IDis
                 var diskData = _mainDisk.ReadPreset(id);
                 _presetMetaCache.TryGetValue(id, out var meta);
                 var hostJson = _backupStorage.ReadPreset(id);
-
                 var metaTime = meta?.Timestamp ?? 0;
                 var metaHash = meta?.Hash;
 
-                var diskHash = diskData != null ? ComputeHash(diskData.Value.Json) : null;
-                var hostHash = hostJson != null ? ComputeHash(hostJson) : null;
+                var (finalContent, healDisk, healHost, healMeta) = SelectContent(diskData, hostJson, metaTime, metaHash);
 
-                var diskMatchesMeta = diskHash != null && diskHash == metaHash;
-                var hostMatchesMeta = hostHash != null && hostHash == metaHash;
-
-                string? finalContent = null;
-                var healDisk = false;
-                var healHost = false;
-                var healMeta = false;
-
-                if (diskMatchesMeta)
-                {
-                    finalContent = diskData!.Value.Json;
-                    if (!hostMatchesMeta) healHost = true;
-                }
-                else if (hostMatchesMeta)
-                {
-                    finalContent = hostJson;
-                    if (!diskMatchesMeta) healDisk = true;
-                }
-                else
-                {
-                    if (diskHash != null && hostHash != null)
-                    {
-                        finalContent = diskData!.Value.Timestamp > metaTime ? diskData.Value.Json : hostJson;
-                    }
-                    else if (diskHash != null) finalContent = diskData!.Value.Json;
-                    else if (hostHash != null) finalContent = hostJson;
-
-                    healMeta = true;
-                    healDisk = true;
-                    healHost = true;
-                }
-
-                if (finalContent == null) return null;
+                if (finalContent is null) return null;
 
                 var preset = JsonConvert.DeserializeObject<EffectPreset>(finalContent, Settings);
 
@@ -218,7 +187,7 @@ internal sealed class PresetPersistenceService : IPresetPersistenceService, IDis
                     _logger.LogInfo($"Restored Preset {id} Backup Storage");
                     await _backupStorage.WritePresetAsync(id, finalContent).ConfigureAwait(false);
                 }
-                if (healMeta || (healDisk && diskData == null) || (healHost && hostJson == null))
+                if (healMeta || (healDisk && !diskData.HasValue) || (healHost && hostJson is null))
                 {
                     _presetMetaCache[id] = new PresetBackupMeta
                     {
@@ -281,9 +250,7 @@ internal sealed class PresetPersistenceService : IPresetPersistenceService, IDis
                 _backupStorage.DeletePreset(id);
 
                 if (_presetMetaCache.TryRemove(id, out _))
-                {
                     SyncMetaToSettings();
-                }
             }
             catch (Exception ex)
             {

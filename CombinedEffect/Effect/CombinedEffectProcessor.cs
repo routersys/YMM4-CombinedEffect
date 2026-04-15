@@ -77,6 +77,7 @@ internal sealed class CombinedEffectProcessor : IVideoEffectProcessor
 
     private void SynchronizeProcessors()
     {
+        if (ReferenceEquals(_currentEffects, _effect.Effects)) return;
         if (_currentEffects.SequenceEqual(_effect.Effects)) return;
         DisposeProcessors();
         foreach (var effect in _effect.Effects)

@@ -8,6 +8,7 @@ internal sealed class LoggerService : ILoggerService
     private readonly string _logDir;
     private readonly object _lock = new();
     private readonly ILoggerConfiguration _config;
+    private DateTime _lastPurge = DateTime.MinValue;
 
     public LoggerService(ILoggerConfiguration config)
     {
@@ -28,16 +29,21 @@ internal sealed class LoggerService : ILoggerService
         {
             try
             {
-                PurgeOldLogs();
-                var activeFile = GetActiveLogFile();
-                var logLine = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] [{level}] {message}\n";
+                var now = DateTime.Now;
+                if ((now - _lastPurge).TotalHours >= 1.0)
+                {
+                    PurgeOldLogs(now);
+                    _lastPurge = now;
+                }
+                var activeFile = GetActiveLogFile(now);
+                var logLine = $"[{now:yyyy-MM-dd HH:mm:ss.fff}] [{level}] {message}\n";
                 File.AppendAllText(activeFile, logLine);
             }
             catch { }
         }
     }
 
-    private string GetActiveLogFile()
+    private string GetActiveLogFile(DateTime now)
     {
         var files = Directory.GetFiles(_logDir, "log_*.txt")
                              .Select(f => new FileInfo(f))
@@ -45,29 +51,18 @@ internal sealed class LoggerService : ILoggerService
                              .ToList();
 
         var latest = files.FirstOrDefault();
-        if (latest != null && latest.Length < _config.MaxLogFileSizeBytes)
-        {
+        if (latest is not null && latest.Length < _config.MaxLogFileSizeBytes)
             return latest.FullName;
-        }
 
-        return Path.Combine(_logDir, $"log_{DateTime.Now:yyyyMMdd_HHmmss}.txt");
+        return Path.Combine(_logDir, $"log_{now:yyyyMMdd_HHmmss}.txt");
     }
 
-    private void PurgeOldLogs()
+    private void PurgeOldLogs(DateTime now)
     {
-        var files = Directory.GetFiles(_logDir, "log_*.txt").Select(f => new FileInfo(f)).ToList();
-        var now = DateTime.Now;
-
-        foreach (var file in files)
+        foreach (var file in Directory.GetFiles(_logDir, "log_*.txt").Select(f => new FileInfo(f)))
         {
-            if (file.LastWriteTime.Year != now.Year || file.LastWriteTime.Month != now.Month)
-            {
+            if ((now - file.LastWriteTime).TotalDays >= _config.MaxRetentionDays)
                 file.Delete();
-            }
-            else if ((now - file.LastWriteTime).TotalDays >= _config.MaxRetentionDays)
-            {
-                file.Delete();
-            }
         }
     }
 }

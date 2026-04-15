@@ -62,13 +62,15 @@ public partial class PresetManagerControl : UserControl, IPropertyEditorControl
     private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
     {
         var newHeight = ActualHeight + e.VerticalChange;
-        if (newHeight >= MinHeight)
-        {
+        if (newHeight >= MinControlHeight)
             Height = newHeight;
-            var uiSettings = ServiceRegistry.Instance.UISettings;
-            uiSettings.Settings.ControlHeight = newHeight;
-            uiSettings.Save();
-        }
+    }
+
+    private void Thumb_DragCompleted(object sender, DragCompletedEventArgs e)
+    {
+        var uiSettings = ServiceRegistry.Instance.UISettings;
+        uiSettings.Settings.ControlHeight = Height;
+        uiSettings.Save();
     }
 
     private void GridSplitter_DragCompleted(object sender, DragCompletedEventArgs e)

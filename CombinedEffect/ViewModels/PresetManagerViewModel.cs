@@ -32,10 +32,11 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
 
     private readonly AsyncDebouncer _updateDebouncer = new();
     private ImmutableList<IVideoEffect> _trackedEffects = [];
-    private bool _canUpdatePresetCache;
+    private volatile bool _canUpdatePresetCache;
 
     private bool _disposed;
     private Guid? _appliedPresetId;
+    private Regex? _searchRegex;
 
     public ObservableCollection<PresetGroup> Groups { get; } = [];
     public ObservableCollection<PresetItemViewModel> DisplayedPresets { get; } = [];
@@ -93,6 +94,7 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
         set
         {
             if (!SetProperty(ref field, value)) return;
+            _searchRegex = TryBuildRegex(value);
             RefreshDisplayedPresets();
         }
     } = string.Empty;
@@ -160,6 +162,13 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
     internal static bool IsVirtualGroup(PresetGroup? group) =>
         group?.Name is { } name &&
         (name == Texts.PresetManager_GroupAll || name == Texts.PresetManager_GroupFavorites || name == Texts.PresetManager_GroupRecent);
+
+    private static Regex? TryBuildRegex(string? pattern)
+    {
+        if (string.IsNullOrWhiteSpace(pattern)) return null;
+        try { return new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled); }
+        catch { return null; }
+    }
 
     private void AttachEffectHandlers(ImmutableList<IVideoEffect> effects)
     {
@@ -314,18 +323,7 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
 
         IEnumerable<PresetItemViewModel> source = ResolvePresetsForGroup(SelectedGroup);
         if (!string.IsNullOrWhiteSpace(SearchText))
-        {
-            Regex? regex = null;
-            try
-            {
-                regex = new Regex(SearchText, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-            }
-            catch (Exception)
-            {
-            }
-
-            source = source.Where(p => MatchesSearch(p, SearchText, SearchMode, regex));
-        }
+            source = source.Where(p => MatchesSearch(p, SearchText, SearchMode, _searchRegex));
 
         if (IsVirtualGroup(SelectedGroup) && SelectedGroup.Name != Texts.PresetManager_GroupRecent)
         {
@@ -683,9 +681,7 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
 
             var combinedEffects = new List<IVideoEffect>();
             if (isAppending)
-            {
                 combinedEffects.AddRange(_effect.Effects);
-            }
             combinedEffects.AddRange(newEffects);
 
             var presetJson = presets.Count == 1 ? JsonConvert.SerializeObject(presets[0].Model) : string.Empty;
@@ -699,9 +695,7 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
             EndEdit?.Invoke(this, EventArgs.Empty);
 
             if (presets.Count == 1)
-            {
                 _appliedPresetId = presets[0].Model.Id;
-            }
 
             foreach (var preset in presets)
                 _recentService.Add(preset.Model.Id);
@@ -741,10 +735,7 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
         var vm = new HistoryManagerViewModel(target, _itemProperties);
         vm.BeginEdit += (_, _) => BeginEdit?.Invoke(this, EventArgs.Empty);
         vm.EndEdit += (_, _) => EndEdit?.Invoke(this, EventArgs.Empty);
-        var window = new HistoryManagerWindow(vm)
-        {
-            Owner = Application.Current.MainWindow
-        };
+        var window = new HistoryManagerWindow(vm) { Owner = Application.Current.MainWindow };
         window.Closed += (s, e) =>
         {
             _historyWindows.Remove(id);
