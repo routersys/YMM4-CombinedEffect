@@ -1,4 +1,5 @@
 using CombinedEffect.Infrastructure;
+using CombinedEffect.Models;
 using CombinedEffect.Models.History;
 using CombinedEffect.Services;
 using CombinedEffect.Services.Interfaces;

@@ -1,12 +1,6 @@
-namespace CombinedEffect.ViewModels;
+using CombinedEffect.Models;
 
-public enum DiffType
-{
-    Unchanged,
-    Added,
-    Removed,
-    Modified
-}
+namespace CombinedEffect.ViewModels;
 
 internal sealed class DiffNode
 {
