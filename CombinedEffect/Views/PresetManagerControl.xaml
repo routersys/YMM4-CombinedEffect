@@ -12,7 +12,35 @@
 
     <UserControl.Resources>
         <converters:FavoriteStarBrushConverter x:Key="FavoriteStarBrushConverter"/>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
+        <Style x:Key="AnimatedTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="MaxWidth" Value="0"/>
+            <Setter Property="Opacity" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Button}}" Value="True">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="MaxWidth" To="200" Duration="0:0:0.15" DecelerationRatio="0.9"/>
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.15"/>
+                                <ThicknessAnimation Storyboard.TargetProperty="Margin" To="5,0,5,0" Duration="0:0:0.15"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="MaxWidth" To="0" Duration="0:0:0.15" DecelerationRatio="0.9"/>
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15"/>
+                                <ThicknessAnimation Storyboard.TargetProperty="Margin" To="0" Duration="0:0:0.15"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
 
         <Style x:Key="StarButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
@@ -102,7 +130,7 @@
                         </ListBox.ItemContainerStyle>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Grid Height="24" Background="Transparent">
+                                <Grid MinHeight="24" Background="Transparent">
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Name}"/>
                                 </Grid>
                             </DataTemplate>
@@ -163,7 +191,7 @@
                                         </ListBox.ItemContainerStyle>
                                         <ListBox.ItemTemplate>
                                             <DataTemplate>
-                                                <Grid Height="24" Background="Transparent">
+                                                <Grid MinHeight="24" Background="Transparent">
                                                     <TextBlock VerticalAlignment="Center" Text="{Binding Name}"/>
                                                 </Grid>
                                             </DataTemplate>
@@ -207,6 +235,9 @@
                                         <Setter Property="Visibility" Value="Collapsed"/>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding Text, ElementName=SearchTextBox}" Value="">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Text, ElementName=SearchTextBox}" Value="{x:Null}">
                                                 <Setter Property="Visibility" Value="Visible"/>
                                             </DataTrigger>
                                         </Style.Triggers>
@@ -297,7 +328,7 @@
                         </ListBox.ItemContainerStyle>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Grid Height="24" Background="Transparent">
+                                <Grid MinHeight="24" Background="Transparent">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
@@ -346,52 +377,52 @@
 
                     <Border Grid.Row="3" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="0,1,0,0">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,0">
-                            <Button Command="{Binding AddPresetCommand}" Padding="0" Height="28" ToolTip="{x:Static loc:Texts.PresetManager_AddPreset}" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" HorizontalContentAlignment="Left" VerticalContentAlignment="Stretch" MouseEnter="PresetButton_MouseEnter" MouseLeave="PresetButton_MouseLeave">
+                            <Button Command="{Binding AddPresetCommand}" Padding="0" Height="28" MinWidth="28" ToolTip="{x:Static loc:Texts.PresetManager_AddPreset}" HorizontalContentAlignment="Left" VerticalContentAlignment="Stretch">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Grid Grid.Column="0" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}">
+                                    <Grid Grid.Column="0" Width="28">
                                         <Path Data="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" Stretch="Uniform" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
                                     </Grid>
-                                    <TextBlock Grid.Column="1" Text="{x:Static loc:Texts.PresetManager_AddPreset}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" VerticalAlignment="Center" Margin="5,0,5,0" Visibility="Collapsed" Opacity="0" />
+                                    <TextBlock Grid.Column="1" Text="{x:Static loc:Texts.PresetManager_AddPreset}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Style="{StaticResource AnimatedTextBlockStyle}" />
                                 </Grid>
                             </Button>
-                            <Button Command="{Binding RemovePresetCommand}" Padding="0" Height="28" ToolTip="{x:Static loc:Texts.PresetManager_RemovePreset}" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" HorizontalContentAlignment="Left" VerticalContentAlignment="Stretch" MouseEnter="PresetButton_MouseEnter" MouseLeave="PresetButton_MouseLeave">
+                            <Button Command="{Binding RemovePresetCommand}" Padding="0" Height="28" MinWidth="28" ToolTip="{x:Static loc:Texts.PresetManager_RemovePreset}" HorizontalContentAlignment="Left" VerticalContentAlignment="Stretch">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Grid Grid.Column="0" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}">
+                                    <Grid Grid.Column="0" Width="28">
                                         <Path Data="M19 13H5v-2h14v2z" Stretch="Uniform" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
                                     </Grid>
-                                    <TextBlock Grid.Column="1" Text="{x:Static loc:Texts.PresetManager_RemovePreset}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" VerticalAlignment="Center" Margin="5,0,5,0" Visibility="Collapsed" Opacity="0" />
+                                    <TextBlock Grid.Column="1" Text="{x:Static loc:Texts.PresetManager_RemovePreset}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Style="{StaticResource AnimatedTextBlockStyle}" />
                                 </Grid>
                             </Button>
-                            <Button Command="{Binding UpdatePresetCommand}" Padding="0" Height="28" ToolTip="{x:Static loc:Texts.PresetManager_UpdatePreset}" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" HorizontalContentAlignment="Left" VerticalContentAlignment="Stretch" MouseEnter="PresetButton_MouseEnter" MouseLeave="PresetButton_MouseLeave">
+                            <Button Command="{Binding UpdatePresetCommand}" Padding="0" Height="28" MinWidth="28" ToolTip="{x:Static loc:Texts.PresetManager_UpdatePreset}" HorizontalContentAlignment="Left" VerticalContentAlignment="Stretch">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Grid Grid.Column="0" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}">
+                                    <Grid Grid.Column="0" Width="28">
                                         <Path Data="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1-2.73 2.71-2.73 7.08 0 9.79 2.73 2.71 7.15 2.71 9.88 0C18.32 15.65 19 14.08 19 12.1h2c0 2.5-1.06 4.84-2.98 6.78-3.87 3.86-10.15 3.86-14.02 0-3.87-3.86-3.87-10.15 0-14.01 3.87-3.86 10.15-3.86 14.02 0L21 1.9v8.22z" Stretch="Uniform" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
                                     </Grid>
-                                    <TextBlock Grid.Column="1" Text="{x:Static loc:Texts.PresetManager_UpdatePreset}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" VerticalAlignment="Center" Margin="5,0,5,0" Visibility="Collapsed" Opacity="0" />
+                                    <TextBlock Grid.Column="1" Text="{x:Static loc:Texts.PresetManager_UpdatePreset}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Style="{StaticResource AnimatedTextBlockStyle}" />
                                 </Grid>
                             </Button>
-                            <Button Command="{Binding ApplyPresetCommand}" CommandParameter="{Binding SelectedItems, ElementName=PresetListBox}" Padding="0" Height="28" FontWeight="Bold" ToolTip="{x:Static loc:Texts.PresetManager_ApplyPreset}" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" HorizontalContentAlignment="Left" VerticalContentAlignment="Stretch" MouseEnter="PresetButton_MouseEnter" MouseLeave="PresetButton_MouseLeave">
+                            <Button Command="{Binding ApplyPresetCommand}" CommandParameter="{Binding SelectedItems, ElementName=PresetListBox}" Padding="0" Height="28" MinWidth="28" FontWeight="Bold" ToolTip="{x:Static loc:Texts.PresetManager_ApplyPreset}" HorizontalContentAlignment="Left" VerticalContentAlignment="Stretch">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Grid Grid.Column="0" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}">
+                                    <Grid Grid.Column="0" Width="28">
                                         <Path Data="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" Stretch="Uniform" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
                                     </Grid>
-                                    <TextBlock Grid.Column="1" Text="{x:Static loc:Texts.PresetManager_ApplyPreset}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" VerticalAlignment="Center" Margin="5,0,5,0" Visibility="Collapsed" Opacity="0" />
+                                    <TextBlock Grid.Column="1" Text="{x:Static loc:Texts.PresetManager_ApplyPreset}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Style="{StaticResource AnimatedTextBlockStyle}" />
                                 </Grid>
                             </Button>
                         </StackPanel>

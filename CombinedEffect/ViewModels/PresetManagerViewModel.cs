@@ -233,7 +233,7 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
             var preset = JsonConvert.DeserializeObject<EffectPreset>(_effect.SelectedPresetJson);
             _appliedPresetId = preset?.Id;
         }
-        catch
+        catch (Exception)
         {
             _appliedPresetId = null;
         }
@@ -316,7 +316,9 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
             {
                 regex = new Regex(SearchText, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
             }
-            catch { }
+            catch (Exception)
+            {
+            }
 
             source = source.Where(p => MatchesSearch(p, SearchText, SearchMode, regex));
         }
@@ -418,7 +420,7 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
         {
             _presetExchange.Export(filePath, [.. targets.Select(p => p.Model)]);
         }
-        catch
+        catch (Exception)
         {
             MessageBox.Show(Texts.PresetManager_ExchangeExportError);
         }
@@ -458,7 +460,7 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
             if (firstImported is not null)
                 SelectedPreset = firstImported;
         }
-        catch
+        catch (Exception)
         {
             MessageBox.Show(Texts.PresetManager_ExchangeImportError);
         }
@@ -624,7 +626,7 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
             if (SelectedGroup?.Name == Texts.PresetManager_GroupRecent)
                 RefreshDisplayedPresets();
         }
-        catch
+        catch (Exception)
         {
             MessageBox.Show(Texts.PresetManager_ApplyError);
         }

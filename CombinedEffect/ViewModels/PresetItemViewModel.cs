@@ -40,7 +40,9 @@ internal sealed class PresetItemViewModel : ObservableBase
                 return;
             }
         }
-        catch { }
+        catch (Exception)
+        {
+        }
 
         EffectCount = 0;
         EffectInfo = string.Empty;

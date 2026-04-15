@@ -20,9 +20,6 @@ public partial class PresetManagerControl : UserControl, IPropertyEditorControl
     private const double MinGroupColumnWidthDesktop = 120.0;
     private const double MaxGroupColumnWidthDesktop = 400.0;
     private const double MinGroupColumnWidthFallback = 50.0;
-    private const double ButtonAnimationDurationMs = 150.0;
-    private const double ButtonAnimationDeceleration = 0.9;
-    private const double ButtonTextPadding = 10.0;
     private const string GroupDragFormat = "CombinedEffect.GroupFormat";
     private const string PresetDragFormat = "CombinedEffect.PresetFormat";
 
@@ -237,38 +234,5 @@ public partial class PresetManagerControl : UserControl, IPropertyEditorControl
         if (_adornerLayer is null || _insertionAdorner is null) return;
         _adornerLayer.Remove(_insertionAdorner);
         _insertionAdorner = null;
-    }
-
-    private void PresetButton_MouseEnter(object sender, MouseEventArgs e)
-    {
-        if (sender is not Button button || button.Content is not Grid mainGrid) return;
-        if (mainGrid.Children[1] is not TextBlock textBlock) return;
-
-        textBlock.Visibility = Visibility.Visible;
-        textBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-        var targetWidth = button.ActualHeight + textBlock.DesiredSize.Width + ButtonTextPadding;
-        var duration = TimeSpan.FromMilliseconds(ButtonAnimationDurationMs);
-
-        button.BeginAnimation(WidthProperty,
-            new DoubleAnimation(button.ActualWidth, targetWidth, duration) { DecelerationRatio = ButtonAnimationDeceleration });
-        textBlock.BeginAnimation(OpacityProperty,
-            new DoubleAnimation(textBlock.Opacity, 1.0, duration));
-    }
-
-    private void PresetButton_MouseLeave(object sender, MouseEventArgs e)
-    {
-        if (sender is not Button button || button.Content is not Grid mainGrid) return;
-        if (mainGrid.Children[1] is not TextBlock textBlock) return;
-
-        var duration = TimeSpan.FromMilliseconds(ButtonAnimationDurationMs);
-        var widthAnim = new DoubleAnimation(button.ActualWidth, button.ActualHeight, duration) { DecelerationRatio = ButtonAnimationDeceleration };
-        widthAnim.Completed += (_, _) =>
-        {
-            if (!button.IsMouseOver) textBlock.Visibility = Visibility.Collapsed;
-        };
-
-        button.BeginAnimation(WidthProperty, widthAnim);
-        textBlock.BeginAnimation(OpacityProperty,
-            new DoubleAnimation(textBlock.Opacity, 0.0, duration));
     }
 }
