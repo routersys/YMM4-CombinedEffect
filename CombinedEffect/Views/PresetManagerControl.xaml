@@ -13,6 +13,16 @@
     <UserControl.Resources>
         <converters:FavoriteStarBrushConverter x:Key="FavoriteStarBrushConverter"/>
 
+        <Path x:Key="CheckmarkIcon" x:Shared="False"
+              Data="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" 
+              Fill="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" 
+              Stretch="Uniform" 
+              Width="12" 
+              Height="12" 
+              Margin="4,0,0,0" 
+              HorizontalAlignment="Center" 
+              VerticalAlignment="Center"/>
+
         <Style x:Key="AnimatedTextBlockStyle" TargetType="TextBlock">
             <Setter Property="MaxWidth" Value="0"/>
             <Setter Property="Opacity" Value="0"/>
@@ -254,11 +264,86 @@
                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Grid>
                                     </MenuItem.Header>
-                                    <MenuItem Header="{x:Static loc:Texts.SearchMode_Name}" IsChecked="{Binding IsSearchModeName, Mode=OneWay}" Command="{Binding SetSearchModeCommand}" CommandParameter="Name"/>
-                                    <MenuItem Header="{x:Static loc:Texts.SearchMode_EffectName}" IsChecked="{Binding IsSearchModeEffectName, Mode=OneWay}" Command="{Binding SetSearchModeCommand}" CommandParameter="EffectName"/>
-                                    <MenuItem Header="{x:Static loc:Texts.SearchMode_EffectCount}" IsChecked="{Binding IsSearchModeEffectCount, Mode=OneWay}" Command="{Binding SetSearchModeCommand}" CommandParameter="EffectCount"/>
-                                    <MenuItem Header="{x:Static loc:Texts.SearchMode_RawJson}" IsChecked="{Binding IsSearchModeRawJson, Mode=OneWay}" Command="{Binding SetSearchModeCommand}" CommandParameter="RawJson"/>
-                                    <MenuItem Header="{x:Static loc:Texts.SearchMode_Any}" IsChecked="{Binding IsSearchModeAny, Mode=OneWay}" Command="{Binding SetSearchModeCommand}" CommandParameter="Any"/>
+                                    <MenuItem Header="{x:Static loc:Texts.SearchMode_Name}" Command="{Binding SetSearchModeCommand}" CommandParameter="Name">
+                                        <MenuItem.Icon>
+                                            <ContentControl Content="{StaticResource CheckmarkIcon}">
+                                                <ContentControl.Style>
+                                                    <Style TargetType="ContentControl">
+                                                        <Setter Property="Visibility" Value="Hidden"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsSearchModeName}" Value="True">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </ContentControl.Style>
+                                            </ContentControl>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="{x:Static loc:Texts.SearchMode_EffectName}" Command="{Binding SetSearchModeCommand}" CommandParameter="EffectName">
+                                        <MenuItem.Icon>
+                                            <ContentControl Content="{StaticResource CheckmarkIcon}">
+                                                <ContentControl.Style>
+                                                    <Style TargetType="ContentControl">
+                                                        <Setter Property="Visibility" Value="Hidden"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsSearchModeEffectName}" Value="True">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </ContentControl.Style>
+                                            </ContentControl>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="{x:Static loc:Texts.SearchMode_EffectCount}" Command="{Binding SetSearchModeCommand}" CommandParameter="EffectCount">
+                                        <MenuItem.Icon>
+                                            <ContentControl Content="{StaticResource CheckmarkIcon}">
+                                                <ContentControl.Style>
+                                                    <Style TargetType="ContentControl">
+                                                        <Setter Property="Visibility" Value="Hidden"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsSearchModeEffectCount}" Value="True">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </ContentControl.Style>
+                                            </ContentControl>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="{x:Static loc:Texts.SearchMode_RawJson}" Command="{Binding SetSearchModeCommand}" CommandParameter="RawJson">
+                                        <MenuItem.Icon>
+                                            <ContentControl Content="{StaticResource CheckmarkIcon}">
+                                                <ContentControl.Style>
+                                                    <Style TargetType="ContentControl">
+                                                        <Setter Property="Visibility" Value="Hidden"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsSearchModeRawJson}" Value="True">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </ContentControl.Style>
+                                            </ContentControl>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="{x:Static loc:Texts.SearchMode_Any}" Command="{Binding SetSearchModeCommand}" CommandParameter="Any">
+                                        <MenuItem.Icon>
+                                            <ContentControl Content="{StaticResource CheckmarkIcon}">
+                                                <ContentControl.Style>
+                                                    <Style TargetType="ContentControl">
+                                                        <Setter Property="Visibility" Value="Hidden"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsSearchModeAny}" Value="True">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </ContentControl.Style>
+                                            </ContentControl>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
                                 </MenuItem>
                             </Menu>
                         </Grid>
