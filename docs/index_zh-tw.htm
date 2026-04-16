@@ -2,11 +2,15 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
 <title>組合效果 使用說明書</title>
 </head>
 <body>
 
-<p>
+<header class="site-header">
+  <div class="lang-nav container">
+    <p>
 [<a href="index.htm">日本語</a>]
 [<a href="index_en.htm">English</a>]
 [<a href="index_zh-cn.htm">中文（简体）</a>]
@@ -16,12 +20,12 @@
 [<a href="index_ar.htm">العربية</a>]
 [<a href="index_id.htm">Indonesia</a>]
 </p>
+  </div>
+</header>
 
-<h1>組合效果 for YMM4 — 使用說明書</h1>
-<p>版本: 2.1.0 &nbsp;/&nbsp; 支援OS: Windows 10 / 11 (64bit) &nbsp;/&nbsp; 執行環境: .NET 10.0</p>
-<hr>
-
-<h2>目錄</h2>
+<div class="layout-wrapper container">
+  <nav class="sidebar">
+    <h2>目錄</h2>
 <ol>
   <li><a href="#overview">概述</a></li>
   <li><a href="#requirements">執行環境</a></li>
@@ -50,9 +54,16 @@
   <li><a href="#caution">注意事項</a></li>
   <li><a href="#license">免責聲明與授權</a></li>
 </ol>
-<hr>
+  </nav>
 
-<h2 id="overview">1. 概述</h2>
+  <main class="main-content">
+    <div class="page-title">
+      <h1>組合效果 for YMM4 — 使用說明書</h1>
+      <p>版本: 2.1.0 &nbsp;/&nbsp; 支援OS: Windows 10 / 11 (64bit) &nbsp;/&nbsp; 執行環境: .NET 10.0</p>
+    </div>
+    
+    <div class="content-body">
+      <h2 id="overview">1. 概述</h2>
 <p>
 「組合效果」是在 YukkuriMovieMaker4（YMM4）上運作的視訊效果外掛程式。
 可將多個視訊效果存放在單一「組合效果」項目中，進行分組、預設儲存和調用管理。
@@ -637,6 +648,9 @@
 </p>
 <hr>
 <p>文件結束。</p>
+    </div>
+  </main>
+</div>
 
 </body>
 </html>

@@ -2,11 +2,15 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
 <title>Efectos Combinados — Manual de Usuario</title>
 </head>
 <body>
 
-<p>
+<header class="site-header">
+  <div class="lang-nav container">
+    <p>
 [<a href="index.htm">日本語</a>]
 [<a href="index_en.htm">English</a>]
 [<a href="index_zh-cn.htm">中文（简体）</a>]
@@ -16,12 +20,12 @@
 [<a href="index_ar.htm">العربية</a>]
 [<a href="index_id.htm">Indonesia</a>]
 </p>
+  </div>
+</header>
 
-<h1>Efectos Combinados for YMM4 — Manual de Usuario</h1>
-<p>Versión: 2.1.0 &nbsp;/&nbsp; SO compatible: Windows 10 / 11 (64bit) &nbsp;/&nbsp; Runtime: .NET 10.0</p>
-<hr>
-
-<h2>Índice</h2>
+<div class="layout-wrapper container">
+  <nav class="sidebar">
+    <h2>Índice</h2>
 <ol>
   <li><a href="#overview">Descripción general</a></li>
   <li><a href="#requirements">Requisitos del sistema</a></li>
@@ -50,9 +54,16 @@
   <li><a href="#caution">Notas y advertencias</a></li>
   <li><a href="#license">Aviso legal y licencia</a></li>
 </ol>
-<hr>
+  </nav>
 
-<h2 id="overview">1. Descripción general</h2>
+  <main class="main-content">
+    <div class="page-title">
+      <h1>Efectos Combinados for YMM4 — Manual de Usuario</h1>
+      <p>Versión: 2.1.0 &nbsp;/&nbsp; SO compatible: Windows 10 / 11 (64bit) &nbsp;/&nbsp; Runtime: .NET 10.0</p>
+    </div>
+    
+    <div class="content-body">
+      <h2 id="overview">1. Descripción general</h2>
 <p>
 «Efectos Combinados» es un complemento de efectos de vídeo para YukkuriMovieMaker4 (YMM4).
 Permite almacenar múltiples efectos de vídeo en un solo elemento «Efectos Combinados» y gestionarlos mediante agrupación, guardado de ajustes preestablecidos y recuperación.
@@ -637,6 +648,9 @@ Repositorio: <a href="https://github.com/routersys/YMM4-CombinedEffect">https://
 </p>
 <hr>
 <p>Fin del documento.</p>
+    </div>
+  </main>
+</div>
 
 </body>
 </html>

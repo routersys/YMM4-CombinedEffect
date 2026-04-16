@@ -2,11 +2,15 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
 <title>组合效果 使用说明书</title>
 </head>
 <body>
 
-<p>
+<header class="site-header">
+  <div class="lang-nav container">
+    <p>
 [<a href="index.htm">日本語</a>]
 [<a href="index_en.htm">English</a>]
 [<strong>中文（简体）</strong>]
@@ -16,12 +20,12 @@
 [<a href="index_ar.htm">العربية</a>]
 [<a href="index_id.htm">Indonesia</a>]
 </p>
+  </div>
+</header>
 
-<h1>组合效果 for YMM4 — 使用说明书</h1>
-<p>版本: 2.1.0 &nbsp;/&nbsp; 支持OS: Windows 10 / 11 (64bit) &nbsp;/&nbsp; 运行时: .NET 10.0</p>
-<hr>
-
-<h2>目录</h2>
+<div class="layout-wrapper container">
+  <nav class="sidebar">
+    <h2>目录</h2>
 <ol>
   <li><a href="#overview">概述</a></li>
   <li><a href="#requirements">运行环境</a></li>
@@ -50,9 +54,16 @@
   <li><a href="#caution">注意事项</a></li>
   <li><a href="#license">免责声明与许可证</a></li>
 </ol>
-<hr>
+  </nav>
 
-<h2 id="overview">1. 概述</h2>
+  <main class="main-content">
+    <div class="page-title">
+      <h1>组合效果 for YMM4 — 使用说明书</h1>
+      <p>版本: 2.1.0 &nbsp;/&nbsp; 支持OS: Windows 10 / 11 (64bit) &nbsp;/&nbsp; 运行时: .NET 10.0</p>
+    </div>
+    
+    <div class="content-body">
+      <h2 id="overview">1. 概述</h2>
 <p>
 "组合效果"是一款在 YukkuriMovieMaker4（YMM4）上运行的视频效果插件。
 可将多个视频效果存放在单个"组合效果"项目中，进行分组、预设保存和调用管理。
@@ -637,6 +648,9 @@
 </p>
 <hr>
 <p>文档结束。</p>
+    </div>
+  </main>
+</div>
 
 </body>
 </html>

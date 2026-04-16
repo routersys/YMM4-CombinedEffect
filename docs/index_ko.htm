@@ -2,11 +2,15 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
 <title>조합 효과 취급 설명서</title>
 </head>
 <body>
 
-<p>
+<header class="site-header">
+  <div class="lang-nav container">
+    <p>
 [<a href="index.htm">日本語</a>]
 [<a href="index_en.htm">English</a>]
 [<a href="index_zh-cn.htm">中文（简体）</a>]
@@ -16,12 +20,12 @@
 [<a href="index_ar.htm">العربية</a>]
 [<a href="index_id.htm">Indonesia</a>]
 </p>
+  </div>
+</header>
 
-<h1>조합 효과 for YMM4 — 취급 설명서</h1>
-<p>버전: 2.1.0 &nbsp;/&nbsp; 지원 OS: Windows 10 / 11 (64bit) &nbsp;/&nbsp; 런타임: .NET 10.0</p>
-<hr>
-
-<h2>목차</h2>
+<div class="layout-wrapper container">
+  <nav class="sidebar">
+    <h2>목차</h2>
 <ol>
   <li><a href="#overview">개요</a></li>
   <li><a href="#requirements">동작 요건</a></li>
@@ -50,9 +54,16 @@
   <li><a href="#caution">주의 사항</a></li>
   <li><a href="#license">면책 조항 · 라이선스</a></li>
 </ol>
-<hr>
+  </nav>
 
-<h2 id="overview">1. 개요</h2>
+  <main class="main-content">
+    <div class="page-title">
+      <h1>조합 효과 for YMM4 — 취급 설명서</h1>
+      <p>버전: 2.1.0 &nbsp;/&nbsp; 지원 OS: Windows 10 / 11 (64bit) &nbsp;/&nbsp; 런타임: .NET 10.0</p>
+    </div>
+    
+    <div class="content-body">
+      <h2 id="overview">1. 개요</h2>
 <p>
 「조합 효과」는 YukkuriMovieMaker4(YMM4)에서 동작하는 영상 효과 플러그인입니다.
 여러 개의 영상 효과를 하나의 「조합 효과」 아이템에 저장하고, 그룹화 · 프리셋 저장 · 불러오기를 통해 관리할 수 있습니다.
@@ -637,6 +648,9 @@
 </p>
 <hr>
 <p>이상</p>
+    </div>
+  </main>
+</div>
 
 </body>
 </html>
