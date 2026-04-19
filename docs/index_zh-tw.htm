@@ -59,7 +59,7 @@
   <main class="main-content">
     <div class="page-title">
       <h1>組合效果 for YMM4 — 使用說明書</h1>
-      <p>版本: 2.1.0 &nbsp;/&nbsp; 支援OS: Windows 10 / 11 (64bit) &nbsp;/&nbsp; 執行環境: .NET 10.0</p>
+      <p>版本: 2.2.0 &nbsp;/&nbsp; 支援OS: Windows 10 / 11 (64bit) &nbsp;/&nbsp; 執行環境: .NET 10.0</p>
     </div>
     
     <div class="content-body">
@@ -72,6 +72,7 @@
 <ul>
   <li>將多個效果整合到一個項目中並依序套用</li>
   <li>以命名預設的形式儲存、調用和共享</li>
+  <li>透過分頁管理多套效果配置並可即時切換（支援新增、刪除、重新命名）</li>
   <li>透過全部、收藏、最近使用三種虛擬群組進行整理</li>
   <li>類 Git 的快照歷史與分支管理</li>
   <li>帶 CRC32 校驗的原子寫入與 SHA-256 雜湊多重冗餘持久化</li>
@@ -140,8 +141,17 @@
 <h3>5-3. 行動裝置版面（寬度低於400px）</h3>
 <p>控制項寬度低於400px時，群組清單將自動隱藏，並顯示漢堡選單按鈕（≡）。點擊該按鈕可以彈出視窗顯示群組清單。</p>
 
-<h3>5-4. 活動效果（VideoEffectSelector）</h3>
-<p>預設管理面板下方顯示 YMM4 標準視訊效果選擇器，可在此新增、刪除、排序和啟用/停用效果。</p>
+<h3>5-4. 效果分頁管理（EffectTabManagerControl）</h3>
+<p>「活動效果」上方會顯示分頁列。每個分頁都保存獨立的效果配置，切換分頁後會立即反映目前選取分頁的內容。</p>
+<ul>
+  <li>右側＋按鈕: 「新增分頁」</li>
+  <li>各分頁的×按鈕: 「刪除分頁」（首個分頁「新增」不可刪除）</li>
+  <li>雙擊分頁名稱: 重新命名（按 Enter 或失去焦點確認，按 Esc 取消）</li>
+  <li>預設分頁名稱: 第一個為「新增」，其後為「分頁 2」「分頁 3」……</li>
+</ul>
+
+<h3>5-5. 活動效果（VideoEffectSelector）</h3>
+<p>YMM4 標準視訊效果選擇器會顯示目前選取分頁的效果。此處的新增、刪除、排序、啟用/停用操作都會保存到該分頁。</p>
 <hr>
 
 <h2 id="groups">6. 群組管理</h2>
@@ -336,6 +346,7 @@
       "Id": "...",
       "Name": "預設名稱",
       "IsFavorite": false,
+      "SerializedTabs": "...",
       "SerializedEffects": "..."
     }
   ]
@@ -562,6 +573,7 @@
 <table border="1" cellpadding="6" cellspacing="0">
   <tr><th>參數名稱</th><th>類型</th><th>預設值</th><th>可動畫化</th><th>說明</th></tr>
   <tr><td>活動效果（Effects）</td><td>ImmutableList&lt;IVideoEffect&gt;</td><td>（空）</td><td>否</td><td>要管理的視訊效果清單。使用 YMM4 標準效果選擇器新增、刪除、排序和啟用/停用效果。按從上到下的順序進行管線處理，停用的效果將被略過。</td></tr>
+  <tr><td>EffectTabsJson</td><td>String（JSON格式）</td><td>（空字串）</td><td>否</td><td>儲存效果分頁狀態（目前選取分頁ID、分頁名稱、各分頁的效果JSON）的內部屬性。在新增/刪除/重新命名/切換分頁時自動更新。</td></tr>
   <tr><td>SelectedPresetJson</td><td>String（JSON格式）</td><td>（空字串）</td><td>否</td><td>儲存目前已套用預設資訊的內部屬性。套用預設時自動設定，不建議直接編輯。用於時間軸標籤顯示。</td></tr>
   <tr><td>PresetManagerVisible</td><td>bool</td><td>true</td><td>否</td><td>控制預設管理面板顯示的內部旗標，不包含在JSON序列化中（[JsonIgnore]）。</td></tr>
 </table>
@@ -575,6 +587,15 @@
 <hr>
 
 <h2 id="operations">24. 操作速查表</h2>
+
+<h3>分頁操作</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>操作</th><th>方法</th><th>限制與補充</th></tr>
+  <tr><td>新增分頁</td><td>分頁列右側「＋」按鈕</td><td>新分頁以空效果配置建立</td></tr>
+  <tr><td>刪除分頁</td><td>分頁上的「×」按鈕</td><td>首個分頁「新增」不可刪除</td></tr>
+  <tr><td>重新命名分頁</td><td>雙擊分頁後編輯</td><td>Enter/失去焦點確認，Esc取消</td></tr>
+  <tr><td>切換分頁</td><td>點擊分頁</td><td>選取分頁的效果會反映到「活動效果」</td></tr>
+</table>
 
 <h3>群組操作</h3>
 <table border="1" cellpadding="6" cellspacing="0">
@@ -627,6 +648,7 @@
   <li>在選取虛擬群組的狀態下新增或貼上預設，將儲存到第一個實群組中。</li>
   <li>匯入封裝檔案時，將指派與原始 GUID 不同的新ID，因此匯入的預設不繼承快照歷史。</li>
   <li>剪下操作無需確認對話方塊即可刪除預設。操作後無法立即復原，請謹慎使用。</li>
+  <li>單一預設套用時會還原已儲存的分頁結構（包含目前選取分頁）。同時套用多個預設，或對同一預設執行重複疊加套用時，只會合併各預設選取分頁的效果，並重建為單一「新增」分頁。</li>
   <li>預設資料儲存在主要儲存和備份儲存兩處。刪除其中一個資料夾仍可能還原資料，但兩者均刪除將導致預設永久遺失。</li>
   <li>歷史資料儲存在 <code>History/</code> 資料夾中，刪除此資料夾將遺失所有歷史記錄。</li>
   <li>快照歷史會無限增長。如有過多不必要的歷史記錄，可手動刪除 <code>History/{預設GUID}/</code> 資料夾中不需要的 <code>.json</code> 檔案（請勿刪除 <code>branches.json</code>）。</li>

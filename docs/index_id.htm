@@ -59,7 +59,7 @@
   <main class="main-content">
     <div class="page-title">
       <h1>Efek Gabungan for YMM4 — Panduan Pengguna</h1>
-      <p>Versi: 2.1.0 &nbsp;/&nbsp; OS yang Didukung: Windows 10 / 11 (64bit) &nbsp;/&nbsp; Runtime: .NET 10.0</p>
+      <p>Versi: 2.2.0 &nbsp;/&nbsp; OS yang Didukung: Windows 10 / 11 (64bit) &nbsp;/&nbsp; Runtime: .NET 10.0</p>
     </div>
     
     <div class="content-body">
@@ -72,6 +72,7 @@ Plugin ini memungkinkan Anda menyimpan beberapa efek video dalam satu item «Efe
 <ul>
   <li>Menerapkan beberapa efek secara berurutan dalam satu item</li>
   <li>Menyimpan, memanggil, dan berbagi prasetel dengan nama</li>
+  <li>Kelola beberapa konfigurasi efek dengan tab dan beralih seketika (mendukung tambah, hapus, dan ganti nama)</li>
   <li>Mengatur prasetel dengan tiga jenis grup virtual: Semua, Terbaru, dan Favorit</li>
   <li>Riwayat cuplikan dan manajemen cabang bergaya Git</li>
   <li>Penulisan atomik dengan verifikasi CRC32 dan persistensi multi-redundan SHA-256</li>
@@ -140,8 +141,17 @@ Label linimasa menampilkan jumlah efek saat ini dan nama prasetel yang diterapka
 <h3>5-3. Tata Letak Mobile (di bawah 400px lebar)</h3>
 <p>Saat lebar kontrol turun di bawah 400px, daftar grup disembunyikan dan tombol menu hamburger (≡) muncul. Mengkliknya membuka daftar grup sebagai popup.</p>
 
-<h3>5-4. Efek Aktif (VideoEffectSelector)</h3>
-<p>Pemilih efek video standar YMM4 ditampilkan di bawah panel manajemen prasetel. Gunakan untuk menambah, menghapus, mengurutkan ulang, dan mengaktifkan/menonaktifkan efek.</p>
+<h3>5-4. Manajemen Tab Efek (EffectTabManagerControl)</h3>
+<p>Bilah tab ditampilkan di atas «Efek Aktif». Setiap tab menyimpan konfigurasi efek yang terpisah, dan saat tab diganti, isi tab terpilih langsung diterapkan.</p>
+<ul>
+  <li>Tombol + di kanan: «Tambah Tab»</li>
+  <li>Tombol × pada tiap tab: «Hapus Tab» (tab pertama «Baru» tidak bisa dihapus)</li>
+  <li>Klik dua kali nama tab: ganti nama (Enter atau pindah fokus untuk konfirmasi, Esc untuk batal)</li>
+  <li>Nama tab default: pertama «Baru», lalu «Tab 2», «Tab 3», ...</li>
+</ul>
+
+<h3>5-5. Efek Aktif (VideoEffectSelector)</h3>
+<p>Pemilih efek video standar YMM4 menampilkan efek dari tab yang sedang dipilih. Operasi tambah, hapus, urut ulang, aktif/nonaktif di sini disimpan ke tab tersebut.</p>
 <hr>
 
 <h2 id="groups">6. Manajemen Grup</h2>
@@ -336,6 +346,7 @@ Jika grup virtual dipilih, prasetel ditambahkan ke grup nyata pertama.
       "Id": "...",
       "Name": "Nama Prasetel",
       "IsFavorite": false,
+      "SerializedTabs": "...",
       "SerializedEffects": "..."
     }
   ]
@@ -562,6 +573,7 @@ Jika grup virtual dipilih, prasetel ditambahkan ke grup nyata pertama.
 <table border="1" cellpadding="6" cellspacing="0">
   <tr><th>Parameter</th><th>Tipe</th><th>Default</th><th>Dapat Dianimasikan</th><th>Keterangan</th></tr>
   <tr><td>Efek Aktif (Effects)</td><td>ImmutableList&lt;IVideoEffect&gt;</td><td>(kosong)</td><td>Tidak</td><td>Daftar efek video yang akan dikelola. Gunakan pemilih efek standar YMM4 untuk menambah, menghapus, mengurutkan ulang, dan mengaktifkan/menonaktifkan efek. Diproses sebagai pipeline dari atas ke bawah. Efek yang dinonaktifkan dilewati.</td></tr>
+  <tr><td>EffectTabsJson</td><td>String (JSON)</td><td>(string kosong)</td><td>Tidak</td><td>Properti internal yang menyimpan status tab efek (ID tab terpilih, nama tab, dan JSON efek per tab). Diperbarui otomatis saat tab ditambah, dihapus, diganti nama, atau dipindah.</td></tr>
   <tr><td>SelectedPresetJson</td><td>String (JSON)</td><td>(string kosong)</td><td>Tidak</td><td>Properti internal yang menyimpan informasi tentang prasetel yang saat ini diterapkan. Diatur otomatis saat prasetel diterapkan. Pengeditan langsung tidak direkomendasikan. Digunakan untuk menampilkan nama prasetel di label linimasa.</td></tr>
   <tr><td>PresetManagerVisible</td><td>bool</td><td>true</td><td>Tidak</td><td>Flag internal yang mengontrol visibilitas panel manajemen prasetel. Dikecualikan dari serialisasi JSON ([JsonIgnore]).</td></tr>
 </table>
@@ -575,6 +587,15 @@ Jika grup virtual dipilih, prasetel ditambahkan ke grup nyata pertama.
 <hr>
 
 <h2 id="operations">24. Referensi Cepat</h2>
+
+<h3>Operasi Tab</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Operasi</th><th>Metode</th><th>Catatan</th></tr>
+  <tr><td>Tambah Tab</td><td>Tombol «+» di kanan bilah tab</td><td>Membuat tab baru dengan konfigurasi efek kosong</td></tr>
+  <tr><td>Hapus Tab</td><td>Tombol «×» pada tab</td><td>Tab pertama «Baru» tidak bisa dihapus</td></tr>
+  <tr><td>Ganti nama tab</td><td>Klik dua kali tab untuk mengedit</td><td>Enter/pindah fokus untuk konfirmasi, Esc untuk batal</td></tr>
+  <tr><td>Pindah tab</td><td>Klik tab</td><td>Efek tab terpilih ditampilkan di «Efek Aktif»</td></tr>
+</table>
 
 <h3>Operasi Grup</h3>
 <table border="1" cellpadding="6" cellspacing="0">
@@ -627,6 +648,7 @@ Jika grup virtual dipilih, prasetel ditambahkan ke grup nyata pertama.
   <li>Menambahkan atau menempel prasetel saat grup virtual dipilih menyimpannya ke grup nyata pertama.</li>
   <li>Mengimpor file paket memberikan ID baru yang berbeda dari GUID asli. Oleh karena itu, prasetel yang diimpor tidak mewarisi riwayat cuplikan.</li>
   <li>Operasi Potong menghapus prasetel tanpa kotak konfirmasi. Tindakan ini tidak dapat langsung dibatalkan, jadi gunakan dengan hati-hati.</li>
+  <li>Menerapkan satu prasetel akan memulihkan struktur tab yang tersimpan (termasuk tab yang dipilih). Saat menerapkan beberapa prasetel sekaligus, atau menerapkan ulang prasetel yang sama dalam mode tumpuk, hanya efek dari tab terpilih yang digabungkan dan tab dibangun ulang menjadi satu tab «Baru».</li>
   <li>Data prasetel disimpan di penyimpanan utama dan cadangan. Menghapus satu folder mungkin masih memungkinkan pemulihan, tetapi menghapus keduanya akan mengakibatkan kehilangan data permanen.</li>
   <li>Data riwayat disimpan di folder <code>History/</code>. Menghapus folder ini akan menghapus semua riwayat.</li>
   <li>Riwayat cuplikan bertumbuh tanpa batas. Jika ada terlalu banyak cuplikan yang tidak diperlukan, Anda dapat menghapus file <code>.json</code> yang tidak diinginkan secara manual di folder <code>History/{GUID Prasetel}/</code> (jangan hapus <code>branches.json</code>).</li>

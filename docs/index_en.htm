@@ -59,7 +59,7 @@
   <main class="main-content">
     <div class="page-title">
       <h1>Combined Effect for YMM4 — User Manual</h1>
-      <p>Version: 2.1.0 &nbsp;/&nbsp; Supported OS: Windows 10 / 11 (64bit) &nbsp;/&nbsp; Runtime: .NET 10.0</p>
+      <p>Version: 2.2.0 &nbsp;/&nbsp; Supported OS: Windows 10 / 11 (64bit) &nbsp;/&nbsp; Runtime: .NET 10.0</p>
     </div>
     
     <div class="content-body">
@@ -72,6 +72,7 @@ It allows you to store multiple video effects inside a single "Combined Effect" 
 <ul>
   <li>Apply multiple effects in sequence within a single item</li>
   <li>Save, recall, and share named presets</li>
+  <li>Manage multiple effect sets with tabs and switch them instantly (add/remove/rename supported)</li>
   <li>Organize presets with three virtual group types: All, Recent, and Favorites</li>
   <li>Git-like snapshot history and branch management</li>
   <li>Atomic writes with CRC32 verification and SHA-256 multi-redundant persistence</li>
@@ -140,8 +141,17 @@ The timeline label displays the current effect count and applied preset name, e.
 <h3>5-3. Mobile Layout (below 400px width)</h3>
 <p>When the control width drops below 400px, the group list is hidden and a hamburger menu button (≡) appears. Clicking it opens the group list as a popup.</p>
 
-<h3>5-4. Active Effects (VideoEffectSelector)</h3>
-<p>The YMM4 standard video effect selector is displayed below the preset management panel. Use it to add, remove, reorder, and enable/disable effects.</p>
+<h3>5-4. Effect Tab Manager (EffectTabManagerControl)</h3>
+<p>A tab bar is shown above "Active Effects". Each tab keeps an independent effect configuration, and switching tabs immediately reflects the selected tab.</p>
+<ul>
+  <li>Right + button: "Add Tab"</li>
+  <li>x button on each tab: "Remove Tab" (the first tab "New" cannot be removed)</li>
+  <li>Double-click a tab name: rename (Enter or focus change to commit, Esc to cancel)</li>
+  <li>Default tab names: first is "New", then "Tab 2", "Tab 3", ...</li>
+</ul>
+
+<h3>5-5. Active Effects (VideoEffectSelector)</h3>
+<p>The YMM4 standard video effect selector shows effects for the currently selected tab. Add, remove, reorder, and enable/disable operations are saved to that selected tab.</p>
 <hr>
 
 <h2 id="groups">6. Group Management</h2>
@@ -336,6 +346,7 @@ If a virtual group is selected, the presets are added to the first real group.
       "Id": "...",
       "Name": "Preset Name",
       "IsFavorite": false,
+      "SerializedTabs": "...",
       "SerializedEffects": "..."
     }
   ]
@@ -562,6 +573,7 @@ If a virtual group is selected, the presets are added to the first real group.
 <table border="1" cellpadding="6" cellspacing="0">
   <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Animatable</th><th>Description</th></tr>
   <tr><td>Active Effects (Effects)</td><td>ImmutableList&lt;IVideoEffect&gt;</td><td>(empty)</td><td>No</td><td>The list of video effects to manage. Use the YMM4 standard effect selector to add, remove, reorder, and enable/disable effects. They are processed as a pipeline from top to bottom. Disabled effects are skipped.</td></tr>
+  <tr><td>EffectTabsJson</td><td>String (JSON)</td><td>(empty string)</td><td>No</td><td>Internal property that stores effect-tab state (selected tab ID, tab names, and per-tab effect JSON). It is updated automatically when tabs are added, removed, renamed, or switched.</td></tr>
   <tr><td>SelectedPresetJson</td><td>String (JSON)</td><td>(empty string)</td><td>No</td><td>Internal property holding information about the currently applied preset. Set automatically when a preset is applied. Direct editing is not recommended. Used to display the preset name in the timeline label.</td></tr>
   <tr><td>PresetManagerVisible</td><td>bool</td><td>true</td><td>No</td><td>Internal flag controlling the visibility of the preset management panel. Excluded from JSON serialization ([JsonIgnore]).</td></tr>
 </table>
@@ -575,6 +587,15 @@ If a virtual group is selected, the presets are added to the first real group.
 <hr>
 
 <h2 id="operations">24. Quick Reference</h2>
+
+<h3>Tab Operations</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Operation</th><th>Method</th><th>Notes</th></tr>
+  <tr><td>Add Tab</td><td>Right + button on the tab bar</td><td>Creates a new tab with an empty effect configuration</td></tr>
+  <tr><td>Remove Tab</td><td>x button on a tab</td><td>The first tab "New" cannot be removed</td></tr>
+  <tr><td>Rename tab</td><td>Double-click a tab to edit</td><td>Enter/focus change to commit, Esc to cancel</td></tr>
+  <tr><td>Switch tab</td><td>Click a tab</td><td>The selected tab's effects are reflected in "Active Effects"</td></tr>
+</table>
 
 <h3>Group Operations</h3>
 <table border="1" cellpadding="6" cellspacing="0">
@@ -627,6 +648,7 @@ If a virtual group is selected, the presets are added to the first real group.
   <li>Adding or pasting a preset while a virtual group is selected saves it to the first real group.</li>
   <li>Importing a package file assigns new IDs that differ from the original GUIDs. Therefore, imported presets do not inherit snapshot history.</li>
   <li>The Cut operation deletes presets without a confirmation dialog. This action cannot be undone immediately, so use it with care.</li>
+  <li>Applying a single preset restores the saved tab state (including the selected tab). Applying multiple presets at once, or re-applying the same preset in append mode, merges only selected-tab effects and rebuilds tabs into a single "New" tab.</li>
   <li>Preset data is stored in both main storage and backup storage. Deleting one folder may still allow recovery, but deleting both will result in permanent data loss.</li>
   <li>History data is stored in the <code>History/</code> folder. Deleting this folder will erase all history.</li>
   <li>Snapshot history grows without limit. If there are too many unnecessary snapshots, you can manually delete unwanted <code>.json</code> files in the <code>History/{PresetGUID}/</code> folder (do not delete <code>branches.json</code>).</li>

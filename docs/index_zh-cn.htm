@@ -59,7 +59,7 @@
   <main class="main-content">
     <div class="page-title">
       <h1>组合效果 for YMM4 — 使用说明书</h1>
-      <p>版本: 2.1.0 &nbsp;/&nbsp; 支持OS: Windows 10 / 11 (64bit) &nbsp;/&nbsp; 运行时: .NET 10.0</p>
+      <p>版本: 2.2.0 &nbsp;/&nbsp; 支持OS: Windows 10 / 11 (64bit) &nbsp;/&nbsp; 运行时: .NET 10.0</p>
     </div>
     
     <div class="content-body">
@@ -72,6 +72,7 @@
 <ul>
   <li>将多个效果整合到一个项目中并按顺序应用</li>
   <li>以命名预设的形式保存、调用和共享</li>
+  <li>通过标签管理多套效果配置并可即时切换（支持添加、删除、重命名）</li>
   <li>通过全部、收藏、最近使用三种虚拟组进行整理</li>
   <li>类 Git 的快照历史与分支管理</li>
   <li>带 CRC32 校验的原子写入与 SHA-256 哈希多重冗余持久化</li>
@@ -140,8 +141,17 @@
 <h3>5-3. 移动端布局（宽度低于400px）</h3>
 <p>控件宽度低于400px时，组列表将自动隐藏，并显示汉堡菜单按钮（≡）。点击该按钮可以弹出组列表。</p>
 
-<h3>5-4. 活动效果（VideoEffectSelector）</h3>
-<p>预设管理面板下方显示 YMM4 标准视频效果选择器，可在此添加、删除、排序和启用/禁用效果。</p>
+<h3>5-4. 效果标签管理（EffectTabManagerControl）</h3>
+<p>“活动效果”上方会显示标签栏。每个标签都保存独立的效果配置，切换标签后会立即反映当前选中标签的内容。</p>
+<ul>
+  <li>右侧＋按钮: “添加标签”</li>
+  <li>各标签的×按钮: “删除标签”（首个标签“新建”不可删除）</li>
+  <li>双击标签名: 重命名（按 Enter 或失去焦点确认，按 Esc 取消）</li>
+  <li>默认标签名: 第一个为“新建”，之后为“标签 2”“标签 3”……</li>
+</ul>
+
+<h3>5-5. 活动效果（VideoEffectSelector）</h3>
+<p>YMM4 标准视频效果选择器会显示当前选中标签的效果。此处的添加、删除、排序、启用/禁用操作都会保存到该标签。</p>
 <hr>
 
 <h2 id="groups">6. 组管理</h2>
@@ -336,6 +346,7 @@
       "Id": "...",
       "Name": "预设名称",
       "IsFavorite": false,
+      "SerializedTabs": "...",
       "SerializedEffects": "..."
     }
   ]
@@ -562,6 +573,7 @@
 <table border="1" cellpadding="6" cellspacing="0">
   <tr><th>参数名</th><th>类型</th><th>默认值</th><th>可动画化</th><th>说明</th></tr>
   <tr><td>活动效果（Effects）</td><td>ImmutableList&lt;IVideoEffect&gt;</td><td>（空）</td><td>否</td><td>要管理的视频效果列表。使用 YMM4 标准效果选择器添加、删除、排序和启用/禁用效果。按从上到下的顺序进行流水线处理，禁用的效果将被跳过。</td></tr>
+  <tr><td>EffectTabsJson</td><td>String（JSON格式）</td><td>（空字符串）</td><td>否</td><td>保存效果标签状态（当前选中标签ID、标签名称、各标签的效果JSON）的内部属性。在添加/删除/重命名/切换标签时自动更新。</td></tr>
   <tr><td>SelectedPresetJson</td><td>String（JSON格式）</td><td>（空字符串）</td><td>否</td><td>保存当前已应用预设信息的内部属性。应用预设时自动设置，不推荐直接编辑。用于时间轴标签显示。</td></tr>
   <tr><td>PresetManagerVisible</td><td>bool</td><td>true</td><td>否</td><td>控制预设管理面板显示的内部标志，不包含在JSON序列化中（[JsonIgnore]）。</td></tr>
 </table>
@@ -575,6 +587,15 @@
 <hr>
 
 <h2 id="operations">24. 操作速查表</h2>
+
+<h3>标签操作</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>操作</th><th>方法</th><th>限制与补充</th></tr>
+  <tr><td>添加标签</td><td>标签栏右侧“＋”按钮</td><td>新标签以空效果配置创建</td></tr>
+  <tr><td>删除标签</td><td>标签上的“×”按钮</td><td>首个标签“新建”不可删除</td></tr>
+  <tr><td>重命名标签</td><td>双击标签后编辑</td><td>Enter/失去焦点确认，Esc取消</td></tr>
+  <tr><td>切换标签</td><td>点击标签</td><td>选中标签的效果会反映到“活动效果”</td></tr>
+</table>
 
 <h3>组操作</h3>
 <table border="1" cellpadding="6" cellspacing="0">
@@ -627,6 +648,7 @@
   <li>在选择虚拟组的状态下添加或粘贴预设，将保存到第一个实组中。</li>
   <li>导入包文件时，将分配与原始 GUID 不同的新ID，因此导入的预设不继承快照历史。</li>
   <li>剪切操作无需确认对话框即可删除预设。操作后无法立即撤销，请谨慎使用。</li>
+  <li>单个预设应用时会恢复已保存的标签结构（包含当前选中标签）。同时应用多个预设，或对同一预设执行重复叠加应用时，仅合并各预设选中标签的效果，并重建为单一“新建”标签。</li>
   <li>预设数据保存在主存储和备份存储两处。删除其中一个文件夹仍可能恢复数据，但两者均删除将导致预设永久丢失。</li>
   <li>历史数据保存在 <code>History/</code> 文件夹中，删除此文件夹将丢失所有历史记录。</li>
   <li>快照历史会无限增长。如有过多不必要的历史记录，可手动删除 <code>History/{预设GUID}/</code> 文件夹中不需要的 <code>.json</code> 文件（请勿删除 <code>branches.json</code>）。</li>

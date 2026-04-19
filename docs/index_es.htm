@@ -59,7 +59,7 @@
   <main class="main-content">
     <div class="page-title">
       <h1>Efectos Combinados for YMM4 — Manual de Usuario</h1>
-      <p>Versión: 2.1.0 &nbsp;/&nbsp; SO compatible: Windows 10 / 11 (64bit) &nbsp;/&nbsp; Runtime: .NET 10.0</p>
+      <p>Versión: 2.2.0 &nbsp;/&nbsp; SO compatible: Windows 10 / 11 (64bit) &nbsp;/&nbsp; Runtime: .NET 10.0</p>
     </div>
     
     <div class="content-body">
@@ -72,6 +72,7 @@ Permite almacenar múltiples efectos de vídeo en un solo elemento «Efectos Com
 <ul>
   <li>Aplicar varios efectos en secuencia dentro de un único elemento</li>
   <li>Guardar, recuperar y compartir ajustes preestablecidos con nombre</li>
+  <li>Gestionar múltiples configuraciones de efectos con pestañas y cambiarlas al instante (admite agregar, eliminar y renombrar)</li>
   <li>Organizar ajustes con tres tipos de grupos virtuales: Todo, Reciente y Favoritos</li>
   <li>Historial de instantáneas y gestión de ramas al estilo Git</li>
   <li>Escritura atómica con verificación CRC32 y persistencia multirredundante SHA-256</li>
@@ -140,8 +141,17 @@ La etiqueta de la línea de tiempo muestra el recuento de efectos actual y el no
 <h3>5-3. Diseño móvil (menos de 400px de ancho)</h3>
 <p>Cuando el ancho del control cae por debajo de 400px, la lista de grupos se oculta y aparece un botón de menú hamburguesa (≡). Al hacer clic se abre la lista de grupos como una ventana emergente.</p>
 
-<h3>5-4. Efectos Activos (VideoEffectSelector)</h3>
-<p>El selector de efectos de vídeo estándar de YMM4 se muestra debajo del panel de gestión de ajustes. Úselo para agregar, eliminar, reordenar y activar/desactivar efectos.</p>
+<h3>5-4. Gestión de pestañas de efectos (EffectTabManagerControl)</h3>
+<p>Encima de «Efectos Activos» se muestra una barra de pestañas. Cada pestaña guarda una configuración de efectos independiente y, al cambiar de pestaña, se refleja inmediatamente la pestaña seleccionada.</p>
+<ul>
+  <li>Botón + a la derecha: «Agregar pestaña»</li>
+  <li>Botón x de cada pestaña: «Eliminar pestaña» (la primera pestaña «Nuevo» no se puede eliminar)</li>
+  <li>Doble clic en el nombre de la pestaña: renombrar (Enter o cambio de foco para confirmar, Esc para cancelar)</li>
+  <li>Nombres predeterminados: la primera es «Nuevo», luego «Pestaña 2», «Pestaña 3», ...</li>
+</ul>
+
+<h3>5-5. Efectos Activos (VideoEffectSelector)</h3>
+<p>El selector de efectos estándar de YMM4 muestra los efectos de la pestaña actualmente seleccionada. Las operaciones de agregar, eliminar, reordenar y activar/desactivar se guardan en esa pestaña.</p>
 <hr>
 
 <h2 id="groups">6. Gestión de grupos</h2>
@@ -336,6 +346,7 @@ Si se selecciona un grupo virtual, los ajustes se agregan al primer grupo real.
       "Id": "...",
       "Name": "Nombre del ajuste",
       "IsFavorite": false,
+      "SerializedTabs": "...",
       "SerializedEffects": "..."
     }
   ]
@@ -562,6 +573,7 @@ Si se selecciona un grupo virtual, los ajustes se agregan al primer grupo real.
 <table border="1" cellpadding="6" cellspacing="0">
   <tr><th>Parámetro</th><th>Tipo</th><th>Predeterminado</th><th>Animable</th><th>Descripción</th></tr>
   <tr><td>Efectos Activos (Effects)</td><td>ImmutableList&lt;IVideoEffect&gt;</td><td>(vacío)</td><td>No</td><td>La lista de efectos de vídeo a gestionar. Use el selector de efectos estándar de YMM4 para agregar, eliminar, reordenar y activar/desactivar efectos. Se procesan en cadena de arriba abajo. Los efectos desactivados se omiten.</td></tr>
+  <tr><td>EffectTabsJson</td><td>String (JSON)</td><td>(cadena vacía)</td><td>No</td><td>Propiedad interna que almacena el estado de pestañas de efectos (ID de pestaña seleccionada, nombres de pestañas y JSON de efectos por pestaña). Se actualiza automáticamente al agregar, eliminar, renombrar o cambiar pestañas.</td></tr>
   <tr><td>SelectedPresetJson</td><td>String (JSON)</td><td>(cadena vacía)</td><td>No</td><td>Propiedad interna que almacena información sobre el ajuste actualmente aplicado. Se establece automáticamente al aplicar un ajuste. No se recomienda editarlo directamente. Se usa para mostrar el nombre del ajuste en la etiqueta de la línea de tiempo.</td></tr>
   <tr><td>PresetManagerVisible</td><td>bool</td><td>true</td><td>No</td><td>Indicador interno que controla la visibilidad del panel de gestión de ajustes. Excluido de la serialización JSON ([JsonIgnore]).</td></tr>
 </table>
@@ -575,6 +587,15 @@ Si se selecciona un grupo virtual, los ajustes se agregan al primer grupo real.
 <hr>
 
 <h2 id="operations">24. Referencia rápida</h2>
+
+<h3>Operaciones de pestañas</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr><th>Operación</th><th>Método</th><th>Notas</th></tr>
+  <tr><td>Agregar pestaña</td><td>Botón «+» a la derecha de la barra de pestañas</td><td>Crea una pestaña nueva con configuración vacía</td></tr>
+  <tr><td>Eliminar pestaña</td><td>Botón «x» de la pestaña</td><td>La primera pestaña «Nuevo» no se puede eliminar</td></tr>
+  <tr><td>Renombrar pestaña</td><td>Doble clic en la pestaña para editar</td><td>Enter/cambio de foco para confirmar, Esc para cancelar</td></tr>
+  <tr><td>Cambiar pestaña</td><td>Hacer clic en una pestaña</td><td>Los efectos de la pestaña seleccionada se reflejan en «Efectos Activos»</td></tr>
+</table>
 
 <h3>Operaciones de grupo</h3>
 <table border="1" cellpadding="6" cellspacing="0">
@@ -627,6 +648,7 @@ Si se selecciona un grupo virtual, los ajustes se agregan al primer grupo real.
   <li>Agregar o pegar un ajuste mientras se selecciona un grupo virtual lo guarda en el primer grupo real.</li>
   <li>Importar un archivo de paquete asigna nuevos ID diferentes de los GUID originales. Por lo tanto, los ajustes importados no heredan el historial de instantáneas.</li>
   <li>La operación Cortar elimina ajustes sin cuadro de confirmación. Esta acción no se puede deshacer inmediatamente, así que úsela con cuidado.</li>
+  <li>Aplicar un solo ajuste restaura la estructura de pestañas guardada (incluida la pestaña seleccionada). Al aplicar varios ajustes a la vez, o al volver a aplicar el mismo ajuste en modo de apilado, solo se combinan los efectos de la pestaña seleccionada y las pestañas se reconstruyen como una única pestaña «Nuevo».</li>
   <li>Los datos de ajustes se almacenan tanto en el almacenamiento principal como en el de respaldo. Eliminar una carpeta puede permitir la recuperación, pero eliminar ambas resultará en pérdida permanente de datos.</li>
   <li>Los datos del historial se almacenan en la carpeta <code>History/</code>. Eliminar esta carpeta borrará todo el historial.</li>
   <li>El historial de instantáneas crece sin límite. Si hay demasiadas instantáneas innecesarias, puede eliminar manualmente los archivos <code>.json</code> no deseados en la carpeta <code>History/{GUID del ajuste}/</code> (no elimine <code>branches.json</code>).</li>
