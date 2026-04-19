@@ -61,6 +61,19 @@ internal static class EffectTabStateService
         };
     }
 
+    public static EffectTabState ResolveEffectState(
+        string? serializedTabs,
+        ImmutableList<IVideoEffect> fallbackEffects,
+        IEffectSerializationService serialization,
+        string defaultTabName) =>
+        ResolveState(serializedTabs, null, Guid.Empty, fallbackEffects, serialization, defaultTabName);
+
+    public static EffectTabState ResolvePresetState(
+        EffectPreset preset,
+        IEffectSerializationService serialization,
+        string defaultTabName) =>
+        ResolveState(preset.SerializedTabs, preset.SerializedEffects, preset.Id, ImmutableList<IVideoEffect>.Empty, serialization, defaultTabName);
+
     public static EffectTabState Normalize(
         EffectTabState? state,
         ImmutableList<IVideoEffect> fallbackEffects,
@@ -92,6 +105,28 @@ internal static class EffectTabStateService
             normalized.SelectedTabId = normalized.Tabs[0].Id;
 
         return normalized;
+    }
+
+    private static EffectTabState ResolveState(
+        string? serializedTabs,
+        string? serializedEffects,
+        Guid fallbackLegacyTabId,
+        ImmutableList<IVideoEffect> fallbackEffects,
+        IEffectSerializationService serialization,
+        string defaultTabName)
+    {
+        EffectTabState? parsed = null;
+        if (TryDeserialize(serializedTabs, out var state))
+            parsed = state;
+        else if (!string.IsNullOrWhiteSpace(serializedEffects))
+        {
+            parsed = CreateSingleTabState(serializedEffects, defaultTabName);
+            var tab = parsed.Tabs[0];
+            tab.Id = fallbackLegacyTabId == Guid.Empty ? tab.Id : fallbackLegacyTabId;
+            parsed.SelectedTabId = tab.Id;
+        }
+
+        return Normalize(parsed, fallbackEffects, serialization, defaultTabName);
     }
 
     public static EffectTab GetSelectedTab(EffectTabState state)

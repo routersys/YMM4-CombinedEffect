@@ -11,6 +11,7 @@ namespace CombinedEffect.ViewModels;
 internal sealed class PresetItemViewModel : ObservableBase
 {
     private readonly IEffectSerializationService _serialization;
+    private readonly ILoggerService _logger;
 
     public EffectPreset Model { get; }
 
@@ -19,10 +20,11 @@ internal sealed class PresetItemViewModel : ObservableBase
     public int EffectCount { get; private set; }
     public string EffectInfo { get; private set; } = string.Empty;
 
-    public PresetItemViewModel(EffectPreset model, IEffectSerializationService serialization)
+    public PresetItemViewModel(EffectPreset model, IEffectSerializationService serialization, ILoggerService? logger = null)
     {
         Model = model;
         _serialization = serialization;
+        _logger = logger ?? ServiceRegistry.Instance.Logger;
         RefreshEffectInfo(serialization);
     }
 
@@ -34,7 +36,7 @@ internal sealed class PresetItemViewModel : ObservableBase
     {
         try
         {
-            var state = ResolveTabState(serialization);
+            var state = EffectTabStateService.ResolvePresetState(Model, serialization, Texts.EffectTab_FirstName);
             var blocks = new List<string>(state.Tabs.Count);
             var totalCount = 0;
             var maxEffectNameLength = 1;
@@ -67,30 +69,15 @@ internal sealed class PresetItemViewModel : ObservableBase
             OnPropertyChanged(nameof(EffectInfo));
             return;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError("Failed to refresh preset effect info.", ex);
         }
 
         EffectCount = 0;
         EffectInfo = string.Empty;
         OnPropertyChanged(nameof(EffectCount));
         OnPropertyChanged(nameof(EffectInfo));
-    }
-
-    private EffectTabState ResolveTabState(IEffectSerializationService serialization)
-    {
-        EffectTabState? parsed = null;
-        if (EffectTabStateService.TryDeserialize(Model.SerializedTabs, out var state))
-            parsed = state;
-        else if (!string.IsNullOrWhiteSpace(Model.SerializedEffects))
-        {
-            parsed = EffectTabStateService.CreateSingleTabState(Model.SerializedEffects, Texts.EffectTab_FirstName);
-            var tab = parsed.Tabs[0];
-            tab.Id = Model.Id == Guid.Empty ? tab.Id : Model.Id;
-            parsed.SelectedTabId = tab.Id;
-        }
-
-        return EffectTabStateService.Normalize(parsed, ImmutableList<YukkuriMovieMaker.Plugin.Effects.IVideoEffect>.Empty, serialization, Texts.EffectTab_FirstName);
     }
 
     private static int GetTextElementLength(string? text)
