@@ -79,6 +79,10 @@
 <data name="CombinedEffect_DisplayNameWithPreset" xml:space="preserve"><value>まとめてエフェクト [{0}]</value></data>
 <data name="CombinedEffect_PresetGroup" xml:space="preserve"><value>プリセット管理</value></data>
 <data name="CombinedEffect_EffectGroup" xml:space="preserve"><value>適用中エフェクト</value></data>
+<data name="EffectTab_FirstName" xml:space="preserve"><value>新規</value></data>
+<data name="EffectTab_NumberedName" xml:space="preserve"><value>タブ {0}</value></data>
+<data name="EffectTab_Add" xml:space="preserve"><value>タブを追加</value></data>
+<data name="EffectTab_Remove" xml:space="preserve"><value>タブを削除</value></data>
 <data name="VideoEffect_Name" xml:space="preserve"><value>まとめてエフェクト</value></data>
 <data name="VideoEffect_Category_Tool" xml:space="preserve"><value>ツール</value></data>
 <data name="VideoEffect_Tag_Combined" xml:space="preserve"><value>まとめて</value></data>

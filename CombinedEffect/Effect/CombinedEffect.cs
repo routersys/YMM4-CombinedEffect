@@ -41,6 +41,11 @@ public sealed class CombinedEffect : VideoEffectBase
     public bool PresetManagerVisible { get; set; } = true;
 
     [Display(GroupName = nameof(Texts.CombinedEffect_EffectGroup), Name = nameof(Texts.CombinedEffect_EmptyLabel), ResourceType = typeof(Texts))]
+    [EffectTabManagerControl]
+    [JsonIgnore]
+    public bool EffectTabManagerVisible { get; set; } = true;
+
+    [Display(GroupName = nameof(Texts.CombinedEffect_EffectGroup), Name = nameof(Texts.CombinedEffect_EmptyLabel), ResourceType = typeof(Texts))]
     [VideoEffectSelector(PropertyEditorSize = PropertyEditorSize.FullWidth)]
     public ImmutableList<IVideoEffect> Effects
     {
@@ -75,6 +80,12 @@ public sealed class CombinedEffect : VideoEffectBase
             }
             OnPropertyChanged(nameof(Label));
         }
+    }
+
+    public string? EffectTabsJson
+    {
+        get;
+        set => Set(ref field, value);
     }
 
     public override IVideoEffectProcessor CreateVideoEffect(IGraphicsDevicesAndContext devices) =>

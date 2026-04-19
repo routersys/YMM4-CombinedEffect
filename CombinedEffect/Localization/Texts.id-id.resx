@@ -79,6 +79,10 @@
 <data name="CombinedEffect_DisplayNameWithPreset" xml:space="preserve"><value>Efek Gabungan [{0}]</value></data>
 <data name="CombinedEffect_PresetGroup" xml:space="preserve"><value>Manajemen Prasetel</value></data>
 <data name="CombinedEffect_EffectGroup" xml:space="preserve"><value>Efek Aktif</value></data>
+<data name="EffectTab_FirstName" xml:space="preserve"><value>Baru</value></data>
+<data name="EffectTab_NumberedName" xml:space="preserve"><value>Tab {0}</value></data>
+<data name="EffectTab_Add" xml:space="preserve"><value>Tambah Tab</value></data>
+<data name="EffectTab_Remove" xml:space="preserve"><value>Hapus Tab</value></data>
 <data name="VideoEffect_Name" xml:space="preserve"><value>Efek Gabungan</value></data>
 <data name="VideoEffect_Category_Tool" xml:space="preserve"><value>Alat</value></data>
 <data name="VideoEffect_Tag_Combined" xml:space="preserve"><value>Gabungan</value></data>

@@ -79,6 +79,10 @@
 <data name="CombinedEffect_DisplayNameWithPreset" xml:space="preserve"><value>التأثير المشترك [{0}]</value></data>
 <data name="CombinedEffect_PresetGroup" xml:space="preserve"><value>إدارة الإعدادات المسبقة</value></data>
 <data name="CombinedEffect_EffectGroup" xml:space="preserve"><value>التأثيرات النشطة</value></data>
+<data name="EffectTab_FirstName" xml:space="preserve"><value>جديد</value></data>
+<data name="EffectTab_NumberedName" xml:space="preserve"><value>علامة تبويب {0}</value></data>
+<data name="EffectTab_Add" xml:space="preserve"><value>إضافة علامة تبويب</value></data>
+<data name="EffectTab_Remove" xml:space="preserve"><value>إزالة علامة تبويب</value></data>
 <data name="VideoEffect_Name" xml:space="preserve"><value>التأثير المشترك</value></data>
 <data name="VideoEffect_Category_Tool" xml:space="preserve"><value>أداة</value></data>
 <data name="VideoEffect_Tag_Combined" xml:space="preserve"><value>مدمج</value></data>

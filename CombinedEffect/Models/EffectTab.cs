@@ -1,10 +1,8 @@
 namespace CombinedEffect.Models;
 
-public sealed class EffectPreset
+public sealed class EffectTab
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = string.Empty;
-    public bool IsFavorite { get; set; }
     public string SerializedEffects { get; set; } = string.Empty;
-    public string? SerializedTabs { get; set; }
 }

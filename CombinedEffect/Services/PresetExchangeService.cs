@@ -70,6 +70,7 @@ internal sealed class PresetExchangeService : IPresetExchangeService
             Name = source.Name,
             IsFavorite = source.IsFavorite,
             SerializedEffects = source.SerializedEffects,
+            SerializedTabs = source.SerializedTabs,
         };
 
     private static EffectPreset CloneForImport(EffectPreset source) =>
@@ -79,5 +80,6 @@ internal sealed class PresetExchangeService : IPresetExchangeService
             Name = source.Name,
             IsFavorite = source.IsFavorite,
             SerializedEffects = source.SerializedEffects,
+            SerializedTabs = source.SerializedTabs,
         };
 }

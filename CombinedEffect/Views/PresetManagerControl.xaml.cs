@@ -106,6 +106,7 @@ public partial class PresetManagerControl : UserControl, IPropertyEditorControl
 
     private void ListBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
     {
+        if (Keyboard.Modifiers != ModifierKeys.None) return;
         if (e.Handled) return;
         e.Handled = true;
         var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)

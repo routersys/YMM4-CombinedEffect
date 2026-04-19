@@ -195,19 +195,24 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
     private void TriggerUpdateCheck()
     {
         var preset = SelectedPreset;
-        var appliedId = _appliedPresetId;
-        var effectsSnapshot = _effect.Effects;
 
         _updateDebouncer.DebounceAsync("update_check", TimeSpan.FromMilliseconds(50), async () =>
         {
-            if (preset is null || appliedId != preset.Model.Id)
+            if (preset is null)
             {
                 SetUpdateCache(false);
                 return;
             }
 
-            var currentJson = await Task.Run(() => _serialization.Serialize(effectsSnapshot)).ConfigureAwait(false);
-            var isDirty = currentJson != preset.Model.SerializedEffects;
+            var compare = await Task.Run(() =>
+            {
+                var currentStateJson = GetCurrentTabStateJson();
+                var presetState = ResolvePresetTabState(preset.Model);
+                var presetStateJson = EffectTabStateService.Serialize(presetState);
+                return (Current: currentStateJson, Preset: presetStateJson);
+            }).ConfigureAwait(false);
+
+            var isDirty = !string.Equals(compare.Current, compare.Preset, StringComparison.Ordinal);
             SetUpdateCache(isDirty);
         });
     }
@@ -231,6 +236,10 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
             else if (e.PropertyName == nameof(Effect.CombinedEffect.Effects))
             {
                 AttachEffectHandlers(_effect.Effects);
+                TriggerUpdateCheck();
+            }
+            else if (e.PropertyName == nameof(Effect.CombinedEffect.EffectTabsJson))
+            {
                 TriggerUpdateCheck();
             }
         });
@@ -351,8 +360,8 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
             PresetSearchMode.Name => IsMatchText(p.Model.Name),
             PresetSearchMode.EffectName => IsMatchText(p.EffectInfo),
             PresetSearchMode.EffectCount => int.TryParse(text, out var c) ? p.EffectCount == c : IsMatchText(p.EffectCount.ToString()),
-            PresetSearchMode.RawJson => IsMatchText(p.Model.SerializedEffects),
-            PresetSearchMode.Any => IsMatchText(p.Model.Name) || IsMatchText(p.EffectInfo) || IsMatchText(p.Model.SerializedEffects),
+            PresetSearchMode.RawJson => IsMatchText(p.Model.SerializedEffects) || IsMatchText(p.Model.SerializedTabs),
+            PresetSearchMode.Any => IsMatchText(p.Model.Name) || IsMatchText(p.EffectInfo) || IsMatchText(p.Model.SerializedEffects) || IsMatchText(p.Model.SerializedTabs),
             _ => false
         };
     }
@@ -443,7 +452,8 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
                 Id = p.Model.Id,
                 Name = p.Model.Name,
                 IsFavorite = p.Model.IsFavorite,
-                SerializedEffects = p.Model.SerializedEffects
+                SerializedEffects = p.Model.SerializedEffects,
+                SerializedTabs = p.Model.SerializedTabs,
             })]
         };
         var json = JsonConvert.SerializeObject(package, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
@@ -596,7 +606,8 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
         var preset = new EffectPreset
         {
             Name = inputWindow.InputText,
-            SerializedEffects = _serialization.Serialize(_effect.Effects),
+            SerializedTabs = GetCurrentTabStateJson(),
+            SerializedEffects = GetCurrentSelectedEffectsJson(),
         };
         var vm = new PresetItemViewModel(preset, _serialization);
         _presetCache[preset.Id] = vm;
@@ -657,19 +668,13 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
 
         try
         {
-            var newEffects = new List<IVideoEffect>();
-            foreach (var preset in presets)
-            {
-                var effects = _serialization.Deserialize(preset.Model.SerializedEffects);
-                if (effects is not null) newEffects.AddRange(effects);
-            }
-            if (newEffects.Count == 0) return;
-
             var isAppending = false;
             if (presets.Count == 1 && _effect.Effects.Count > 0)
             {
                 var currentSerialized = _serialization.Serialize(_effect.Effects);
-                if (currentSerialized == presets[0].Model.SerializedEffects)
+                var presetState = ResolvePresetTabState(presets[0].Model);
+                var presetSelectedEffectsJson = EffectTabStateService.GetSelectedEffectsJson(presetState);
+                if (currentSerialized == presetSelectedEffectsJson)
                 {
                     var confirmWindow = new ConfirmationDialogWindow(Texts.Confirm_SamePresetApply, Texts.Confirm_SamePresetApplyTitle);
                     if (confirmWindow.ShowDialog() != true) return;
@@ -677,18 +682,43 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
                 }
             }
 
-            BeginEdit?.Invoke(this, EventArgs.Empty);
-
             var combinedEffects = new List<IVideoEffect>();
-            if (isAppending)
-                combinedEffects.AddRange(_effect.Effects);
-            combinedEffects.AddRange(newEffects);
+            EffectTabState stateToApply;
+            string presetJson;
 
-            var presetJson = presets.Count == 1 ? JsonConvert.SerializeObject(presets[0].Model) : string.Empty;
+            if (presets.Count == 1 && !isAppending)
+            {
+                var sourceState = ResolvePresetTabState(presets[0].Model);
+                stateToApply = sourceState;
+                presetJson = JsonConvert.SerializeObject(presets[0].Model);
+                combinedEffects.AddRange(EffectTabStateService.GetSelectedEffects(sourceState, _serialization));
+            }
+            else
+            {
+                foreach (var preset in presets)
+                {
+                    var sourceState = ResolvePresetTabState(preset.Model);
+                    var effects = EffectTabStateService.GetSelectedEffects(sourceState, _serialization);
+                    if (effects.Count > 0)
+                        combinedEffects.AddRange(effects);
+                }
+
+                if (isAppending)
+                    combinedEffects.InsertRange(0, _effect.Effects);
+
+                var immutableCombined = ImmutableList.CreateRange(combinedEffects);
+                stateToApply = EffectTabStateService.CreateDefault(immutableCombined, _serialization, Texts.EffectTab_FirstName);
+                presetJson = presets.Count == 1 ? JsonConvert.SerializeObject(presets[0].Model) : string.Empty;
+            }
+
             var immutableEffects = ImmutableList.CreateRange(combinedEffects);
+            var tabStateJson = EffectTabStateService.Serialize(stateToApply);
+
+            BeginEdit?.Invoke(this, EventArgs.Empty);
             foreach (var prop in _itemProperties)
             {
                 var target = (Effect.CombinedEffect)prop.PropertyOwner;
+                target.EffectTabsJson = tabStateJson;
                 target.Effects = immutableEffects;
                 target.SelectedPresetJson = presetJson;
             }
@@ -702,6 +732,8 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
 
             if (SelectedGroup?.Name == Texts.PresetManager_GroupRecent)
                 RefreshDisplayedPresets();
+
+            TriggerUpdateCheck();
         }
         catch (Exception)
         {
@@ -773,7 +805,9 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
         var confirmWindow = new ConfirmationDialogWindow(Texts.Confirm_ClearPreset, Texts.Confirm_ClearPresetTitle);
         if (confirmWindow.ShowDialog() != true) return;
 
-        target.Model.SerializedEffects = _serialization.Serialize(ImmutableList<IVideoEffect>.Empty);
+        var emptyState = EffectTabStateService.CreateDefault(ImmutableList<IVideoEffect>.Empty, _serialization, Texts.EffectTab_FirstName);
+        target.Model.SerializedTabs = EffectTabStateService.Serialize(emptyState);
+        target.Model.SerializedEffects = EffectTabStateService.GetSelectedEffectsJson(emptyState);
         target.RefreshEffectInfo(_serialization);
         _persistence.SavePreset(target.Model);
 
@@ -784,10 +818,53 @@ internal sealed class PresetManagerViewModel(ItemProperty[] itemProperties) : Ob
     {
         var target = presetVm ?? SelectedPreset;
         if (target is null) return;
-        target.Model.SerializedEffects = _serialization.Serialize(_effect.Effects);
+        target.Model.SerializedTabs = GetCurrentTabStateJson();
+        target.Model.SerializedEffects = GetCurrentSelectedEffectsJson();
         target.RefreshEffectInfo(_serialization);
         _persistence.SavePreset(target.Model);
+
+        if (_appliedPresetId == target.Model.Id)
+        {
+            var json = JsonConvert.SerializeObject(target.Model);
+            foreach (var prop in _itemProperties)
+            {
+                var owner = (Effect.CombinedEffect)prop.PropertyOwner;
+                owner.SelectedPresetJson = json;
+            }
+        }
+
         TriggerUpdateCheck();
+    }
+
+    private EffectTabState GetCurrentTabState()
+    {
+        EffectTabState? parsed = null;
+        if (EffectTabStateService.TryDeserialize(_effect.EffectTabsJson, out var state))
+            parsed = state;
+
+        return EffectTabStateService.Normalize(parsed, _effect.Effects, _serialization, Texts.EffectTab_FirstName);
+    }
+
+    private string GetCurrentTabStateJson() =>
+        EffectTabStateService.Serialize(GetCurrentTabState());
+
+    private string GetCurrentSelectedEffectsJson() =>
+        EffectTabStateService.GetSelectedEffectsJson(GetCurrentTabState());
+
+    private EffectTabState ResolvePresetTabState(EffectPreset preset)
+    {
+        EffectTabState? parsed = null;
+        if (EffectTabStateService.TryDeserialize(preset.SerializedTabs, out var state))
+            parsed = state;
+        else if (!string.IsNullOrWhiteSpace(preset.SerializedEffects))
+        {
+            parsed = EffectTabStateService.CreateSingleTabState(preset.SerializedEffects, Texts.EffectTab_FirstName);
+            var tab = parsed.Tabs[0];
+            tab.Id = preset.Id == Guid.Empty ? tab.Id : preset.Id;
+            parsed.SelectedTabId = tab.Id;
+        }
+
+        return EffectTabStateService.Normalize(parsed, ImmutableList<IVideoEffect>.Empty, _serialization, Texts.EffectTab_FirstName);
     }
 
     private void ExecuteToggleFavorite(PresetItemViewModel? presetVm)

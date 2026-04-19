@@ -79,6 +79,10 @@
 <data name="CombinedEffect_DisplayNameWithPreset" xml:space="preserve"><value>Combined Effect [{0}]</value></data>
 <data name="CombinedEffect_PresetGroup" xml:space="preserve"><value>Preset Management</value></data>
 <data name="CombinedEffect_EffectGroup" xml:space="preserve"><value>Active Effects</value></data>
+<data name="EffectTab_FirstName" xml:space="preserve"><value>New</value></data>
+<data name="EffectTab_NumberedName" xml:space="preserve"><value>Tab {0}</value></data>
+<data name="EffectTab_Add" xml:space="preserve"><value>Add Tab</value></data>
+<data name="EffectTab_Remove" xml:space="preserve"><value>Remove Tab</value></data>
 <data name="VideoEffect_Name" xml:space="preserve"><value>Combined Effect</value></data>
 <data name="VideoEffect_Category_Tool" xml:space="preserve"><value>Tool</value></data>
 <data name="VideoEffect_Tag_Combined" xml:space="preserve"><value>Combined</value></data>
