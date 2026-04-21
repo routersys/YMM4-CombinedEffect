@@ -22,6 +22,7 @@ internal sealed class EffectTabManagerViewModel(ItemProperty[] itemProperties) :
     private bool _disposed;
     private int _internalSyncDepth;
     private bool _isLoadingState;
+    private bool _suppressEffectsPropertySync;
 
     public ObservableCollection<EffectTabItemViewModel> Tabs { get; } = [];
 
@@ -32,14 +33,21 @@ internal sealed class EffectTabManagerViewModel(ItemProperty[] itemProperties) :
         get;
         set
         {
+            var previous = field;
             var hadCommittedEdits = CommitOtherEditingTabs(value);
+
             if (!SetProperty(ref field, value))
             {
                 if (!_isLoadingState && hadCommittedEdits)
                     PersistTabState(applyEffects: false, raiseEdit: false);
                 return;
             }
+
             if (_isLoadingState) return;
+
+            if (previous is not null)
+                FlushCurrentEffectsToTab(previous);
+
             PersistTabState(applyEffects: true, raiseEdit: true);
             CommandManager.InvalidateRequerySuggested();
         }
@@ -81,6 +89,9 @@ internal sealed class EffectTabManagerViewModel(ItemProperty[] itemProperties) :
     private void ExecuteAddTab()
     {
         if (_effect is null) return;
+
+        if (SelectedTab is not null)
+            FlushCurrentEffectsToTab(SelectedTab);
 
         var newTab = new EffectTabItemViewModel(new EffectTab
         {
@@ -160,14 +171,21 @@ internal sealed class EffectTabManagerViewModel(ItemProperty[] itemProperties) :
 
         if (propertyName == nameof(Effect.CombinedEffect.Effects))
         {
+            if (_suppressEffectsPropertySync) return;
             if (SelectedTab is null) return;
             SelectedTab.SerializedEffects = _serialization.Serialize(_effect.Effects);
-            PersistTabState(applyEffects: false, raiseEdit: false);
+            PersistTabStateJsonOnly();
             return;
         }
 
         if (propertyName == nameof(Effect.CombinedEffect.EffectTabsJson))
             LoadStateFromEffect();
+    }
+
+    private void FlushCurrentEffectsToTab(EffectTabItemViewModel tab)
+    {
+        if (_effect is null) return;
+        tab.SerializedEffects = _serialization.Serialize(_effect.Effects);
     }
 
     private void LoadStateFromEffect()
@@ -190,27 +208,57 @@ internal sealed class EffectTabManagerViewModel(ItemProperty[] itemProperties) :
         SelectedTab = Tabs.FirstOrDefault(t => t.Id == normalized.SelectedTabId) ?? Tabs.FirstOrDefault();
         _isLoadingState = false;
 
-        PersistTabState(applyEffects: true, raiseEdit: false);
+        ApplySelectedTabEffectsToEffect(raiseEdit: false);
+        PersistTabStateJsonOnly();
+    }
+
+    private void ApplySelectedTabEffectsToEffect(bool raiseEdit)
+    {
+        if (_effect is null || Tabs.Count == 0) return;
+
+        var effects = SelectedTab is null
+            ? ImmutableList<IVideoEffect>.Empty
+            : _serialization.Deserialize(SelectedTab.SerializedEffects) ?? ImmutableList<IVideoEffect>.Empty;
+
+        var state = BuildCurrentState();
+        var json = EffectTabStateService.Serialize(state);
+
+        using var _ = EnterInternalSync();
+        _suppressEffectsPropertySync = true;
+
+        var startedEdit = false;
+        if (raiseEdit)
+        {
+            BeginEdit?.Invoke(this, EventArgs.Empty);
+            startedEdit = true;
+        }
+
+        try
+        {
+            foreach (var prop in _itemProperties)
+            {
+                var target = (Effect.CombinedEffect)prop.PropertyOwner;
+                target.EffectTabsJson = json;
+                target.Effects = effects;
+            }
+        }
+        finally
+        {
+            _suppressEffectsPropertySync = false;
+            if (startedEdit)
+                EndEdit?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     private void PersistTabState(bool applyEffects, bool raiseEdit)
     {
         if (_effect is null || Tabs.Count == 0) return;
 
-        var state = new EffectTabState
-        {
-            SelectedTabId = SelectedTab?.Id ?? Tabs[0].Id,
-            Tabs = [.. Tabs.Select(t => new EffectTab
-            {
-                Id = t.Id,
-                Name = t.Name,
-                SerializedEffects = t.SerializedEffects,
-            })]
-        };
-
+        var state = BuildCurrentState();
         var json = EffectTabStateService.Serialize(state);
 
         using var _ = EnterInternalSync();
+        _suppressEffectsPropertySync = true;
 
         var startedEdit = false;
         if (applyEffects && raiseEdit)
@@ -245,9 +293,40 @@ internal sealed class EffectTabManagerViewModel(ItemProperty[] itemProperties) :
         }
         finally
         {
+            _suppressEffectsPropertySync = false;
             if (startedEdit)
                 EndEdit?.Invoke(this, EventArgs.Empty);
         }
+    }
+
+    private void PersistTabStateJsonOnly()
+    {
+        if (_effect is null || Tabs.Count == 0) return;
+
+        var state = BuildCurrentState();
+        var json = EffectTabStateService.Serialize(state);
+
+        using var _ = EnterInternalSync();
+
+        foreach (var prop in _itemProperties)
+        {
+            var target = (Effect.CombinedEffect)prop.PropertyOwner;
+            target.EffectTabsJson = json;
+        }
+    }
+
+    private EffectTabState BuildCurrentState()
+    {
+        return new EffectTabState
+        {
+            SelectedTabId = SelectedTab?.Id ?? (Tabs.Count > 0 ? Tabs[0].Id : null),
+            Tabs = [.. Tabs.Select(t => new EffectTab
+            {
+                Id = t.Id,
+                Name = t.Name,
+                SerializedEffects = t.SerializedEffects,
+            })]
+        };
     }
 
     private IDisposable EnterInternalSync()
