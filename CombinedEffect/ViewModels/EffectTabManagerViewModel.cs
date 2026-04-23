@@ -23,6 +23,7 @@ internal sealed class EffectTabManagerViewModel(ItemProperty[] itemProperties) :
     private int _internalSyncDepth;
     private bool _isLoadingState;
     private bool _suppressEffectsPropertySync;
+    private readonly List<INotifyPropertyChanged> _observedEffects = [];
 
     public ObservableCollection<EffectTabItemViewModel> Tabs { get; } = [];
 
@@ -172,6 +173,7 @@ internal sealed class EffectTabManagerViewModel(ItemProperty[] itemProperties) :
         if (propertyName == nameof(Effect.CombinedEffect.Effects))
         {
             if (_suppressEffectsPropertySync) return;
+            UpdateEffectObservations();
             if (SelectedTab is null) return;
             SelectedTab.SerializedEffects = _serialization.Serialize(_effect.Effects);
             PersistTabStateJsonOnly();
@@ -180,6 +182,36 @@ internal sealed class EffectTabManagerViewModel(ItemProperty[] itemProperties) :
 
         if (propertyName == nameof(Effect.CombinedEffect.EffectTabsJson))
             LoadStateFromEffect();
+    }
+
+    private void UpdateEffectObservations()
+    {
+        foreach (var observed in _observedEffects)
+        {
+            observed.PropertyChanged -= OnChildEffectPropertyChanged;
+        }
+        _observedEffects.Clear();
+
+        if (_effect?.Effects is not null)
+        {
+            foreach (var child in _effect.Effects)
+            {
+                if (child is INotifyPropertyChanged npc)
+                {
+                    npc.PropertyChanged += OnChildEffectPropertyChanged;
+                    _observedEffects.Add(npc);
+                }
+            }
+        }
+    }
+
+    private void OnChildEffectPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (_disposed || IsInternalSync || _suppressEffectsPropertySync) return;
+        if (SelectedTab is null || _effect is null) return;
+
+        FlushCurrentEffectsToTab(SelectedTab);
+        PersistTabStateJsonOnly();
     }
 
     private void FlushCurrentEffectsToTab(EffectTabItemViewModel tab)
@@ -241,6 +273,7 @@ internal sealed class EffectTabManagerViewModel(ItemProperty[] itemProperties) :
                 target.EffectTabsJson = json;
                 target.Effects = effects;
             }
+            UpdateEffectObservations();
         }
         finally
         {
@@ -281,6 +314,7 @@ internal sealed class EffectTabManagerViewModel(ItemProperty[] itemProperties) :
                     target.EffectTabsJson = json;
                     target.Effects = effects;
                 }
+                UpdateEffectObservations();
             }
             else
             {
@@ -373,6 +407,12 @@ internal sealed class EffectTabManagerViewModel(ItemProperty[] itemProperties) :
     {
         if (_disposed) return;
         _disposed = true;
+
+        foreach (var observed in _observedEffects)
+        {
+            observed.PropertyChanged -= OnChildEffectPropertyChanged;
+        }
+        _observedEffects.Clear();
 
         if (_effect is not null)
             _effect.PropertyChanged -= OnEffectPropertyChanged;
